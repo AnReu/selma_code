@@ -1,15 +1,28 @@
 import React  from 'react';
 
-import { Box, Typography} from '@material-ui/core';
+import { CircularProgress, Typography, List, ListSubheader } from '@material-ui/core';
 
-const SearchResults = ({ results }) => {
+import Result from "./Result";
+
+const SearchResults = ({ results, isLoading=false }) => {
   return (
-    <Box style={{marginTop: 20}}>
-      <Typography variant="h6">Search Results:</Typography>
-      {results.map((result, i) =>
-        <Typography variant="body1" key={i}>{ result }</Typography>
-      )}
-    </Box>
+    <React.Fragment>
+      {isLoading
+        ? <CircularProgress />
+        : <List style={{marginTop: 20}}>
+            {results.length
+              ? <ListSubheader disableSticky={true} disableGutters={true}>
+                  <Typography variant="h6">Search Results:</Typography>
+                </ListSubheader>
+              : null
+            }
+
+            {results.map(result =>
+              <Result result={result} key={result.id} />
+            )}
+          </List>
+      }
+    </React.Fragment>
   );
 };
 

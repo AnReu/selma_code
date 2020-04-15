@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { Button, Grid } from '@material-ui/core';
-import MathJax from 'react-mathjax2';
+import MathJax from 'react-mathjax3';
 
 import SearchField from "./Field";
 

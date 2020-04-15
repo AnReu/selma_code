@@ -9,6 +9,7 @@ export default class Search extends Component{
     super(props);
 
     this.state = {
+      isLoading: false,
       query: {text: '', code: '', equations: ''},
       results: []
     };
@@ -26,6 +27,9 @@ export default class Search extends Component{
   }
 
   handleSearch() {
+    this.setState({
+      isLoading: true
+    });
     fetch('http://127.0.0.1:5000/search?' +
       'text=' + encodeURIComponent(this.state.query.text) + '&' +
       'code=' + encodeURIComponent(this.state.query.code) + '&' +
@@ -38,9 +42,13 @@ export default class Search extends Component{
       })
       .then(json =>
         this.setState({
+          isLoading: false,
           results: json
         })
       ).catch((e) => {
+        this.setState({
+          isLoading: false
+        });
         console.log(e);
         this.props.onError();
       });
@@ -50,7 +58,7 @@ export default class Search extends Component{
     return (
       <React.Fragment>
         <SearchBar onQueryChange={this.handleQueryChange} onSearch={this.handleSearch} />
-        <SearchResults results={this.state.results} />
+        <SearchResults results={this.state.results} isLoading={this.state.isLoading} />
       </React.Fragment>
     );
   }
