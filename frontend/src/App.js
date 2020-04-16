@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import { Container, Snackbar } from '@material-ui/core';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import Search from "./components/Search";
-import NavBar from "./components/NavBar";
+import Search from './components/Search';
+import NavBar from './components/NavBar';
+import './App.css'
 
 export default class App extends Component {
 

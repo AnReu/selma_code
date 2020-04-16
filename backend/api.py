@@ -1,5 +1,4 @@
 import sys
-import os
 import json
 from pathlib import Path
 
@@ -11,11 +10,6 @@ import VectorModel.predictor
 
 app = Flask(__name__)
 CORS(app)
-
-
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
 
 
 @app.route('/search')

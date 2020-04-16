@@ -1,26 +1,29 @@
 import React  from 'react';
 
-import { CircularProgress, Typography, List, ListSubheader } from '@material-ui/core';
+import { CircularProgress, Typography } from '@material-ui/core';
 
 import Result from "./Result";
 
 const SearchResults = ({ results, isLoading=false }) => {
+  const [expanded, setExpanded] = React.useState(false);
+  const handleExpand = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
   return (
     <React.Fragment>
       {isLoading
         ? <CircularProgress />
-        : <List style={{marginTop: 20}}>
+        : <React.Fragment>
             {results.length
-              ? <ListSubheader disableSticky={true} disableGutters={true}>
-                  <Typography variant="h6">Search Results:</Typography>
-                </ListSubheader>
+              ? <Typography variant="h6">Search Results:</Typography>
               : null
             }
 
             {results.map(result =>
-              <Result result={result} key={result.id} />
+              <Result result={result} expanded={expanded} handleExpand={handleExpand} key={result.id} />
             )}
-          </List>
+          </React.Fragment>
       }
     </React.Fragment>
   );
