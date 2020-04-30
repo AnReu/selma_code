@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Container, Snackbar } from '@material-ui/core';
+import { Box, Container, Snackbar } from '@material-ui/core';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Document from './components/Document';
@@ -65,6 +65,7 @@ export default class App extends Component {
                 />
               </Route>
             </Switch>
+            <Box p={1} />
           </Container>
           <Snackbar
             anchorOrigin={{

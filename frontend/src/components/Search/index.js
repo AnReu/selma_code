@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import { Box } from "@material-ui/core";
-
 import SearchBar from "./Bar";
 import SearchResults from "./Results";
 
@@ -101,7 +99,6 @@ export default class Search extends Component{
           isLoading={this.state.isLoading}
           onRelevanceCheck={this.handleRelevanceCheck}
         />
-        <Box p={1} />
       </React.Fragment>
     );
   }
