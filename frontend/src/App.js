@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import { Container, Snackbar } from '@material-ui/core';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import Search from './components/Search';
+import Document from './components/Document';
 import NavBar from './components/NavBar';
+import Search from './components/Search';
 import './App.css'
 
 export default class App extends Component {
@@ -57,6 +58,11 @@ export default class App extends Component {
             <Switch>
               <Route path="/search">
                 <Search onError={this.handleError} />
+              </Route>
+              <Route path="/document/:id">
+                <Document
+                  onError={this.handleError}
+                />
               </Route>
             </Switch>
           </Container>

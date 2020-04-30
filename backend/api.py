@@ -55,6 +55,12 @@ def relevance():
     return '', 204
 
 
+@app.route('/document')
+def get_document():
+    id = request.args.get('id')
+    return jsonify(db.get_results_by_id('searchables', [id], ['text'])[0])
+
+
 def results_to_json(results, column_names):
     return_value = []
     for result in results:
