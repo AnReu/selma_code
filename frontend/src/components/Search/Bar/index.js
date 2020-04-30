@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Button, Grid } from '@material-ui/core';
+import { Box, Button, Grid } from '@material-ui/core';
 import MathJax from 'react-mathjax3';
 
 import SearchField from "./Field";
@@ -48,10 +48,10 @@ export default class SearchBar extends Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
 
         <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid item md={4} sm={6} xs={12}>
             <Grid container direction='column' spacing={1}>
               {this.state.titles.map((title, i) =>
                 <Grid item key={i}>
@@ -80,7 +80,9 @@ export default class SearchBar extends Component {
           </Grid>
         </Grid>
 
-      </div>
+        <Box p={1} />
+
+      </React.Fragment>
     );
   }
 };
