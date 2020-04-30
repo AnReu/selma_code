@@ -42,6 +42,19 @@ def search_route():
     return jsonify(results)
 
 
+@app.route('/relevance', methods=['POST'])
+def relevance():
+    data = json.loads(request.data)
+
+    con, cur = db.create_connection()
+    cur.execute('INSERT INTO relevances (id, query, relevant) VALUES (?, ?, ?)',
+                (data['result_id'], json.dumps(data['query']), data['value']))
+    con.commit()
+    con.close()
+
+    return '', 204
+
+
 def results_to_json(results, column_names):
     return_value = []
     for result in results:

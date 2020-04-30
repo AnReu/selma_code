@@ -4,7 +4,7 @@ import { CircularProgress, Typography } from '@material-ui/core';
 
 import Result from "./Result";
 
-const SearchResults = ({ results, isLoading=false }) => {
+const SearchResults = ({ results, isLoading=false, onRelevanceCheck }) => {
   const [expanded, setExpanded] = React.useState(false);
   const handleExpand = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -21,7 +21,13 @@ const SearchResults = ({ results, isLoading=false }) => {
             }
 
             {results.map(result =>
-              <Result result={result} expanded={expanded} handleExpand={handleExpand} key={result.id} />
+              <Result
+                key={result.id}
+                result={result}
+                expanded={expanded}
+                onExpand={handleExpand}
+                onRelevanceCheck={onRelevanceCheck}
+              />
             )}
           </React.Fragment>
       }
