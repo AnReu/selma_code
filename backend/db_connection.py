@@ -49,7 +49,6 @@ class DB:
         cur.execute(query)
         value = cur.fetchall()
         con.close()
-        print(value)
         return value
 
     def get_column_names(self, table_name):
