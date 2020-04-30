@@ -5,9 +5,9 @@ class Predictor:
     """Predictor for most similar documents."""
 
     def __init__(self, data_path):
-        self.eq_model = VectorModel.model.VectorModel(data_path + 'nctr_se_latex2vec.model', data_path + 'questions_features.npy',
+        self.eq_model = VectorModel.model.VectorModel(data_path + 'nctr_se_latex2vec.model', data_path + 'q_and_a_t2v_features.npy',
                                VectorModel.model.TexTokenizer())
-        self.text_model = VectorModel.model.WordVectorModel(data_path + 'se_w2v.model', data_path + 'questions_w2v_features.npy',
+        self.text_model = VectorModel.model.WordVectorModel(data_path + 'se_w2v.model', data_path + 'q_and_a_w2v_features.npy',
                                      VectorModel.model.WordTokenizer(data_path))
 
     def predict(self, text, code, equations, N=5):
