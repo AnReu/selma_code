@@ -45,7 +45,7 @@ export default class Search extends Component{
       .then(json =>
         this.setState({
           isLoading: false,
-          results: json
+          results: json.results
         }))
       .catch((e) => {
         this.setState({

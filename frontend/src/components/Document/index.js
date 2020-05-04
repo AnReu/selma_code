@@ -29,7 +29,7 @@ class Document extends Component {
       .then(json =>
         this.setState({
           isLoading: false,
-          document: json
+          document: json.document
         }))
       .catch((e) => {
         this.setState({

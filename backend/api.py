@@ -4,19 +4,18 @@ import json
 from pathlib import Path
 import re
 
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask import Flask, request
 
 import db_connection
 from HTMLCutter import HTMLCutter
-sys.path.insert(0, os.path.abspath('.'))
+PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
+sys.path.insert(0, PROJECT_DIR)
 import VectorModel.predictor
 
 app = Flask(__name__)
-CORS(app)
 
-data_path = str(Path().absolute()) + '/data/'
-db = db_connection.DB(data_path + 'db.db')
+data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
+db = db_connection.DB(PROJECT_DIR + os.environ.get('DB_PATH'))
 cutter = HTMLCutter(700, 2000)
 
 
@@ -39,7 +38,7 @@ def search_route():
     for result in results:
         result['text'], result['cut'] = trim_html(result['text'])
 
-    return jsonify(results)
+    return {'results': results}
 
 
 @app.route('/relevance', methods=['POST'])
@@ -59,7 +58,7 @@ def relevance():
 def get_document():
     id = request.args.get('id')
     document = db.get_results_by_id('searchables', [id], ['text'])[0][0]
-    return jsonify(re.subn(r'<img', '<img style="max-width: 100%"', document)[0])
+    return {'document': re.subn(r'<img', '<img style="max-width: 100%"', document)[0]}
 
 
 def results_to_json(results, column_names):

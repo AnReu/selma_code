@@ -5,16 +5,12 @@ cd frontend && npm start
 
 Start api with:
 ```
-FLASK_APP=backend/api.py flask run
-```
-
-For debugging mode start api with:
-```
-FLASK_APP=backend/api.py FLASK_ENV=development flask run
+cd frontend && npm run start-api
 ```
 
 # Database
-You need to create a sqlite db file name it `db.db` and place it in `data/`.
+You need to create a sqlite db file. The default location is `data/` and the default name is `db.db` 
+if you want to change them you also need to change them in `backend/.flaskenv`.
 
 \
 To create the tables run:
