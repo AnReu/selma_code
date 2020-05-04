@@ -32,7 +32,7 @@ export default class Search extends Component{
     this.setState({
       isLoading: true
     });
-    fetch('http://127.0.0.1:5000/search?' +
+    fetch('/search?' +
       'text=' + encodeURIComponent(this.state.query.text) + '&' +
       'code=' + encodeURIComponent(this.state.query.code) + '&' +
       'equations=' + encodeURIComponent(this.state.query.equations))
@@ -63,7 +63,7 @@ export default class Search extends Component{
         resultResponses: [...state.resultResponses, resultId]
       }
     });
-    fetch('http://127.0.0.1:5000/relevance', {
+    fetch('/relevance', {
       method: 'post',
       body: JSON.stringify({
         result_id: resultId,

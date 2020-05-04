@@ -18,7 +18,7 @@ class Document extends Component {
   componentDidMount() {
     const { id } = this.props.match.params;
 
-    fetch('http://127.0.0.1:5000/document?' +
+    fetch('/document?' +
       'id=' + encodeURIComponent(id))
       .then(response => {
         if (response.status !== 200) {
