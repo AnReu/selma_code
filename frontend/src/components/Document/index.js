@@ -7,7 +7,6 @@ import { withRouter } from "react-router-dom";
 class Document extends Component {
 
   constructor(props) {
-    console.log(props);
     super(props);
 
     this.state = {
@@ -17,8 +16,6 @@ class Document extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
-
     const { id } = this.props.match.params;
 
     fetch('http://127.0.0.1:5000/document?' +
