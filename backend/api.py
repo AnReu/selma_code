@@ -19,7 +19,7 @@ db = db_connection.DB(PROJECT_DIR + os.environ.get('DB_PATH'))
 cutter = HTMLCutter(700, 2000)
 
 
-@app.route('/search')
+@app.route('/api/v1/search')
 def search_route():
     text = request.args.get('text')
     code = request.args.get('code')
@@ -41,7 +41,7 @@ def search_route():
     return {'results': results}
 
 
-@app.route('/relevance', methods=['POST'])
+@app.route('/api/v1/relevance', methods=['POST'])
 def relevance():
     data = json.loads(request.data)
 
@@ -54,7 +54,7 @@ def relevance():
     return '', 204
 
 
-@app.route('/document')
+@app.route('/api/v1/document')
 def get_document():
     id = request.args.get('id')
     document = db.get_results_by_id('searchables', [id], ['text'])[0][0]
