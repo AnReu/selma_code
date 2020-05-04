@@ -58,7 +58,8 @@ def relevance():
 @app.route('/document')
 def get_document():
     id = request.args.get('id')
-    return jsonify(db.get_results_by_id('searchables', [id], ['text'])[0])
+    document = db.get_results_by_id('searchables', [id], ['text'])[0][0]
+    return jsonify(re.subn(r'<img', '<img style="max-width: 100%"', document)[0])
 
 
 def results_to_json(results, column_names):
