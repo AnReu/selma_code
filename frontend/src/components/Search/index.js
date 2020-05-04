@@ -18,7 +18,6 @@ export default class Search extends Component{
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleRelevanceCheck = this.handleRelevanceCheck.bind(this);
-    this.handleRemainingRelevanceChecks = this.handleRemainingRelevanceChecks.bind(this);
   }
 
   handleQueryChange(query, title) {
@@ -30,7 +29,6 @@ export default class Search extends Component{
   }
 
   handleSearch() {
-    this.handleRemainingRelevanceChecks();
     this.setState({
       isLoading: true
     });
@@ -81,13 +79,6 @@ export default class Search extends Component{
         console.log(e);
         this.props.onError();
       });
-  }
-
-  handleRemainingRelevanceChecks() {
-    if (this.state.resultResponses.length) {
-      this.state.results.filter(result => !this.state.resultResponses.includes(result.id))
-        .forEach(result => this.handleRelevanceCheck(result.id, ''))
-    }
   }
 
   render() {
