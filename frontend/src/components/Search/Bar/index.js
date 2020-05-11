@@ -60,6 +60,7 @@ export default class SearchBar extends Component {
                     onQueryChange={(event) =>
                       this.handleQueryChange(event, title.label.toLowerCase())
                     }
+                    onEnter={this.props.onSearch}
                   />
                   {title.label === 'Equations' &&
                     <MathJax.Context input='tex'>
