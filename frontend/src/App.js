@@ -14,23 +14,24 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      error: false,
-      show_error: false,
+      showError: false,
+      defaultErrorMessage: 'There was an error fetching the data!',
+      errorMessage: null,
     };
 
     this.handleError = this.handleError.bind(this);
     this.handleErrorClose = this.handleErrorClose.bind(this);
   }
 
-  handleError() {
+  handleError(errorMessage=null) {
     this.setState({
-      error: true,
-      show_error: true,
+      showError: true,
+      errorMessage: errorMessage,
     })
   }
 
   handleErrorClose() {
-    this.setState({show_error: false})
+    this.setState({showError: false})
   }
 
   render() {
@@ -48,7 +49,6 @@ export default class App extends Component {
         route: 'about',
       },
     ];
-    const errorMessage = 'There was an error fetching the data!';
 
     return (
       <Router>
@@ -72,13 +72,13 @@ export default class App extends Component {
               vertical: 'bottom',
               horizontal: 'left',
             }}
-            open={this.state.show_error}
+            open={this.state.showError}
             autoHideDuration={6000}
             onClose={this.handleErrorClose}
             ContentProps={{
               'aria-describedby': 'message-id',
             }}
-            message={<span>{errorMessage}</span>}
+            message={<span>{this.state.errorMessage ? this.state.errorMessage : this.state.defaultErrorMessage}</span>}
           />
         </div>
       </Router>

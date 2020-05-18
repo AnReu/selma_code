@@ -35,6 +35,11 @@ class VectorModel:
         dists_query = np.dot(self.get_vector_from_tokenized(query), self.document_vecs.T)
         return np.argsort(dists_query)[-1:-(1 + N):-1]  # get last N vectors
 
+    def predict_by_id(self, id, N=5):
+        query_vec = self.document_vecs[id]
+        dists_query = np.dot(query_vec, self.document_vecs.T)
+        return np.argsort(dists_query)[-1:-(1 + N):-1]  # get last N vectors
+
 
 class WordVectorModel(VectorModel):
     """Special vector model for tokenizing text in sentences and words."""

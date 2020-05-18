@@ -10,62 +10,49 @@ export default class SearchBar extends Component {
     super(props);
 
     this.state = {
-      titles: [
-        {
-          label: 'Text',
-          inputProps: {},
-        },
-        {
-          label: 'Code',
-          inputProps: {
-            style: {
-              fontFamily: 'Ubuntu Mono'
-            }
-          },
-        },
-        {
-          label: 'Equations',
-          inputProps: {},
-          value: '',
-        },
-      ]
+      equationValue: '',
     };
 
     this.handleQueryChange = this.handleQueryChange.bind(this);
+    this.getValidation = this.getValidation.bind(this);
   }
 
-  handleQueryChange = (event, title) => {
-    const value = event.target.value;
+  handleQueryChange = (value, title) => {
     if (title === 'equations') {
-      this.setState(state => {
-        let titles = [...state.titles];
-        titles[2].value = value;
-        return {titles: titles};
+      this.setState({
+        equationValue: value,
       });
     }
-    this.props.onQueryChange(value, title)
+    this.props.onQueryChange(value, title);
   };
+
+  getValidation = (title) => {
+    return this.props.validations !== undefined && this.props.validations[title] !== undefined
+      ? this.props.validations[title]
+      : (value) => value;
+  }
 
   render() {
     return (
-      <React.Fragment>
+      <div hidden={this.props.tabValue !== this.props.tabIndex}>
 
         <Grid container spacing={2}>
           <Grid item md={4} sm={6} xs={12}>
             <Grid container direction='column' spacing={1}>
-              {this.state.titles.map((title, i) =>
+              {(this.props.titles || SearchBar.defaultProps.titles).map((title, i) =>
                 <Grid item key={i}>
                   <SearchField
                     title={title}
                     onQueryChange={(event) =>
-                      this.handleQueryChange(event, title.label.toLowerCase())
+                      this.handleQueryChange(event, title.label)
                     }
                     onEnter={this.props.onSearch}
+                    validation={this.getValidation(title.label)}
                   />
-                  {title.label === 'Equations' &&
+                  {title.label === 'equations' &&
                     <MathJax.Context input='tex'>
                       <div>
-                        <MathJax.Node>{title.value}</MathJax.Node>
+                        <MathJax.Node>{this.state.equationValue}</MathJax.Node>
                       </div>
                     </MathJax.Context>
                   }
@@ -83,7 +70,31 @@ export default class SearchBar extends Component {
 
         <Box p={1} />
 
-      </React.Fragment>
+      </div>
     );
   }
 };
+
+SearchBar.defaultProps = {
+  titles: [
+    {
+      label: 'text',
+      displayLabel: 'Text',
+      inputProps: {},
+    },
+    {
+      label: 'code',
+      displayLabel: 'Code',
+      inputProps: {
+        style: {
+          fontFamily: 'Ubuntu Mono'
+        }
+      },
+    },
+    {
+      label: 'equations',
+      displayLabel: 'Equations',
+      inputProps: {},
+    },
+  ],
+}
