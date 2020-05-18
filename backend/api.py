@@ -12,7 +12,7 @@ PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
 sys.path.insert(0, PROJECT_DIR)
 import VectorModel.predictor
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
 data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
 db = db_connection.DB(PROJECT_DIR + os.environ.get('DB_PATH'))
