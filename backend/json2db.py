@@ -10,9 +10,11 @@ def insert_to_searchables(db_path, json_path):
     with open(json_path, 'r') as f:
         data = json.load(f)
 
+    id = 0
     for date in data:
-        cur.execute('INSERT INTO searchables (exchange_id, text, is_question) VALUES (?,?,?)',
-                    (int(date['id']), date['text'], int(date['is_question'])))
+        cur.execute('INSERT INTO searchables (id, exchange_id, text, is_question) VALUES (?, ?,?,?)',
+                    (id, int(date['id']), date['text'], int(date['is_question'])))
+        id += 1
 
     con.commit()
     con.close()
