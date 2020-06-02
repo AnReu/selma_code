@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 
-import { Box, Tab, Tabs } from "@material-ui/core";
+import {Box, Grid, Tab, Tabs} from "@material-ui/core";
+import MathJax from 'react-mathjax3';
 
 import SearchBar from "./Bar";
 import SearchResults from "./Results";
+import Markdown from "../Markdown";
 
 export default class Search extends Component{
 
@@ -12,7 +14,7 @@ export default class Search extends Component{
 
     this.state = {
       isLoading: false,
-      query: {text: '', code: '', equations: '', id: '', exchange: ''},
+      query: {text: [], code: [], equations: [], id: '', exchange: []},
       results: [],
       resultResponses: [],
       statusCode: null,
@@ -39,7 +41,7 @@ export default class Search extends Component{
     });
 
     let params = '';
-    if (this.state.tabValue === 0) {
+    if ([0, 1].includes(this.state.tabValue)) {
       params = 'text=' + encodeURIComponent(this.state.query.text) + '&' +
                'code=' + encodeURIComponent(this.state.query.code) + '&' +
                'equations=' + encodeURIComponent(this.state.query.equations)
@@ -136,34 +138,88 @@ export default class Search extends Component{
           textColor="primary"
         >
           <Tab label="Default" />
+          <Tab label="Separated" />
           <Tab label="ID" />
         </Tabs>
         <Box p={1} />
         <SearchBar
+          titles={[{
+            name: 'mono_search',
+            query_key: 'text',
+            label: 'Text',
+          }]}
+          multiline={true}
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
           tabValue={this.state.tabValue}
           tabIndex={0}
+          child={(state={mono_search: ''}) => {
+            return (
+              <Grid item md={8} xs={12}>
+                <Markdown source={state.mono_search} />
+              </Grid>
+            )
+          }}
+        />
+
+        <SearchBar
+          titles={[
+            {
+              name: 'text',
+              query_key: 'text',
+              label: 'Text',
+            },
+            {
+              name: 'code',
+              query_key: 'code',
+              label: 'Code',
+              inputProps: {
+                style: {
+                  fontFamily: 'Ubuntu Mono'
+                }
+              },
+            },
+            {
+              name: 'equations',
+              query_key: 'equations',
+              label: 'Equations',
+            }
+          ]}
+          onQueryChange={this.handleQueryChange}
+          onSearch={this.handleSearch}
+          tabValue={this.state.tabValue}
+          tabIndex={1}
+          child={(state={equations: ''}) => {
+            return (
+              <Grid item md={8} xs={12}>
+                <Grid container alignItems="flex-start" justify="flex-start">
+                  <Grid item>
+                    <MathJax.Context input='tex'>
+                      <div>
+                        <MathJax.Node>{state.equations}</MathJax.Node>
+                      </div>
+                    </MathJax.Context>
+                  </Grid>
+                </Grid>
+              </Grid>
+            )
+          }}
         />
 
         <SearchBar
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
           titles={[{
-            label: 'id',
-            displayLabel: 'ID or URL',
-            inputProps: {},
-          },]}
-          validations={
-            {'id': id_validation}
-          }
+            name: 'id',
+            query_key: 'id',
+            label: 'ID or URL',
+          }]}
+          validation={id_validation}
           tabValue={this.state.tabValue}
-          tabIndex={1}
+          tabIndex={2}
         />
 
-        {this.state.tabValue === 1 &&
-          <Box p={2} />
-        }
+        <Box p={2} />
 
         <SearchResults
           results={this.state.results}

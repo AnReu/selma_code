@@ -10,9 +10,12 @@
     "@testing-library/user-event": "^7.2.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-katex": "^2.0.2",
+    "react-markdown": "^4.3.1",
     "react-mathjax3": "0.0.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "remark-math": "^2.0.1",
     "styled-components": "^5.1.0"
   },
   "scripts": {
