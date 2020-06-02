@@ -81,7 +81,7 @@ const Result = ({ result, expanded, onExpand, onRelevanceCheck }) => {
           <MathJax.Html html={ result.text } />
         </MathJax.Context>
         <div>
-          <RouterLink to={`/document/${result.id}`}>
+          <RouterLink to={`/document/${result.id}`} target='_blank'>
             Full Document
           </RouterLink>
         </div>
