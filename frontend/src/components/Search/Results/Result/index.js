@@ -28,8 +28,21 @@ const Result = ({ result, expanded, onExpand, onRelevanceCheck }) => {
       expanded={expanded === result.id}
       onChange={onExpand(result.id)}
     >
-      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.heading}>Document-ID: {result.id}</Typography>
+      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} className={classes.exp}>
+        <Typography className={classes.heading}>
+          <MathJax.Context
+            input='tex'
+            options={{
+              tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+              }
+            }}
+          >
+            <MathJax.Html html={ 'Document: ' + result.relevant_sentence + ' ...' } />
+          </MathJax.Context>
+        </Typography>
         <FormControl
           onChange={(event) => onRelevanceCheck(result.id, event.target.value)}
           className={classes.formControl}
