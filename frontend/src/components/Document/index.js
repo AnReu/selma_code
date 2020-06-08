@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
 
-import { CircularProgress } from '@material-ui/core';
+import { Box, CircularProgress, Paper } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import MathJax from 'react-mathjax3';
 import { withRouter } from "react-router-dom";
+
+const styles = theme => ({
+  progress: {
+    display: 'flex',
+    justifyContent: 'center',
+  }
+});
 
 class Document extends Component {
 
@@ -10,7 +18,7 @@ class Document extends Component {
     super(props);
 
     this.state = {
-      isLoading: false,
+      isLoading: true,
       document: null,
     }
   }
@@ -42,10 +50,12 @@ class Document extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     return (
-      <React.Fragment>
+      <Paper>
+        <Box p={2}>
         {this.state.isLoading
-          ? <CircularProgress />
+          ? <div className={classes.progress}><CircularProgress /></div>
           : <MathJax.Context
               input='tex'
               options={{
@@ -59,9 +69,10 @@ class Document extends Component {
               <MathJax.Html html={ this.state.document } />
             </MathJax.Context>
         }
-      </React.Fragment>
+        </Box>
+      </Paper>
     );
   }
 }
 
-export default withRouter(Document)
+export default withStyles(styles)(withRouter(Document))
