@@ -30,12 +30,19 @@ def search(request, db):
     if id is None:
         result_ids = predictor.predict(text, code, equation)
     elif exchange == ['physics', 'stackexchange']:
-        id = int(id)
-        if id >= 119158:
-            error = 'Index out of bounds'
+        exchange_id = int(id)
+
+        con, cur = db.create_connection()
+        query = 'SELECT {} FROM {} WHERE exchange_id={}'.format('id', 'searchables', exchange_id)
+        cur.execute(query)
+        id = cur.fetchone()
+        con.close()
+
+        if not id:
+            error = 'ID not present'
             status = 404
         else:
-            result_ids = predictor.predict_by_id(id)
+            result_ids = predictor.predict_by_id(id[0])
 
     data = db.get_results_by_id('searchables', result_ids)
     column_names = db.get_column_names('searchables')
