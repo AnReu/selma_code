@@ -6,6 +6,7 @@ import MathJax from 'react-mathjax3';
 import SearchBar from "./Bar";
 import SearchResults from "./Results";
 import Markdown from "../Markdown";
+import FileUpload from "../FileUpload";
 
 export default class Search extends Component{
 
@@ -140,6 +141,7 @@ export default class Search extends Component{
           <Tab label="Default" />
           <Tab label="Separated" />
           <Tab label="ID" />
+          <Tab label="File" />
         </Tabs>
         <Box p={1} />
         <SearchBar
@@ -218,6 +220,10 @@ export default class Search extends Component{
           tabValue={this.state.tabValue}
           tabIndex={2}
         />
+
+        <div hidden={this.state.tabValue !== 3}>
+          <FileUpload />
+        </div>
 
         <Box p={2} />
 
