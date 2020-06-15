@@ -13,22 +13,20 @@ cutter = HTMLCutter(700, 2000)
 data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
 
 
-def search(request, db):
+def search(db, text=None, code=None, equation=None, id=None, exchange=None):
     result_ids = []
     error = ''
     status = 200
 
-    text = request.args.get('text')
-    code = request.args.get('code')
-    equation = request.args.get('equations')
-    id = request.args.get('id')
-    exchange = request.args.get('exchange') or 'physics,stackexchange'
-    exchange = exchange.split(',')
-
     predictor = VectorModel.predictor.Predictor(data_path)
 
     if id is None:
-        result_ids = predictor.predict(text, code, equation)
+        try:
+            result_ids = predictor.predict(text, code, equation)
+        except KeyError:
+            result_ids = []
+            error = 'Key Error: word not in vocabulary'
+            status = 404
     elif exchange == ['physics', 'stackexchange']:
         id = int(id)
         if id >= 119158:

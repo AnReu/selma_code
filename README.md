@@ -23,3 +23,6 @@ To fill table `searchables` with documents run:
 ```commandline
 python3 backend/json2db.py data/db.db YOUR_FILE_WITH_DOCUMENTS.json
 ```
+
+# Dependencies
+For the file upload to work, you need to have Java 7+ installed on your system.

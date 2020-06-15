@@ -26,6 +26,8 @@ export default class Search extends Component{
     this.handleSearch = this.handleSearch.bind(this);
     this.handleRelevanceCheck = this.handleRelevanceCheck.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
+    this.setResult = this.setResult.bind(this);
+    this.setIsLoading = this.setIsLoading.bind(this);
   }
 
   handleQueryChange(query, title) {
@@ -38,7 +40,8 @@ export default class Search extends Component{
 
   handleSearch() {
     this.setState({
-      isLoading: true
+      isLoading: true,
+      results: [],
     });
 
     let params = '';
@@ -110,6 +113,18 @@ export default class Search extends Component{
   handleTabChange(event, newValue) {
     this.setState({
       tabValue: newValue,
+    });
+  }
+
+  setResult(result) {
+    this.setState({
+      result: result,
+    });
+  }
+
+  setIsLoading(isLoading) {
+    this.setState({
+      isLoading: isLoading,
     });
   }
 
@@ -222,7 +237,7 @@ export default class Search extends Component{
         />
 
         <div hidden={this.state.tabValue !== 3}>
-          <FileUpload />
+          <FileUpload setResults={this.setResult} setIsLoading={this.setIsLoading} onError={this.props.onError} />
         </div>
 
         <Box p={2} />

@@ -4,9 +4,9 @@ from pathlib import Path
 import re
 
 from flask import Flask, request
-from werkzeug.utils import secure_filename
 
 import db_connection
+import pdf_parser
 import search
 
 ALLOWED_EXTENSIONS = {'pdf'}
@@ -16,12 +16,17 @@ app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
 data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
 db = db_connection.DB(PROJECT_DIR + os.environ.get('DB_PATH'))
-app.config['UPLOAD_FOLDER'] = PROJECT_DIR + os.environ.get('UPLOAD_FOLDER')
 
 
 @app.route('/api/v1/search')
 def search_route():
-    return search.search(request, db)
+    text = request.args.get('text')
+    code = request.args.get('code')
+    equation = request.args.get('equations')
+    id = request.args.get('id')
+    exchange = request.args.get('exchange') or 'physics,stackexchange'
+    exchange = exchange.split(',')
+    return search.search(db, text, code, equation, id, exchange)
 
 
 @app.route('/api/v1/relevance', methods=['POST'])
@@ -56,8 +61,6 @@ def upload_file():
     if file.filename == '':
         return 'No filename present', 400
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return '', 200
+        return search.search(db, text=pdf_parser.get_abstract(file))
     else:
         return 'Only PDFs are allowed file types', 403
