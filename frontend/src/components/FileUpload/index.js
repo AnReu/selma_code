@@ -78,7 +78,7 @@ export default class FileUpload extends Component {
         <DropzoneDialog
           open={this.state.open}
           onSave={this.handleSave}
-          acceptedFiles={['.pdf']}
+          acceptedFiles={['.pdf', '.tex']}
           showPreviews={true}
           onClose={this.handleClose}
         />

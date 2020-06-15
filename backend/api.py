@@ -8,8 +8,9 @@ from flask import Flask, request
 import db_connection
 import pdf_parser
 import search
+import tex_parser
 
-ALLOWED_EXTENSIONS = {'pdf'}
+ALLOWED_EXTENSIONS = {'pdf', 'tex'}
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
@@ -61,6 +62,10 @@ def upload_file():
     if file.filename == '':
         return 'No filename present', 400
     if file and allowed_file(file.filename):
-        return search.search(db, text=pdf_parser.get_abstract(file))
+        if file.filename.endswith('.pdf'):
+            return search.search(db, text=pdf_parser.get_abstract(file))
+        if file.filename.endswith('.tex'):
+            text, equations = tex_parser.search(file)
+            return search.search(db, text=text, equation=max(equations, key=len, default=''))
     else:
         return 'Only PDFs are allowed file types', 403
