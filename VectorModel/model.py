@@ -27,7 +27,8 @@ class VectorModel:
     def get_vector_from_tokenized(self, tokenized):
         mean = []
         for word in tokenized:
-            mean.append(self.model.wv[word])
+            if word in self.model.wv:
+                mean.append(self.model.wv[word])
         return matutils.unitvec(np.array(mean).mean(axis=0)).astype(np.float32)
 
     def predict(self, query, N=5):
@@ -49,7 +50,8 @@ class WordVectorModel(VectorModel):
         for sent in tokenized:
             sent_mean = []
             for word in sent:
-                sent_mean.append(self.model.wv[word])
+                if word in self.model.wv:
+                    sent_mean.append(self.model.wv[word])
             if sent_mean:
                 mean.append(matutils.unitvec(np.array(sent_mean).mean(axis=0)).astype(np.float32))
 
