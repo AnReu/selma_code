@@ -26,7 +26,7 @@ export default class Search extends Component{
     this.handleSearch = this.handleSearch.bind(this);
     this.handleRelevanceCheck = this.handleRelevanceCheck.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
-    this.setResult = this.setResult.bind(this);
+    this.setResults = this.setResults.bind(this);
     this.setIsLoading = this.setIsLoading.bind(this);
   }
 
@@ -116,9 +116,10 @@ export default class Search extends Component{
     });
   }
 
-  setResult(result) {
+  setResults(results) {
+    console.log('mulm')
     this.setState({
-      result: result,
+      results: results,
     });
   }
 
@@ -237,7 +238,7 @@ export default class Search extends Component{
         />
 
         <div hidden={this.state.tabValue !== 3}>
-          <FileUpload setResults={this.setResult} setIsLoading={this.setIsLoading} onError={this.props.onError} />
+          <FileUpload setResults={this.setResults} setIsLoading={this.setIsLoading} onError={this.props.onError} />
         </div>
 
         <Box p={2} />
