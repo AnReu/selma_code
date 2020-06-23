@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import {Box, Grid, Tab, Tabs} from "@material-ui/core";
+import { Box, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Tab, Tabs } from "@material-ui/core";
 import MathJax from 'react-mathjax3';
 
 import SearchBar from "./Bar";
@@ -15,7 +15,7 @@ export default class Search extends Component{
 
     this.state = {
       isLoading: false,
-      query: {text: [], code: [], equations: [], id: '', exchange: []},
+      query: {text: [], code: [], equations: [], id: '', exchange: [], modelLanguage: 'english'},
       results: [],
       resultResponses: [],
       statusCode: null,
@@ -48,10 +48,12 @@ export default class Search extends Component{
     if ([0, 1].includes(this.state.tabValue)) {
       params = 'text=' + encodeURIComponent(this.state.query.text) + '&' +
                'code=' + encodeURIComponent(this.state.query.code) + '&' +
-               'equations=' + encodeURIComponent(this.state.query.equations)
+               'equations=' + encodeURIComponent(this.state.query.equations) + '&' +
+               'model-language=' + encodeURIComponent(this.state.query.modelLanguage)
     } else {
       params = 'id=' + encodeURIComponent(this.state.query.id) + '&' +
-               'exchange=' + encodeURIComponent(this.state.query.exchange)
+               'exchange=' + encodeURIComponent(this.state.query.exchange) + '&' +
+               'model-language=' + encodeURIComponent(this.state.query.modelLanguage)
     }
 
     fetch('/api/v1/search?' + params)
@@ -117,7 +119,6 @@ export default class Search extends Component{
   }
 
   setResults(results) {
-    console.log('mulm')
     this.setState({
       results: results,
     });
@@ -166,6 +167,7 @@ export default class Search extends Component{
             query_key: 'text',
             label: 'Text',
           }]}
+          modelLanguageValue={this.state.query.modelLanguage}
           multiline={true}
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
@@ -203,6 +205,7 @@ export default class Search extends Component{
               label: 'Equations',
             }
           ]}
+          modelLanguageValue={this.state.query.modelLanguage}
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
           tabValue={this.state.tabValue}
@@ -232,13 +235,32 @@ export default class Search extends Component{
             query_key: 'id',
             label: 'ID or URL',
           }]}
+          modelLanguageValue={this.state.query.modelLanguage}
           validation={id_validation}
           tabValue={this.state.tabValue}
           tabIndex={2}
         />
 
         <div hidden={this.state.tabValue !== 3}>
-          <FileUpload setResults={this.setResults} setIsLoading={this.setIsLoading} onError={this.props.onError} />
+          <FileUpload
+            setResults={this.setResults}
+            setIsLoading={this.setIsLoading}
+            onError={this.props.onError}
+            modelLanguage={this.state.query.modelLanguage}
+          />
+
+          <Box p={2} />
+
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Model language</FormLabel>
+            <RadioGroup
+                name="model-language"
+                value={this.state.query.modelLanguage}
+                onChange={event => this.handleQueryChange(event.target.value, 'modelLanguage')}>
+              <FormControlLabel value="english" control={<Radio />} label="English" />
+              <FormControlLabel value="german" control={<Radio />} label="German" />
+            </RadioGroup>
+          </FormControl>
         </div>
 
         <Box p={2} />

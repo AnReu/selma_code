@@ -29,6 +29,7 @@ export default class FileUpload extends Component {
 
     const formData = new FormData();
     formData.append('file', files[0]);
+    formData.append('model-language', this.props.modelLanguage);
 
     this.props.setIsLoading(true);
     this.props.setResults([]);

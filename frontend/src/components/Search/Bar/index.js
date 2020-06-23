@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Box, Button, Grid } from '@material-ui/core';
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup } from '@material-ui/core';
 
 import SearchField from "./Field";
 
@@ -94,6 +94,22 @@ export default class SearchBar extends Component {
               <Box p={1} />
 
             </Grid>
+
+            <Box p={1} />
+
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Model language</FormLabel>
+              <RadioGroup
+                name="model-language"
+                value={this.props.modelLanguageValue}
+                onChange={event => this.props.onQueryChange(event.target.value, 'modelLanguage')}>
+                <FormControlLabel value="english" control={<Radio />} label="English" />
+                <FormControlLabel value="german" control={<Radio />} label="German" />
+              </RadioGroup>
+            </FormControl>
+
+            <Box p={1} />
+
             <Button
               variant="contained"
               onClick={this.props.onSearch}

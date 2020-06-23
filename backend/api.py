@@ -27,6 +27,7 @@ def search_route():
     id = request.args.get('id')
     exchange = request.args.get('exchange') or 'physics,stackexchange'
     exchange = exchange.split(',')
+    model_language = request.args.get('model-language')
     return search.search(db, text, code, equation, id, exchange)
 
 
@@ -62,6 +63,7 @@ def upload_file():
     if file.filename == '':
         return 'No filename present', 400
     if file and allowed_file(file.filename):
+        model_language = request.form.get('model-language')
         if file.filename.endswith('.pdf'):
             return search.search(db, text=pdf_parser.get_abstract(file))
         if file.filename.endswith('.tex'):
