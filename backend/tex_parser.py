@@ -123,10 +123,25 @@ def get_eqation_start(string, delimiters):
 
 
 def remove_tex_commands(text):
+    title = ''
+    match = re.search(r'\\[\w]*title[\w]*{([^}]*)}', text)
+    if match:
+        title = match.group(1)
+
     text = re.sub(r'[\w\W]*\\begin{document}', '', text, count=1)
     text = re.sub(r'\\end{document}[\w\W]*', '', text, count=1)
+
+    offset = 0
+    for match in re.finditer(r'\\(?:section|subsection){([^\\{}]*)}', text):
+        text = text[:match.end(1) + offset + 1] + ' ' + match.group(1) + ' ' + text[match.end(1) + offset + 1:]
+        offset += len(match.group(1)) + 2
+
     # remove all tables tab.* because of table, table*, tabular, tabular*, tabularx etc.
     text = re.sub(r'\\begin{(tab.*)}[\w\W]*\\end{\1}', '', text)
+    # remove all footnotes (may contain tex commands)
+    text = re.sub(r'\\footnote{[^\\{}]*(?:\\[^{\[\s]+(?:{[^\\{}]*})*(?:\[[^\[\]]*(?:(?:\[[^\[\]]*\])?[^\[\]]*)*\])?(?:{[^\\{}]*})*[^\\{}]*)*}', '', text)
     # match any tex command
-    text = re.sub(r'\\[^{[\s]*(?:\[[^]]*\])?(?:{[^}]*})*', '', text)
-    return text
+    text = re.sub(r'\\[^{\[\s]*(?:{[^\\{}]*})*(?:\[[^\[\]]*(?:(?:\[[^\[\]]*\])?[^\[\]]*)*\])?(?:{[^\\{}]*})*', '', text)
+
+    text = re.sub('{}', '', text)
+    return title + ' ' + text
