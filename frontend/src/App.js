@@ -17,10 +17,12 @@ export default class App extends Component {
       showError: false,
       defaultErrorMessage: 'There was an error fetching the data!',
       errorMessage: null,
+      modelLanguage: 'english',
     };
 
     this.handleError = this.handleError.bind(this);
     this.handleErrorClose = this.handleErrorClose.bind(this);
+    this.handleModelLanguageChange = this.handleModelLanguageChange.bind(this);
   }
 
   handleError(errorMessage=null) {
@@ -32,6 +34,10 @@ export default class App extends Component {
 
   handleErrorClose() {
     this.setState({showError: false})
+  }
+
+  handleModelLanguageChange(modelLanguage) {
+    this.setState({modelLanguage: modelLanguage});
   }
 
   render() {
@@ -53,11 +59,11 @@ export default class App extends Component {
     return (
       <Router>
         <div className="App">
-          <NavBar headings={headings}/>
+          <NavBar headings={headings} initialModelLanguage={this.state.modelLanguage} onModelLanguageChange={this.handleModelLanguageChange} />
           <Container style={{marginTop: 20}}>
             <Switch>
               <Route path="/search">
-                <Search onError={this.handleError} />
+                <Search onError={this.handleError} modelLanguage={this.state.modelLanguage}/>
               </Route>
               <Route path="/document/:id">
                 <Document
