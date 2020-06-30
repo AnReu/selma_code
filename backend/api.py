@@ -6,9 +6,9 @@ import re
 from flask import Flask, request
 
 import db_connection
-import pdf_parser
+import parser.pdf_parser
+import parser.tex_parser
 import search
-import tex_parser
 
 ALLOWED_EXTENSIONS = {'pdf', 'tex'}
 
@@ -65,9 +65,9 @@ def upload_file():
     if file and allowed_file(file.filename):
         model_language = request.form.get('model-language')
         if file.filename.endswith('.pdf'):
-            return search.search(db, text=pdf_parser.get_abstract(file))
+            return search.search(db, text=parser.pdf_parser.get_abstract(file))
         if file.filename.endswith('.tex'):
-            text, equations = tex_parser.search(file)
+            text, equations = parser.tex_parser.search(file)
             return search.search(db, text=text, equation=max(equations, key=len, default=''))
     else:
         return 'Only PDFs are allowed file types', 403

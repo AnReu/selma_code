@@ -1,5 +1,7 @@
 import re
 
+from parser.utility import get_eqation_start
+
 MATH_BLOCK_DELIMITERS = [
     {
         'begin': r'\begin{align}',
@@ -68,8 +70,8 @@ def search(file):
             end_eq = line.find(end_delimiter)
             if end_eq != -1:
                 in_equation = False
-                equations.append(line[:end_eq])
-                line = line[end_eq + 1:]
+                equations[-1] = equations[-1] + line[:end_eq]
+                line = line[end_eq + len(end_delimiter):]
             else:
                 equations[-1] = equations[-1] + line
         else:
@@ -109,17 +111,6 @@ def find_inline_equations(line):
     else:
         text += line
     return equations, text
-
-
-def get_eqation_start(string, delimiters):
-    """
-    :param string: string that should be searched for equation start
-    :param delimiters: array consisting of delimiter dicts with begin, end and type
-    :return: 4-Tuple with index after delimiter, beginning, end and type of delimiter
-    """
-    return next(((string.find(delimiter['begin']) + len(delimiter['begin']), *tuple(delimiter.values()))
-                 for delimiter in delimiters if string.find(delimiter['begin']) > -1),
-                (-1, '', '', ''))
 
 
 def remove_tex_commands(text):
