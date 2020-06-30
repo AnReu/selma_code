@@ -65,7 +65,7 @@ def results_to_json(results, column_names):
 
 
 def trim_html(html):
-    return cutter.cut(re.subn(r'<img[^>]*>', '', html)[0])
+    return cutter.cut(re.subn(r'<img[^>]*>', '<strong>[Image]</strong>', html)[0])
 
 
 def get_relevant_sentence(result):
