@@ -166,6 +166,7 @@ export default class Search extends Component{
             name: 'mono_search',
             query_key: 'text',
             label: 'Text',
+            helperText: 'This is a Markdown text field. For code use ``` as delimiter,<br/> like ```my code here```. For Equations use $ as delimiter.',
           }]}
           multiline={true}
           onQueryChange={this.handleQueryChange}
@@ -213,7 +214,14 @@ export default class Search extends Component{
               <Grid item md={8} xs={12}>
                 <Grid container alignItems="flex-start" justify="flex-start">
                   <Grid item>
-                    <MathJax.Context input='tex'>
+                    <MathJax.Context
+                      input='tex'
+                      options={{
+                        asciimath2jax: {
+                          delimiters: []
+                        },
+                      }}
+                    >
                       <div>
                         <MathJax.Node>{state.equations}</MathJax.Node>
                       </div>

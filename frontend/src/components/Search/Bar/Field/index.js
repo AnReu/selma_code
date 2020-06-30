@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { FormControl, IconButton, Input, InputLabel } from '@material-ui/core';
+import { FormControl, FormHelperText, IconButton, Input, InputLabel } from '@material-ui/core';
 import ClearIcon from "@material-ui/icons/Clear";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -48,6 +48,9 @@ const SearchField = ({ title, onQueryChange, onEnter, multiline, validation = x 
           onChange={handleQueryChange}
           onKeyDown={handleKeyDown}
         />
+        <FormHelperText id={id + '-text'}>
+          <div dangerouslySetInnerHTML={{__html: title.helperText}} />
+        </FormHelperText>
       </FormControl>
     </div>
   );
