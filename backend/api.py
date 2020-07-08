@@ -6,11 +6,12 @@ import re
 from flask import Flask, request
 
 import db_connection
+import parser.markdown_parser
 import parser.pdf_parser
 import parser.tex_parser
 import search
 
-ALLOWED_EXTENSIONS = {'pdf', 'tex'}
+ALLOWED_EXTENSIONS = {'pdf', 'tex', 'md'}
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
@@ -69,5 +70,8 @@ def upload_file():
         if file.filename.endswith('.tex'):
             text, equations = parser.tex_parser.search(file)
             return search.search(db, text=text, equation=max(equations, key=len, default=''))
+        if file.filename.endswith('.md'):
+            text, code, equations = parser.markdown_parser.search(file)
+            return search.search(db, text=text, code=code, equation=max(equations, key=len, default=''))
     else:
         return 'Only PDFs are allowed file types', 403

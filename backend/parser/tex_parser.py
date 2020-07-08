@@ -1,6 +1,6 @@
 import re
 
-from parser.utility import get_eqation_start
+from parser.utility import get_eqation_start, find_inline_equations
 
 MATH_BLOCK_DELIMITERS = [
     {
@@ -44,21 +44,23 @@ MATH_INLINE_DELIMITERS = [
 ]
 
 
-def search(file):
-    text = ''
+def search(file, block_delimiter=MATH_BLOCK_DELIMITERS, inline_delimiter=MATH_INLINE_DELIMITERS, file_type='tex'):
+    text = []
     equations = []
     in_equation = False
     end_delimiter = None
 
     for line in file:
-        line = line.decode()
+        if hasattr(line, 'decode'):
+            line = line.decode()
 
         # remove comments
-        if line.startswith('%'):
-            continue
-        index = line.find('%')
-        if index != -1:
-            line = line[:index]
+        if file_type == 'tex':
+            if line.startswith('%'):
+                continue
+            index = line.find('%')
+            if index != -1:
+                line = line[:index]
 
         line = line.strip()
 
@@ -76,41 +78,28 @@ def search(file):
                 equations[-1] = equations[-1] + line
         else:
             # check for block equation
-            eq_start = get_eqation_start(line, MATH_BLOCK_DELIMITERS)
+            eq_start = get_eqation_start(line, block_delimiter)
             if eq_start[0] != -1:
                 in_equation = True
                 end_delimiter = eq_start[2]
                 start = eq_start[0]
+                text.append(line[:start - len(eq_start[1])])
                 end_eq = line.find(end_delimiter, start)
                 if end_eq != -1:
                     in_equation = False
-                    equations.append(line[start:end_eq + len(end_delimiter)])
+                    equations.append(line[start:end_eq])
+                    line = line[end_eq + len(end_delimiter):]
                 else:
                     equations.append(line[start:])
 
         if not in_equation:
             # check for inline equation
-            inline_equations, inline_text = find_inline_equations(line)
+            inline_equations, inline_text = find_inline_equations(line, inline_delimiter)
             equations.extend(inline_equations)
-            text += inline_text
-    return remove_tex_commands(text), equations
-
-
-def find_inline_equations(line):
-    text = ''
-    equations = []
-
-    eq_start = get_eqation_start(line, MATH_INLINE_DELIMITERS)
-    if eq_start[0] != -1:
-        end_eq = line.find(eq_start[2], eq_start[0])
-        equations.append(line[eq_start[0]:end_eq])
-        text += line[:eq_start[0] - len(eq_start[1])]
-        inline_equations, inline_text = find_inline_equations(line[end_eq + len(eq_start[2]):])
-        equations.extend(inline_equations)
-        text += inline_text
-    else:
-        text += line
-    return equations, text
+            text.append(inline_text)
+    if file_type == 'tex':
+        return remove_tex_commands(' '.join(text)), equations
+    return text, equations
 
 
 def remove_tex_commands(text):
