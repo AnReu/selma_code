@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 
-import {Box, Grid, Tab, Tabs} from "@material-ui/core";
+import { Box, Grid, Tab, Tabs } from "@material-ui/core";
 import MathJax from 'react-mathjax3';
 
 import SearchBar from "./Bar";
 import SearchResults from "./Results";
 import Markdown from "../Markdown";
+import FileUpload from "../FileUpload";
 
 export default class Search extends Component{
 
@@ -25,6 +26,8 @@ export default class Search extends Component{
     this.handleSearch = this.handleSearch.bind(this);
     this.handleRelevanceCheck = this.handleRelevanceCheck.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
+    this.setResults = this.setResults.bind(this);
+    this.setIsLoading = this.setIsLoading.bind(this);
   }
 
   handleQueryChange(query, title) {
@@ -37,17 +40,20 @@ export default class Search extends Component{
 
   handleSearch() {
     this.setState({
-      isLoading: true
+      isLoading: true,
+      results: [],
     });
 
     let params = '';
     if ([0, 1].includes(this.state.tabValue)) {
       params = 'text=' + encodeURIComponent(this.state.query.text) + '&' +
                'code=' + encodeURIComponent(this.state.query.code) + '&' +
-               'equations=' + encodeURIComponent(this.state.query.equations)
+               'equations=' + encodeURIComponent(this.state.query.equations) + '&' +
+               'model-language=' + encodeURIComponent(this.props.modelLanguage)
     } else {
       params = 'id=' + encodeURIComponent(this.state.query.id) + '&' +
-               'exchange=' + encodeURIComponent(this.state.query.exchange)
+               'exchange=' + encodeURIComponent(this.state.query.exchange) + '&' +
+               'model-language=' + encodeURIComponent(this.props.modelLanguage)
     }
 
     fetch('/api/v1/search?' + params)
@@ -112,6 +118,18 @@ export default class Search extends Component{
     });
   }
 
+  setResults(results) {
+    this.setState({
+      results: results,
+    });
+  }
+
+  setIsLoading(isLoading) {
+    this.setState({
+      isLoading: isLoading,
+    });
+  }
+
   render() {
     const id_validation = (value) => {
       let exchange = [];
@@ -140,6 +158,7 @@ export default class Search extends Component{
           <Tab label="Default" />
           <Tab label="Separated" />
           <Tab label="ID" />
+          <Tab label="File" />
         </Tabs>
         <Box p={1} />
         <SearchBar
@@ -147,6 +166,7 @@ export default class Search extends Component{
             name: 'mono_search',
             query_key: 'text',
             label: 'Text',
+            helperText: 'This is a Markdown text field. For code use ``` as delimiter,<br/> like ```my code here```. For Equations use $ as delimiter.',
           }]}
           multiline={true}
           onQueryChange={this.handleQueryChange}
@@ -194,7 +214,14 @@ export default class Search extends Component{
               <Grid item md={8} xs={12}>
                 <Grid container alignItems="flex-start" justify="flex-start">
                   <Grid item>
-                    <MathJax.Context input='tex'>
+                    <MathJax.Context
+                      input='tex'
+                      options={{
+                        asciimath2jax: {
+                          delimiters: []
+                        },
+                      }}
+                    >
                       <div>
                         <MathJax.Node>{state.equations}</MathJax.Node>
                       </div>
@@ -218,6 +245,15 @@ export default class Search extends Component{
           tabValue={this.state.tabValue}
           tabIndex={2}
         />
+
+        <div hidden={this.state.tabValue !== 3}>
+          <FileUpload
+            setResults={this.setResults}
+            setIsLoading={this.setIsLoading}
+            onError={this.props.onError}
+            modelLanguage={this.props.modelLanguage}
+          />
+        </div>
 
         <Box p={2} />
 

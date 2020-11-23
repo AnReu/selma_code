@@ -94,6 +94,7 @@ export default class SearchBar extends Component {
               <Box p={1} />
 
             </Grid>
+
             <Button
               variant="contained"
               onClick={this.props.onSearch}

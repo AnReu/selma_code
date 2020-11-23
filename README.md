@@ -31,3 +31,6 @@ To fill table `searchables` with documents run:
 python3 backend/json2db.py data/db.db YOUR_FILE_WITH_DOCUMENTS.json
 ```
 An example for a .json file: see `data/dummy_data.json`
+
+# Dependencies
+For the file upload to work, you need to have Java 7+ installed on your system.
