@@ -8,5 +8,15 @@
     "id": 107,
     "is_question": true,
     "text": "This is another test document."
+  },
+  {
+    "id": 108,
+    "is_question": true,
+    "text": "This is the first test document with $\lambda x$."
+  },
+  {
+    "id": 109,
+    "is_question": true,
+    "text": "Can you help me to solve $x^2 + 1 = 0$?"
   }
 ]
