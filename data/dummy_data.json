@@ -12,7 +12,7 @@
   {
     "id": 108,
     "is_question": true,
-    "text": "This is the first test document with $\lambda x$."
+    "text": "This is the first test document with $\\lambda x$."
   },
   {
     "id": 109,
