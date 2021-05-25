@@ -18,7 +18,7 @@ export default class App extends Component {
       defaultErrorMessage: 'There was an error fetching the data!',
       errorMessage: null,
       modelLanguage: 'english',
-      model: 'vec2mod'
+      model: 'vector'
     };
 
     this.handleError = this.handleError.bind(this);

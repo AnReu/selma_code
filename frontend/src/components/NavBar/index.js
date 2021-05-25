@@ -48,8 +48,8 @@ const NavBar = ({headings, initialModelLanguage, initialModel, onModelChange, on
                             value={model}
                             onChange={handleChangeModel}
                         >
-                            <MenuItem value={'vec2mod'}>Vector Model</MenuItem>
-                            <MenuItem value={'newModel'}>New Model</MenuItem>
+                            <MenuItem value={'vector'}>Vector Model</MenuItem>
+                            <MenuItem value={'boolean'}>Boolean Model</MenuItem>
                         </Select>
                     </FormControl>
 
