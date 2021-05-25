@@ -134,7 +134,7 @@ export default class Search extends Component{
     const id_validation = (value) => {
       let exchange = [];
       const stackexchange_tlds = ['stackexchange', 'stackoverflow', 'serverfault', 'superuser', 'askubuntu'];
-      const regex = new RegExp(`:\\/\\/(?:(\\w+)\\.)?(${stackexchange_tlds.join('|')})\\.com\/questions\/(\\d+)`);
+      const regex = new RegExp(`:\\/\\/(?:(\\w+)\\.)?(${stackexchange_tlds.join('|')})\\.com/questions/(\\d+)`);
       let matched = value.match(regex);
 
       if (matched) {
