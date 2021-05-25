@@ -18,11 +18,13 @@ export default class App extends Component {
       defaultErrorMessage: 'There was an error fetching the data!',
       errorMessage: null,
       modelLanguage: 'english',
+      model: 'vec2mod'
     };
 
     this.handleError = this.handleError.bind(this);
     this.handleErrorClose = this.handleErrorClose.bind(this);
     this.handleModelLanguageChange = this.handleModelLanguageChange.bind(this);
+    this.handleModelChange = this.handleModelChange.bind(this);
   }
 
   handleError(errorMessage=null) {
@@ -37,7 +39,11 @@ export default class App extends Component {
   }
 
   handleModelLanguageChange(modelLanguage) {
-    this.setState({modelLanguage: modelLanguage});
+    this.setState({ modelLanguage });
+  }
+
+  handleModelChange(model) {
+    this.setState({ model });
   }
 
   render() {
@@ -59,7 +65,12 @@ export default class App extends Component {
     return (
       <Router>
         <div className="App">
-          <NavBar headings={headings} initialModelLanguage={this.state.modelLanguage} onModelLanguageChange={this.handleModelLanguageChange} />
+          <NavBar headings={headings}
+                  initialModel={this.state.model}
+                  initialModelLanguage={this.state.modelLanguage}
+                  onModelChange={this.handleModelChange}
+                  onModelLanguageChange={this.handleModelLanguageChange}
+          />
           <Container style={{marginTop: 20}}>
             <Switch>
               <Route path="/search">
