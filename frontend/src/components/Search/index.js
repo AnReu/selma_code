@@ -44,15 +44,17 @@ export default class Search extends Component{
       results: [],
     });
 
-    let params = '';
+    let params;
     if ([0, 1].includes(this.state.tabValue)) {
       params = 'text=' + encodeURIComponent(this.state.query.text) + '&' +
                'code=' + encodeURIComponent(this.state.query.code) + '&' +
                'equations=' + encodeURIComponent(this.state.query.equations) + '&' +
+               'model=' + encodeURIComponent(this.props.model) + '&' +
                'model-language=' + encodeURIComponent(this.props.modelLanguage)
     } else {
       params = 'id=' + encodeURIComponent(this.state.query.id) + '&' +
                'exchange=' + encodeURIComponent(this.state.query.exchange) + '&' +
+               'model=' + encodeURIComponent(this.props.model) + '&' +
                'model-language=' + encodeURIComponent(this.props.modelLanguage)
     }
 
