@@ -74,7 +74,7 @@ export default class App extends Component {
           <Container style={{marginTop: 20}}>
             <Switch>
               <Route path="/search">
-                <Search onError={this.handleError} modelLanguage={this.state.modelLanguage}/>
+                <Search onError={this.handleError} model={this.state.model} modelLanguage={this.state.modelLanguage}/>
               </Route>
               <Route path="/document/:id">
                 <Document
