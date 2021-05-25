@@ -18,11 +18,16 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
     error = ''
     status = 200
 
+    """ 
+        TODO: choose name of models and implement logic to each one of them.
+        Modify the lines below to adapt to these changes.
+    """
     if model == 'vector':
         predictor = VectorModel.predictor.Predictor(data_path)
     elif model == 'boolean':
         predictor = VectorModel.predictor.Predictor(data_path)
-
+    else:
+        predictor = VectorModel.predictor.Predictor(data_path)
 
     if id is None:
         try:
