@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-
 import { Box, Grid, Tab, Tabs } from "@material-ui/core";
-import MathJax from 'react-mathjax3';
-
 import SearchBar from "./Bar";
 import SearchResults from "./Results";
 import Markdown from "../Markdown";
@@ -216,18 +213,19 @@ export default class Search extends Component{
               <Grid item md={8} xs={12}>
                 <Grid container alignItems="flex-start" justify="flex-start">
                   <Grid item>
-                    <MathJax.Context
-                      input='tex'
-                      options={{
-                        asciimath2jax: {
-                          delimiters: []
-                        },
-                      }}
-                    >
-                      <div>
-                        <MathJax.Node>{state.equations}</MathJax.Node>
-                      </div>
-                    </MathJax.Context>
+                      <div>TODO: {state.equations}</div>
+                    {/*<MathJax.Context*/}
+                    {/*  input='tex'*/}
+                    {/*  options={{*/}
+                    {/*    asciimath2jax: {*/}
+                    {/*      delimiters: []*/}
+                    {/*    },*/}
+                    {/*  }}*/}
+                    {/*>*/}
+                    {/*  <div>*/}
+                    {/*    <MathJax.Node>{state.equations}</MathJax.Node>*/}
+                    {/*  </div>*/}
+                    {/*</MathJax.Context>*/}
                   </Grid>
                 </Grid>
               </Grid>

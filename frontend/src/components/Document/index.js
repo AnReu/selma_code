@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import { Box, CircularProgress, Paper } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import MathJax from 'react-mathjax3';
 import { withRouter } from "react-router-dom";
 
 const styles = theme => ({
@@ -56,18 +55,19 @@ class Document extends Component {
         <Box p={2}>
         {this.state.isLoading
           ? <div className={classes.progress}><CircularProgress /></div>
-          : <MathJax.Context
-              input='tex'
-              options={{
-                tex2jax: {
-                  inlineMath: [['$', '$'], ['\\(', '\\)']],
-                  displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                  processEscapes: true,
-                }
-              }}
-            >
-              <MathJax.Html html={ this.state.document } />
-            </MathJax.Context>
+            : <div>TODO { this.state.document }</div>
+          // <MathJax.Context
+          //     input='tex'
+          //     options={{
+          //       tex2jax: {
+          //         inlineMath: [['$', '$'], ['\\(', '\\)']],
+          //         displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          //         processEscapes: true,
+          //       }
+          //     }}
+          //   >
+          //     <MathJax.Html html={ this.state.document } />
+          //   </MathJax.Context>
         }
         </Box>
       </Paper>
