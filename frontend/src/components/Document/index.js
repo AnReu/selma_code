@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Box, CircularProgress, Paper } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from "react-router-dom";
+import Markdown from "../Markdown";
 
 const styles = theme => ({
   progress: {
@@ -55,19 +56,7 @@ class Document extends Component {
         <Box p={2}>
         {this.state.isLoading
           ? <div className={classes.progress}><CircularProgress /></div>
-            : <div>TODO { this.state.document }</div>
-          // <MathJax.Context
-          //     input='tex'
-          //     options={{
-          //       tex2jax: {
-          //         inlineMath: [['$', '$'], ['\\(', '\\)']],
-          //         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-          //         processEscapes: true,
-          //       }
-          //     }}
-          //   >
-          //     <MathJax.Html html={ this.state.document } />
-          //   </MathJax.Context>
+            : <Markdown text={this.state.document} />
         }
         </Box>
       </Paper>
