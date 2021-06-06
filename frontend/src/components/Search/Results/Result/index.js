@@ -1,9 +1,10 @@
 import React  from 'react';
 
-import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Typography } from '@material-ui/core';
+import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { makeStyles } from "@material-ui/core/styles";
 import { Link as RouterLink } from "react-router-dom";
+import Markdown from "../../../Markdown";
 
 const useStyles = makeStyles((theme) => ({
   heading: {
@@ -28,21 +29,9 @@ const Result = ({ result, expanded, onExpand, onRelevanceCheck }) => {
       onChange={onExpand(result.id)}
     >
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} className={classes.exp}>
-        <Typography className={classes.heading}>
-          <div>TODO: { 'Document: ' + result.relevant_sentence + ' ...' }</div>
-          {/*<MathJax.Context*/}
-          {/*  input='tex'*/}
-          {/*  options={{*/}
-          {/*    tex2jax: {*/}
-          {/*      inlineMath: [['$', '$'], ['\\(', '\\)']],*/}
-          {/*      displayMath: [['$$', '$$'], ['\\[', '\\]']],*/}
-          {/*      processEscapes: true,*/}
-          {/*    }*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  <MathJax.Html html={ 'Document: ' + result.relevant_sentence + ' ...' } />*/}
-          {/*</MathJax.Context>*/}
-        </Typography>
+        <div className={classes.heading}>
+          <Markdown text={'Document: ' + result.relevant_sentence + ' ...'} />
+        </div>
         <FormControl
           onChange={(event) => onRelevanceCheck(result.id, event.target.value)}
           className={classes.formControl}
@@ -68,19 +57,7 @@ const Result = ({ result, expanded, onExpand, onRelevanceCheck }) => {
         </FormControl>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails className={classes.expansionPanelDetails}>
-        <div>TODO { result.text }</div>
-        {/*<MathJax.Context*/}
-        {/*  input='tex'*/}
-        {/*  options={{*/}
-        {/*    tex2jax: {*/}
-        {/*      inlineMath: [['$', '$'], ['\\(', '\\)']],*/}
-        {/*      displayMath: [['$$', '$$'], ['\\[', '\\]']],*/}
-        {/*      processEscapes: true,*/}
-        {/*    }*/}
-        {/*  }}*/}
-        {/*>*/}
-        {/*  <MathJax.Html html={ result.text } />*/}
-        {/*</MathJax.Context>*/}
+        <Markdown text={result.text} />
         <div>
           <RouterLink to={`/document/${result.id}`} target='_blank'>
             Full Document
