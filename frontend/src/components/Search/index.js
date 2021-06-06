@@ -175,7 +175,7 @@ export default class Search extends Component{
           child={(state={mono_search: ''}) => {
             return (
               <Grid item md={8} xs={12}>
-                <Markdown source={state.mono_search} />
+                <Markdown text={state.mono_search} />
               </Grid>
             )
           }}
