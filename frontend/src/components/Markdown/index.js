@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import unified from 'unified';
 import markdown from 'remark-parse';
 import math from 'remark-math';
@@ -17,29 +17,9 @@ const processor = unified()
   })
   .use(rehype2react, { createElement: React.createElement });
 
-export default function Markdown() {
-  const [text, setText] = useState('default Text')
-  return <>{processor.processSync(text).result}</>
+export default function Markdown(props) {
+  return <>{processor.processSync(props.text).result}</>
 }
-
-// export default class Markdown extends Component {
-//   constructor(props) {
-//     super(props);
-//   }
-//
-//   render() {
-//     const { text } = this.props;
-//     return (
-//       <>
-//           {processor.processSync(text).result}
-//       </>
-//     );
-//   }
-// }
-//
-// Markdown.propTypes = {
-//   text: PropTypes.string.isRequired,
-// };
 
 // TODO: use lint to format files
 // TODO: uninstall unused packages
