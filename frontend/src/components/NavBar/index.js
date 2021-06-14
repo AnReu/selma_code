@@ -48,6 +48,7 @@ const NavBar = ({headings, initialModelLanguage, initialModel, onModelChange, on
                             value={model}
                             onChange={handleChangeModel}
                         >
+                            <MenuItem value={'tf_idf'}>TF_IDF Model</MenuItem>
                             <MenuItem value={'vector'}>Vector Model</MenuItem>
                             <MenuItem value={'boolean'}>Boolean Model</MenuItem>
                         </Select>
