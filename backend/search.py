@@ -8,6 +8,7 @@ from HTMLCutter import HTMLCutter
 PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
 sys.path.insert(0, PROJECT_DIR)
 import VectorModel.predictor
+import PyterrierModel.predictor
 
 cutter = HTMLCutter(700, 2000)
 data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
@@ -26,6 +27,8 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         predictor = VectorModel.predictor.Predictor(data_path)
     elif model == 'boolean':
         predictor = VectorModel.predictor.Predictor(data_path)
+    elif model == 'tf_idf':
+        predictor = PyterrierModel.predictor.Predictor(data_path)
     else:
         predictor = VectorModel.predictor.Predictor(data_path)
 
