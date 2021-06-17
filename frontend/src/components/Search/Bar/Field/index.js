@@ -49,7 +49,7 @@ const SearchField = ({ title, onQueryChange, onEnter, multiline, validation = x 
           onKeyDown={handleKeyDown}
         />
         <FormHelperText id={id + '-text'}>
-          <div dangerouslySetInnerHTML={{__html: title.helperText}} />
+          <span dangerouslySetInnerHTML={{__html: title.helperText}} />
         </FormHelperText>
       </FormControl>
     </div>

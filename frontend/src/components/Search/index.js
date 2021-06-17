@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-
 import { Box, Grid, Tab, Tabs } from "@material-ui/core";
-import MathJax from 'react-mathjax3';
-
 import SearchBar from "./Bar";
 import SearchResults from "./Results";
 import Markdown from "../Markdown";
@@ -44,15 +41,17 @@ export default class Search extends Component{
       results: [],
     });
 
-    let params = '';
+    let params;
     if ([0, 1].includes(this.state.tabValue)) {
       params = 'text=' + encodeURIComponent(this.state.query.text) + '&' +
                'code=' + encodeURIComponent(this.state.query.code) + '&' +
                'equations=' + encodeURIComponent(this.state.query.equations) + '&' +
+               'model=' + encodeURIComponent(this.props.model) + '&' +
                'model-language=' + encodeURIComponent(this.props.modelLanguage)
     } else {
       params = 'id=' + encodeURIComponent(this.state.query.id) + '&' +
                'exchange=' + encodeURIComponent(this.state.query.exchange) + '&' +
+               'model=' + encodeURIComponent(this.props.model) + '&' +
                'model-language=' + encodeURIComponent(this.props.modelLanguage)
     }
 
@@ -134,7 +133,7 @@ export default class Search extends Component{
     const id_validation = (value) => {
       let exchange = [];
       const stackexchange_tlds = ['stackexchange', 'stackoverflow', 'serverfault', 'superuser', 'askubuntu'];
-      const regex = new RegExp(`:\\/\\/(?:(\\w+)\\.)?(${stackexchange_tlds.join('|')})\\.com\/questions\/(\\d+)`);
+      const regex = new RegExp(`:\\/\\/(?:(\\w+)\\.)?(${stackexchange_tlds.join('|')})\\.com/questions/(\\d+)`);
       let matched = value.match(regex);
 
       if (matched) {
@@ -146,6 +145,10 @@ export default class Search extends Component{
 
       return value;
     };
+
+    const textToMarkdown = (text) => {
+        return `$${text}$`
+    }
 
     return (
       <React.Fragment>
@@ -176,7 +179,7 @@ export default class Search extends Component{
           child={(state={mono_search: ''}) => {
             return (
               <Grid item md={8} xs={12}>
-                <Markdown source={state.mono_search} />
+                <Markdown text={state.mono_search} />
               </Grid>
             )
           }}
@@ -214,18 +217,7 @@ export default class Search extends Component{
               <Grid item md={8} xs={12}>
                 <Grid container alignItems="flex-start" justify="flex-start">
                   <Grid item>
-                    <MathJax.Context
-                      input='tex'
-                      options={{
-                        asciimath2jax: {
-                          delimiters: []
-                        },
-                      }}
-                    >
-                      <div>
-                        <MathJax.Node>{state.equations}</MathJax.Node>
-                      </div>
-                    </MathJax.Context>
+                      <Markdown text={textToMarkdown(state.equations)} />
                   </Grid>
                 </Grid>
               </Grid>

@@ -13,12 +13,21 @@ cutter = HTMLCutter(700, 2000)
 data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
 
 
-def search(db, text=None, code=None, equation=None, id=None, exchange=None):
+def search(db, text=None, code=None, equation=None, id=None, exchange=None, model=None):
     result_ids = []
     error = ''
     status = 200
 
-    predictor = VectorModel.predictor.Predictor(data_path)
+    """ 
+        TODO: choose name of models and implement logic to each one of them.
+        Modify the lines below to adapt to these changes.
+    """
+    if model == 'vector':
+        predictor = VectorModel.predictor.Predictor(data_path)
+    elif model == 'boolean':
+        predictor = VectorModel.predictor.Predictor(data_path)
+    else:
+        predictor = VectorModel.predictor.Predictor(data_path)
 
     if id is None:
         try:

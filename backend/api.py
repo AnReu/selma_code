@@ -28,8 +28,9 @@ def search_route():
     id = request.args.get('id')
     exchange = request.args.get('exchange') or 'physics,stackexchange'
     exchange = exchange.split(',')
+    model = request.args.get('model')
     model_language = request.args.get('model-language')
-    return search.search(db, text, code, equation, id, exchange)
+    return search.search(db, text, code, equation, id, exchange, model)
 
 
 @app.route('/api/v1/relevance', methods=['POST'])
