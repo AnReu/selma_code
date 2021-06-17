@@ -218,18 +218,6 @@ export default class Search extends Component{
                 <Grid container alignItems="flex-start" justify="flex-start">
                   <Grid item>
                       <Markdown text={textToMarkdown(state.equations)} />
-                    {/*<MathJax.Context*/}
-                    {/*  input='tex'*/}
-                    {/*  options={{*/}
-                    {/*    asciimath2jax: {*/}
-                    {/*      delimiters: []*/}
-                    {/*    },*/}
-                    {/*  }}*/}
-                    {/*>*/}
-                    {/*  <div>*/}
-                    {/*    <MathJax.Node>{state.equations}</MathJax.Node>*/}
-                    {/*  </div>*/}
-                    {/*</MathJax.Context>*/}
                   </Grid>
                 </Grid>
               </Grid>
