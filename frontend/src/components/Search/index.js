@@ -146,6 +146,10 @@ export default class Search extends Component{
       return value;
     };
 
+    const textToMarkdown = (text) => {
+        return `$${text}$`
+    }
+
     return (
       <React.Fragment>
         <Tabs
@@ -213,7 +217,7 @@ export default class Search extends Component{
               <Grid item md={8} xs={12}>
                 <Grid container alignItems="flex-start" justify="flex-start">
                   <Grid item>
-                      <div>TODO: {state.equations}</div>
+                      <Markdown text={textToMarkdown(state.equations)} />
                     {/*<MathJax.Context*/}
                     {/*  input='tex'*/}
                     {/*  options={{*/}
