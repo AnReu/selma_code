@@ -5,11 +5,9 @@ import re
 
 from flask import Flask, request
 
-import db_connection
-import parser.markdown_parser
-import parser.pdf_parser
-import parser.tex_parser
-import search
+from .db_connection import DB
+from .parser import markdown_parser, pdf_parser, tex_parser
+from .search import search
 
 ALLOWED_EXTENSIONS = {'pdf', 'tex', 'md'}
 
@@ -17,7 +15,7 @@ app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
 PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
 data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
-db = db_connection.DB(PROJECT_DIR + os.environ.get('DB_PATH'))
+db = DB(PROJECT_DIR + os.environ.get('DB_PATH'))
 
 
 @app.route('/api/v1/search')
@@ -30,7 +28,7 @@ def search_route():
     exchange = exchange.split(',')
     model = request.args.get('model')
     model_language = request.args.get('model-language')
-    return search.search(db, text, code, equation, id, exchange, model)
+    return search(db, text, code, equation, id, exchange, model)
 
 
 @app.route('/api/v1/relevance', methods=['POST'])
@@ -67,12 +65,12 @@ def upload_file():
     if file and allowed_file(file.filename):
         model_language = request.form.get('model-language')
         if file.filename.endswith('.pdf'):
-            return search.search(db, text=parser.pdf_parser.get_abstract(file))
+            return search(db, text=pdf_parser.get_abstract(file))
         if file.filename.endswith('.tex'):
-            text, equations = parser.tex_parser.search(file)
-            return search.search(db, text=text, equation=max(equations, key=len, default=''))
+            text, equations = tex_parser.search(file)
+            return search(db, text=text, equation=max(equations, key=len, default=''))
         if file.filename.endswith('.md'):
-            text, code, equations = parser.markdown_parser.search(file)
-            return search.search(db, text=text, code=code, equation=max(equations, key=len, default=''))
+            text, code, equations = markdown_parser.search(file)
+            return search(db, text=text, code=code, equation=max(equations, key=len, default=''))
     else:
         return 'Only PDFs are allowed file types', 403

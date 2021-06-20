@@ -3,11 +3,11 @@ import os
 import re
 import sys
 from pathlib import Path
+from .models.VectorModel.predictor import Predictor
 
-from HTMLCutter import HTMLCutter
+from .HTMLCutter import HTMLCutter
 PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
 sys.path.insert(0, PROJECT_DIR)
-import VectorModel.predictor
 
 cutter = HTMLCutter(700, 2000)
 data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
@@ -23,11 +23,11 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         Modify the lines below to adapt to these changes.
     """
     if model == 'vector':
-        predictor = VectorModel.predictor.Predictor(data_path)
+        predictor = Predictor(data_path)
     elif model == 'boolean':
-        predictor = VectorModel.predictor.Predictor(data_path)
+        predictor = Predictor(data_path)
     else:
-        predictor = VectorModel.predictor.Predictor(data_path)
+        predictor = Predictor(data_path)
 
     if id is None:
         try:
