@@ -18,13 +18,26 @@ export default class App extends Component {
       defaultErrorMessage: 'There was an error fetching the data!',
       errorMessage: null,
       modelLanguage: 'english',
-      model: 'vector'
+      model: 'vector',
+      models: []
     };
 
     this.handleError = this.handleError.bind(this);
     this.handleErrorClose = this.handleErrorClose.bind(this);
     this.handleModelLanguageChange = this.handleModelLanguageChange.bind(this);
     this.handleModelChange = this.handleModelChange.bind(this);
+  }
+
+  componentDidMount() {
+    fetch('api/v1/models')
+      .then(response => {
+        // console.log(response.json())
+        return response.json()
+      })
+      .then(models => {
+        console.log(`models = ${models}`)
+        return this.setState({ models })
+      });
   }
 
   handleError(errorMessage=null) {
@@ -70,6 +83,7 @@ export default class App extends Component {
                   initialModelLanguage={this.state.modelLanguage}
                   onModelChange={this.handleModelChange}
                   onModelLanguageChange={this.handleModelLanguageChange}
+                  models={this.state.models}
           />
           <Container style={{marginTop: 20}}>
             <Switch>

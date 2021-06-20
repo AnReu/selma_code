@@ -1,8 +1,6 @@
 import React from 'react';
-
 import {AppBar, FormControl, InputLabel, MenuItem, Select, Toolbar} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-
 import NavTitle from "./NavTitle";
 
 const useStyles = makeStyles((theme) => ({
@@ -15,10 +13,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const NavBar = ({headings, initialModelLanguage, initialModel, onModelChange, onModelLanguageChange}) => {
+const NavBar = ({headings, initialModelLanguage, initialModel, onModelChange, onModelLanguageChange, models}) => {
     const classes = useStyles();
     const [modelLanguage, setModelLanguage] = React.useState(initialModelLanguage);
     const [model, setModel] = React.useState(initialModel);
+
 
     const handleChangeModelLanguage = (event) => {
         let value = event.target.value;
@@ -48,8 +47,10 @@ const NavBar = ({headings, initialModelLanguage, initialModel, onModelChange, on
                             value={model}
                             onChange={handleChangeModel}
                         >
-                            <MenuItem value={'vector'}>Vector Model</MenuItem>
-                            <MenuItem value={'boolean'}>Boolean Model</MenuItem>
+                            {models.map((value,index) => {
+                                return <MenuItem value={'vector'} key={index+value}>{value}</MenuItem>
+                            })}
+
                         </Select>
                     </FormControl>
 
