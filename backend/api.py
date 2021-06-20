@@ -3,7 +3,8 @@ import json
 from pathlib import Path
 import re
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
+
 
 from .db_connection import DB
 from .parser import markdown_parser, pdf_parser, tex_parser
@@ -74,3 +75,9 @@ def upload_file():
             return search(db, text=text, code=code, equation=max(equations, key=len, default=''))
     else:
         return 'Only PDFs are allowed file types', 403
+
+
+@app.route('/api/v1/models')
+def get_names_of_models():
+    import backend.models
+    return jsonify(backend.models.__all__)
