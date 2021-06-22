@@ -1,95 +1,99 @@
+// TODO: fix prop validation and remove line below
+/* eslint-disable react/forbid-prop-types,react/prop-types,react/no-array-index-key */
+
 import React, { Component } from 'react';
-
 import { Box, Button, Grid } from '@material-ui/core';
+import SearchField from './Field';
 
-import SearchField from "./Field";
+function getSortedMatches(matches) {
+  matches.sort((a, b) => (a.index < b.index ? -1 : 1));
+
+  return Array.from(matches, (m) => m[1]);
+}
+
+function getAndReplaceCode(text, replacer = '') {
+  const regexInline = RegExp(/```([^(?:`{3})]*)```/, 'gm');
+  const regexBlock = RegExp(/^```.*$([^(?:`{3})]*)^```$/, 'gm');
+
+  let matches = [...text.matchAll(regexInline)];
+  matches.push(...text.matchAll(regexBlock));
+
+  let tempText = text.replace(regexInline, replacer);
+  tempText = tempText.replace(regexBlock, replacer);
+
+  matches = getSortedMatches(matches);
+
+  return [matches, tempText];
+}
+
+function getAndReplaceEquations(text, replacer = '') {
+  const regexInline = RegExp(/\$(\S.*\S|\S)\$/, 'gm');
+  const regexBlock = RegExp(/\$\$([\s\S]*)\$\$/, 'gm');
+
+  let matches = [...text.matchAll(regexBlock)];
+  let tempText = text.replace(regexBlock, replacer);
+  matches.push(...text.matchAll(regexInline));
+  tempText = tempText.replace(regexInline, replacer);
+
+  matches = getSortedMatches(matches);
+
+  return [matches, tempText];
+}
 
 export default class SearchBar extends Component {
   constructor(props) {
     super(props);
 
     // Creates object with title names as keys and '' as each value
-    const fieldNames = Array.from(props.titles, m => {return {[m.name]: ''}});
+    const fieldNames = Array.from(props.titles, (m) => ({ [m.name]: '' }));
     this.state = Object.assign({}, ...fieldNames);
 
     this.handleQueryChange = this.handleQueryChange.bind(this);
   }
 
-  handleQueryChange = (value, title) => {
+  handleQueryChange(value, title) {
+    const { onQueryChange } = this.props;
     this.setState({
       [title.name]: value,
     });
 
+    let tempValue = null;
+
     if (title.name === 'mono_search') {
-      let code, equations, replacer = '```';
-      [code, value] = this.getAndReplaceCode(value, replacer);
-      [equations, value] = this.getAndReplaceEquations(value, replacer);
+      const replacer = '```';
+      const [code] = getAndReplaceCode(value, replacer);
+      const [equations] = getAndReplaceEquations(value, replacer);
 
-      value = value.split(replacer).filter(element => !['\n', ''].includes(element));
+      tempValue = value.split(replacer).filter((element) => !['\n', ''].includes(element));
 
-      this.props.onQueryChange(code, 'code');
-      this.props.onQueryChange(equations, 'equations');
+      onQueryChange(code, 'code');
+      onQueryChange(equations, 'equations');
     }
-    this.props.onQueryChange(value, title.query_key);
-  };
-
-  getAndReplaceCode = (text, replacer='') => {
-    const regex_inline = RegExp(/```([^(?:`{3})]*)```/, 'gm');
-    const regex_block = RegExp(/^```.*$([^(?:`{3})]*)^```$/, 'gm');
-
-    let matches = [...text.matchAll(regex_inline)];
-    matches.push(...text.matchAll(regex_block));
-
-    text = text.replace(regex_inline, replacer);
-    text = text.replace(regex_block, replacer);
-
-    matches = this.getSortedMatches(matches);
-
-    return [matches, text];
-  }
-
-  getAndReplaceEquations = (text, replacer='') => {
-    const regex_inline = RegExp(/\$(\S.*\S|\S)\$/, 'gm');
-    const regex_block = RegExp(/\$\$([\s\S]*)\$\$/, 'gm');
-
-    let matches = [...text.matchAll(regex_block)];
-    text = text.replace(regex_block, replacer);
-    matches.push(...text.matchAll(regex_inline));
-    text = text.replace(regex_inline, replacer);
-
-    matches = this.getSortedMatches(matches);
-
-    return [matches, text];
-  }
-
-  getSortedMatches = (matches) => {
-    matches.sort((a, b) => {
-      return a.index < b.index ? -1 : 1;
-    });
-
-    return Array.from(matches, m => m[1]);
+    onQueryChange(tempValue, title.query_key);
   }
 
   render() {
+    const {
+      tabValue, tabIndex, titles, onSearch, validation, multiline, child,
+    } = this.props;
+
     return (
-      <div hidden={this.props.tabValue !== this.props.tabIndex}>
+      <div hidden={tabValue !== tabIndex}>
 
         <Grid container spacing={2}>
           <Grid item md={4} sm={6} xs={12}>
-            <Grid container direction='column' spacing={1}>
-              {this.props.titles.map((title, i) =>
+            <Grid container direction="column" spacing={1}>
+              {titles.map((title, i) => (
                 <Grid item key={i}>
                   <SearchField
                     title={title}
-                    onQueryChange={(event) =>
-                      this.handleQueryChange(event, title)
-                    }
-                    onEnter={this.props.onSearch}
-                    validation={this.props.validation}
-                    multiline={this.props.multiline}
+                    onQueryChange={(event) => this.handleQueryChange(event, title)}
+                    onEnter={onSearch}
+                    validation={validation}
+                    multiline={multiline}
                   />
                 </Grid>
-              )}
+              ))}
 
               <Box p={1} />
 
@@ -97,11 +101,13 @@ export default class SearchBar extends Component {
 
             <Button
               variant="contained"
-              onClick={this.props.onSearch}
-            >Search</Button>
+              onClick={onSearch}
+            >
+              Search
+            </Button>
           </Grid>
-          {this.props.child &&
-            this.props.child(this.state)}
+          {child
+            && child(this.state)}
         </Grid>
 
         <Box p={1} />
@@ -109,4 +115,4 @@ export default class SearchBar extends Component {
       </div>
     );
   }
-};
+}

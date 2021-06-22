@@ -1,18 +1,25 @@
+// TODO: fix prop validation and remove line below
+/* eslint-disable react/forbid-prop-types,react/prop-types */
+/* eslint-disable react/no-array-index-key,jsx-a11y/tabindex-no-positive */
+
 import React, { Component } from 'react';
-import { Box, Grid, Tab, Tabs } from "@material-ui/core";
-import SearchBar from "./Bar";
-import SearchResults from "./Results";
-import Markdown from "../Markdown";
-import FileUpload from "../FileUpload";
+import {
+  Box, Grid, Tab, Tabs,
+} from '@material-ui/core';
+import SearchBar from './Bar';
+import SearchResults from './Results';
+import Markdown from '../Markdown';
+import FileUpload from '../FileUpload';
 
-export default class Search extends Component{
-
+export default class Search extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: false,
-      query: {text: [], code: [], equations: [], id: '', exchange: []},
+      query: {
+        text: [], code: [], equations: [], id: '', exchange: [],
+      },
       results: [],
       resultResponses: [],
       statusCode: null,
@@ -28,35 +35,37 @@ export default class Search extends Component{
   }
 
   handleQueryChange(query, title) {
-    this.setState(state => {
-      let stateQuery = Object.assign({}, state.query);
+    this.setState((state) => {
+      const stateQuery = { ...state.query };
       stateQuery[title] = query;
       return { query: stateQuery };
     });
   }
 
   handleSearch() {
+    const { tabValue, query, statusCode } = this.state;
+    const { model, modelLanguage, onError } = this.props;
     this.setState({
       isLoading: true,
       results: [],
     });
 
     let params;
-    if ([0, 1].includes(this.state.tabValue)) {
-      params = 'text=' + encodeURIComponent(this.state.query.text) + '&' +
-               'code=' + encodeURIComponent(this.state.query.code) + '&' +
-               'equations=' + encodeURIComponent(this.state.query.equations) + '&' +
-               'model=' + encodeURIComponent(this.props.model) + '&' +
-               'model-language=' + encodeURIComponent(this.props.modelLanguage)
+    if ([0, 1].includes(tabValue)) {
+      params = `text=${encodeURIComponent(query.text)}&`
+               + `code=${encodeURIComponent(query.code)}&`
+               + `equations=${encodeURIComponent(query.equations)}&`
+               + `model=${encodeURIComponent(model)}&`
+               + `model-language=${encodeURIComponent(modelLanguage)}`;
     } else {
-      params = 'id=' + encodeURIComponent(this.state.query.id) + '&' +
-               'exchange=' + encodeURIComponent(this.state.query.exchange) + '&' +
-               'model=' + encodeURIComponent(this.props.model) + '&' +
-               'model-language=' + encodeURIComponent(this.props.modelLanguage)
+      params = `id=${encodeURIComponent(query.id)}&`
+               + `exchange=${encodeURIComponent(query.exchange)}&`
+               + `model=${encodeURIComponent(model)}&`
+               + `model-language=${encodeURIComponent(modelLanguage)}`;
     }
 
-    fetch('/api/v1/search?' + params)
-      .then(response => {
+    fetch(`/api/v1/search?${params}`)
+      .then((response) => {
         if (![200, 404].includes(response.status)) {
           throw Error('Bad status code!');
         }
@@ -67,14 +76,14 @@ export default class Search extends Component{
 
         return response.json();
       })
-      .then(json => {
-        if (this.state.statusCode === 404) {
+      .then((json) => {
+        if (statusCode === 404) {
           throw Error(json.error);
         }
 
         this.setState({
           isLoading: false,
-          results: json.results
+          results: json.results,
         });
       })
       .catch((e) => {
@@ -82,32 +91,33 @@ export default class Search extends Component{
           isLoading: false,
           results: [],
         });
-        console.log(e);
-        this.props.onError(e.message !== 'Bad status code!' ? e.message : null);
+        console.error(e);
+        onError(e.message !== 'Bad status code!' ? e.message : null);
       });
   }
 
   handleRelevanceCheck(resultId, value) {
-    this.setState(state => {
-      return {
-        resultResponses: [...state.resultResponses, resultId]
-      }
-    });
+    const { query } = this.state;
+    const { onError } = this.props;
+    this.setState((state) => ({
+      resultResponses: [...state.resultResponses, resultId],
+    }));
     fetch('/api/v1/relevance', {
       method: 'post',
       body: JSON.stringify({
         result_id: resultId,
-        value: value,
-        query: this.state.query,
-      })})
-      .then(response => {
+        value,
+        query,
+      }),
+    })
+      .then((response) => {
         if (response.status !== 204) {
           throw Error('Bad status code!');
         }
       })
       .catch((e) => {
         console.log(e);
-        this.props.onError();
+        onError();
       });
   }
 
@@ -119,41 +129,46 @@ export default class Search extends Component{
 
   setResults(results) {
     this.setState({
-      results: results,
+      results,
     });
   }
 
   setIsLoading(isLoading) {
     this.setState({
-      isLoading: isLoading,
+      isLoading,
     });
   }
 
   render() {
-    const id_validation = (value) => {
+    const { tabValue, results, isLoading } = this.state;
+    const { onError, modelLanguage } = this.props;
+
+    const idValidation = (value) => {
       let exchange = [];
-      const stackexchange_tlds = ['stackexchange', 'stackoverflow', 'serverfault', 'superuser', 'askubuntu'];
-      const regex = new RegExp(`:\\/\\/(?:(\\w+)\\.)?(${stackexchange_tlds.join('|')})\\.com/questions/(\\d+)`);
-      let matched = value.match(regex);
+      const stackexchangeTlds = ['stackexchange', 'stackoverflow', 'serverfault', 'superuser', 'askubuntu'];
+      const regex = new RegExp(`:\\/\\/(?:(\\w+)\\.)?(${stackexchangeTlds.join('|')})\\.com/questions/(\\d+)`);
+      const matched = value.match(regex);
+
+      let tempValue = value;
 
       if (matched) {
         exchange = [matched[1], matched[2]];
-        value = matched[3];
+        // TODO: fix
+        // eslint-disable-next-line prefer-destructuring
+        tempValue = matched[3];
       }
 
       this.handleQueryChange(exchange, 'exchange');
 
-      return value;
+      return tempValue;
     };
 
-    const textToMarkdown = (text) => {
-        return `$${text}$`
-    }
+    const textToMarkdown = (text) => `$${text}$`;
 
     return (
-      <React.Fragment>
+      <>
         <Tabs
-          value={this.state.tabValue}
+          value={tabValue}
           onChange={this.handleTabChange}
           indicatorColor="primary"
           textColor="primary"
@@ -171,18 +186,16 @@ export default class Search extends Component{
             label: 'Text',
             helperText: 'This is a Markdown text field. For code use ``` as delimiter,<br/> like ```my code here```. For Equations use $ as delimiter.',
           }]}
-          multiline={true}
+          multiline
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
-          tabValue={this.state.tabValue}
+          tabValue={tabValue}
           tabIndex={0}
-          child={(state={mono_search: ''}) => {
-            return (
-              <Grid item md={8} xs={12}>
-                <Markdown text={state.mono_search} />
-              </Grid>
-            )
-          }}
+          child={(state = { mono_search: '' }) => (
+            <Grid item md={8} xs={12}>
+              <Markdown text={state.mono_search} />
+            </Grid>
+          )}
         />
 
         <SearchBar
@@ -198,31 +211,29 @@ export default class Search extends Component{
               label: 'Code',
               inputProps: {
                 style: {
-                  fontFamily: 'Ubuntu Mono'
-                }
+                  fontFamily: 'Ubuntu Mono',
+                },
               },
             },
             {
               name: 'equations',
               query_key: 'equations',
               label: 'Equations',
-            }
+            },
           ]}
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
-          tabValue={this.state.tabValue}
+          tabValue={tabValue}
           tabIndex={1}
-          child={(state={equations: ''}) => {
-            return (
-              <Grid item md={8} xs={12}>
-                <Grid container alignItems="flex-start" justify="flex-start">
-                  <Grid item>
-                      <Markdown text={textToMarkdown(state.equations)} />
-                  </Grid>
+          child={(state = { equations: '' }) => (
+            <Grid item md={8} xs={12}>
+              <Grid container alignItems="flex-start" justify="flex-start">
+                <Grid item>
+                  <Markdown text={textToMarkdown(state.equations)} />
                 </Grid>
               </Grid>
-            )
-          }}
+            </Grid>
+          )}
         />
 
         <SearchBar
@@ -233,28 +244,28 @@ export default class Search extends Component{
             query_key: 'id',
             label: 'ID or URL',
           }]}
-          validation={id_validation}
-          tabValue={this.state.tabValue}
+          validation={idValidation}
+          tabValue={tabValue}
           tabIndex={2}
         />
 
-        <div hidden={this.state.tabValue !== 3}>
+        <div hidden={tabValue !== 3}>
           <FileUpload
             setResults={this.setResults}
             setIsLoading={this.setIsLoading}
-            onError={this.props.onError}
-            modelLanguage={this.props.modelLanguage}
+            onError={onError}
+            modelLanguage={modelLanguage}
           />
         </div>
 
         <Box p={2} />
 
         <SearchResults
-          results={this.state.results}
-          isLoading={this.state.isLoading}
+          results={results}
+          isLoading={isLoading}
           onRelevanceCheck={this.handleRelevanceCheck}
         />
-      </React.Fragment>
+      </>
     );
   }
 }
