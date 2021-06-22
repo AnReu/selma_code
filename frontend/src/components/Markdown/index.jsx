@@ -1,3 +1,6 @@
+// TODO: fix prop validation and remove line below
+/* eslint-disable react/forbid-prop-types,react/prop-types */
+
 import React from 'react';
 import unified from 'unified';
 import markdown from 'remark-parse';
@@ -18,15 +21,6 @@ const processor = unified()
   .use(rehype2react, { createElement: React.createElement });
 
 export default function Markdown(props) {
-  return <>{processor.processSync(props.text).result}</>
+  const { text } = props;
+  return <>{processor.processSync(text).result}</>;
 }
-
-// TODO: use lint to format files
-// TODO: uninstall unused packages
-// TODO: fraction missing line
-// TODO: refactor this component
-// TODO: reuse component this component in other places
-// TODO: when done, delete component 'Markdown' and rename this one
-// TODO: be sure that we need react-scripts, otherwise uninstall it
-// TODO: deal with  eslint-disable import/no-extraneous-dependencies
-// TODO: deal with eslint-disable react/destructuring-assignment
