@@ -7,9 +7,9 @@ import { Box, Typography, Link } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
 
 const CustomLink = (props) => {
-  const { navigate, ...rest } = props;
-  const ref = { ...rest };
-  return (<Link href={ref} />);
+  const { color, children, href } = props;
+
+  return (<Link color={color} href={href}>{children}</Link>);
 };
 
 function NavTitle({ heading }) {
