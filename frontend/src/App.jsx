@@ -30,7 +30,7 @@ export default function App() {
     fetch('api/v1/models')
       .then((response) => response.json())
       .then((fetchedModels) => setModels(fetchedModels));
-  });
+  }, []);
 
   const handleError = (errorMsg) => {
     setShowError(true);
