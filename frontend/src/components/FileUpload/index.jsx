@@ -1,6 +1,8 @@
-import React, {Component} from 'react';
+// TODO: fix prop validation and remove line below
+/* eslint-disable react/forbid-prop-types,react/prop-types */
 
-import { Button } from "@material-ui/core";
+import React, { Component } from 'react';
+import { Button } from '@material-ui/core';
 import { DropzoneDialog } from 'material-ui-dropzone';
 
 export default class FileUpload extends Component {
@@ -18,24 +20,28 @@ export default class FileUpload extends Component {
 
   handleClose() {
     this.setState({
-      open: false
+      open: false,
     });
   }
 
   handleSave(files) {
+    const {
+      setIsLoading, setResults, modelLanguage, onError,
+    } = this.props;
+    const { statusCode } = this.state;
     this.setState({
-      open: false
+      open: false,
     });
 
     const formData = new FormData();
     formData.append('file', files[0]);
-    formData.append('model-language', this.props.modelLanguage);
+    formData.append('model-language', modelLanguage);
 
-    this.props.setIsLoading(true);
-    this.props.setResults([]);
+    setIsLoading(true);
+    setResults([]);
 
-    fetch('/api/v1/file', {method: 'POST', body: formData})
-      .then(response => {
+    fetch('/api/v1/file', { method: 'POST', body: formData })
+      .then((response) => {
         if (![200, 404].includes(response.status)) {
           throw Error('Bad status code!');
         }
@@ -46,18 +52,18 @@ export default class FileUpload extends Component {
 
         return response.json();
       })
-      .then(json => {
-        if (this.state.statusCode === 404) {
+      .then((json) => {
+        if (statusCode === 404) {
           throw Error(json.error);
         }
-        this.props.setIsLoading(false);
-        this.props.setResults(json.results);
+        setIsLoading(false);
+        setResults(json.results);
       })
       .catch((e) => {
-        this.props.setIsLoading(false);
-        this.props.setResults([]);
-        console.log(e);
-        this.props.onError(e.message !== 'Bad status code!' ? e.message : null);
+        setIsLoading(false);
+        setResults([]);
+        console.error(e);
+        onError(e.message !== 'Bad status code!' ? e.message : null);
       });
   }
 
@@ -68,6 +74,8 @@ export default class FileUpload extends Component {
   }
 
   render() {
+    const { open } = this.state;
+
     return (
       <>
         <Button
@@ -77,13 +85,13 @@ export default class FileUpload extends Component {
           Upload File
         </Button>
         <DropzoneDialog
-          open={this.state.open}
+          open={open}
           onSave={this.handleSave}
           acceptedFiles={['.pdf', '.tex', '.md']}
-          showPreviews={true}
+          showPreviews
           onClose={this.handleClose}
         />
       </>
-    )
+    );
   }
 }
