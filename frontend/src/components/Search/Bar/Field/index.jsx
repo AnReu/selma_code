@@ -1,10 +1,14 @@
+// TODO: fix prop validation and remove line below
+/* eslint-disable react/forbid-prop-types,react/prop-types */
+
 import React, { useState } from 'react';
+import {
+  FormControl, FormHelperText, IconButton, Input, InputLabel,
+} from '@material-ui/core';
+import ClearIcon from '@material-ui/icons/Clear';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { FormControl, FormHelperText, IconButton, Input, InputLabel } from '@material-ui/core';
-import ClearIcon from "@material-ui/icons/Clear";
-import { makeStyles } from "@material-ui/core/styles";
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   icon: {
     padding: '6px',
   },
@@ -13,7 +17,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchField = ({ title, onQueryChange, onEnter, multiline, validation = x => x }) => {
+const SearchField = ({
+  title, onQueryChange, onEnter, multiline, validation = (x) => x,
+}) => {
   const classes = useStyles();
   const [value, handleValueChange] = useState('');
 
@@ -26,7 +32,7 @@ const SearchField = ({ title, onQueryChange, onEnter, multiline, validation = x 
   const handleQueryChange = (event) => {
     handleValueChange(event.target.value);
     onQueryChange(validation(event.target.value));
-  }
+  };
 
   const id = `searchfield-${title.name}`;
 
@@ -41,15 +47,15 @@ const SearchField = ({ title, onQueryChange, onEnter, multiline, validation = x 
           multiline={multiline}
           rowsMax="10"
           endAdornment={(
-            <IconButton className={classes.icon} onClick={() => handleQueryChange({target: {value: ''}})}>
+            <IconButton className={classes.icon} onClick={() => handleQueryChange({ target: { value: '' } })}>
               <ClearIcon />
             </IconButton>
           )}
           onChange={handleQueryChange}
           onKeyDown={handleKeyDown}
         />
-        <FormHelperText id={id + '-text'}>
-          <span dangerouslySetInnerHTML={{__html: title.helperText}} />
+        <FormHelperText id={`${id}-text`}>
+          <span dangerouslySetInnerHTML={{ __html: title.helperText }} />
         </FormHelperText>
       </FormControl>
     </div>

@@ -6,10 +6,9 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Document from './components/Document';
 import NavBar from './components/NavBar';
 import Search from './components/Search';
-import './App.css'
+import './App.css';
 
 export default class App extends Component {
-
   constructor(props) {
     super(props);
 
@@ -18,7 +17,8 @@ export default class App extends Component {
       defaultErrorMessage: 'There was an error fetching the data!',
       errorMessage: null,
       modelLanguage: 'english',
-      model: 'vector'
+      model: 'vector',
+      models: [],
     };
 
     this.handleError = this.handleError.bind(this);
@@ -27,15 +27,21 @@ export default class App extends Component {
     this.handleModelChange = this.handleModelChange.bind(this);
   }
 
-  handleError(errorMessage=null) {
+  componentDidMount() {
+    fetch('api/v1/models')
+      .then((response) => response.json())
+      .then((models) => this.setState({ models }));
+  }
+
+  handleError(errorMessage = null) {
     this.setState({
       showError: true,
-      errorMessage: errorMessage,
-    })
+      errorMessage,
+    });
   }
 
   handleErrorClose() {
-    this.setState({showError: false})
+    this.setState({ showError: false });
   }
 
   handleModelLanguageChange(modelLanguage) {
@@ -61,20 +67,25 @@ export default class App extends Component {
         route: 'about',
       },
     ];
+    const {
+      model, modelLanguage, models, showError, errorMessage, defaultErrorMessage,
+    } = this.state;
 
     return (
       <Router>
         <div className="App">
-          <NavBar headings={headings}
-                  initialModel={this.state.model}
-                  initialModelLanguage={this.state.modelLanguage}
-                  onModelChange={this.handleModelChange}
-                  onModelLanguageChange={this.handleModelLanguageChange}
+          <NavBar
+            headings={headings}
+            initialModel={model}
+            initialModelLanguage={modelLanguage}
+            onModelChange={this.handleModelChange}
+            onModelLanguageChange={this.handleModelLanguageChange}
+            models={models}
           />
-          <Container style={{marginTop: 20}}>
+          <Container style={{ marginTop: 20 }}>
             <Switch>
               <Route path="/search">
-                <Search onError={this.handleError} model={this.state.model} modelLanguage={this.state.modelLanguage}/>
+                <Search onError={this.handleError} model={model} modelLanguage={modelLanguage} />
               </Route>
               <Route path="/document/:id">
                 <Document
@@ -89,13 +100,13 @@ export default class App extends Component {
               vertical: 'bottom',
               horizontal: 'left',
             }}
-            open={this.state.showError}
+            open={showError}
             autoHideDuration={6000}
             onClose={this.handleErrorClose}
             ContentProps={{
               'aria-describedby': 'message-id',
             }}
-            message={<span>{this.state.errorMessage ? this.state.errorMessage : this.state.defaultErrorMessage}</span>}
+            message={<span>{errorMessage || defaultErrorMessage}</span>}
           />
         </div>
       </Router>

@@ -1,7 +1,7 @@
 from markdown import Markdown
 from io import StringIO
 
-from parser.tex_parser import search as eq_search
+from .tex_parser import search as eq_search
 
 MATH_BLOCK_DELIMITERS = [
     {

@@ -1,6 +1,6 @@
 import re
 
-from parser.utility import get_eqation_start, find_inline_equations
+from .utility import get_eqation_start, find_inline_equations
 
 MATH_BLOCK_DELIMITERS = [
     {

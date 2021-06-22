@@ -1,12 +1,23 @@
-import React  from 'react';
+// TODO: fix prop validation and remove line below
+/* eslint-disable react/forbid-prop-types,react/prop-types,react/no-array-index-key */
 
-import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@material-ui/core';
+import React from 'react';
+
+import {
+  ExpansionPanel,
+  ExpansionPanelDetails, ExpansionPanelSummary,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { makeStyles } from "@material-ui/core/styles";
-import { Link as RouterLink } from "react-router-dom";
-import Markdown from "../../../Markdown";
+import { makeStyles } from '@material-ui/core/styles';
+import { Link as RouterLink } from 'react-router-dom';
+import Markdown from '../../../Markdown';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   heading: {
     flexBasis: '33.3%',
     flexShrink: 0,
@@ -16,11 +27,13 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '2%',
   },
   expansionPanelDetails: {
-    flexDirection: "column",
+    flexDirection: 'column',
   },
 }));
 
-const Result = ({ result, expanded, onExpand, onRelevanceCheck }) => {
+const Result = ({
+  result, expanded, onExpand, onRelevanceCheck,
+}) => {
   const classes = useStyles();
 
   return (
@@ -30,7 +43,7 @@ const Result = ({ result, expanded, onExpand, onRelevanceCheck }) => {
     >
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} className={classes.exp}>
         <div className={classes.heading}>
-          <Markdown text={'Document: ' + result.relevant_sentence + ' ...'} />
+          <Markdown text={`Document: ${result.relevant_sentence} ...`} />
         </div>
         <FormControl
           onChange={(event) => onRelevanceCheck(result.id, event.target.value)}
@@ -59,7 +72,7 @@ const Result = ({ result, expanded, onExpand, onRelevanceCheck }) => {
       <ExpansionPanelDetails className={classes.expansionPanelDetails}>
         <Markdown text={result.text} />
         <div>
-          <RouterLink to={`/document/${result.id}`} target='_blank'>
+          <RouterLink to={`/document/${result.id}`} target="_blank">
             Full Document
           </RouterLink>
         </div>

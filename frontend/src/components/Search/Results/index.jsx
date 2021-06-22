@@ -1,26 +1,27 @@
-import React  from 'react';
+// TODO: fix prop validation and remove line below
+/* eslint-disable react/forbid-prop-types,react/prop-types,react/no-array-index-key */
 
+import React from 'react';
 import { CircularProgress, Typography } from '@material-ui/core';
+import Result from './Result';
 
-import Result from "./Result";
-
-const SearchResults = ({ results, isLoading=false, onRelevanceCheck }) => {
+const SearchResults = ({ results, isLoading = false, onRelevanceCheck }) => {
   const [expanded, setExpanded] = React.useState(false);
   const handleExpand = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
 
   return (
-    <React.Fragment>
+    <>
       {isLoading
         ? <CircularProgress />
-        : <React.Fragment>
+        : (
+          <>
             {results.length
               ? <Typography variant="h6">Search Results:</Typography>
-              : null
-            }
+              : null}
 
-            {results.map(result =>
+            {results.map((result) => (
               <Result
                 key={result.id}
                 result={result}
@@ -28,10 +29,10 @@ const SearchResults = ({ results, isLoading=false, onRelevanceCheck }) => {
                 onExpand={handleExpand}
                 onRelevanceCheck={onRelevanceCheck}
               />
-            )}
-          </React.Fragment>
-      }
-    </React.Fragment>
+            ))}
+          </>
+        )}
+    </>
   );
 };
 
