@@ -1,115 +1,100 @@
-import React, { Component } from 'react';
-
-import { Box, Container, Snackbar } from '@material-ui/core';
+import React from 'react';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import { makeStyles } from '@material-ui/core/styles';
+import {
+  Box, Container, Fab, Snackbar,
+} from '@material-ui/core';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
 import Document from './components/Document';
 import NavBar from './components/NavBar';
 import Search from './components/Search';
 import './App.css';
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
+const useStyles = makeStyles((theme) => ({
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  },
+}));
 
-    this.state = {
-      showError: false,
-      defaultErrorMessage: 'There was an error fetching the data!',
-      errorMessage: null,
-      modelLanguage: 'english',
-      model: 'vector',
-      models: [],
-    };
+export default function App() {
+  const [showError, setShowError] = React.useState(false);
+  const [defaultErrorMessage] = React.useState('There was an error fetching the data!');
+  const [errorMessage, setErrorMessage] = React.useState(null);
+  const [modelLanguage, setModelLanguage] = React.useState('english');
+  const [model, setModel] = React.useState('vector');
+  const [models, setModels] = React.useState([]);
 
-    this.handleError = this.handleError.bind(this);
-    this.handleErrorClose = this.handleErrorClose.bind(this);
-    this.handleModelLanguageChange = this.handleModelLanguageChange.bind(this);
-    this.handleModelChange = this.handleModelChange.bind(this);
-  }
-
-  componentDidMount() {
+  React.useEffect(() => {
     fetch('api/v1/models')
       .then((response) => response.json())
-      .then((models) => this.setState({ models }));
-  }
+      .then((fetchedModels) => setModels(fetchedModels));
+  });
 
-  handleError(errorMessage = null) {
-    this.setState({
-      showError: true,
-      errorMessage,
-    });
-  }
+  const handleError = (errorMsg) => {
+    setShowError(true);
+    setErrorMessage(errorMsg);
+  };
 
-  handleErrorClose() {
-    this.setState({ showError: false });
-  }
+  const classes = useStyles();
+  const headings = [
+    {
+      name: 'RETRIEVAL',
+      route: '',
+    },
+    {
+      name: 'Search',
+      route: 'search',
+    },
+    {
+      name: 'About',
+      route: 'about',
+    },
+  ];
 
-  handleModelLanguageChange(modelLanguage) {
-    this.setState({ modelLanguage });
-  }
-
-  handleModelChange(model) {
-    this.setState({ model });
-  }
-
-  render() {
-    const headings = [
-      {
-        name: 'RETRIEVAL',
-        route: '',
-      },
-      {
-        name: 'Search',
-        route: 'search',
-      },
-      {
-        name: 'About',
-        route: 'about',
-      },
-    ];
-    const {
-      model, modelLanguage, models, showError, errorMessage, defaultErrorMessage,
-    } = this.state;
-
-    return (
-      <Router>
-        <div className="App">
-          <NavBar
-            headings={headings}
-            initialModel={model}
-            initialModelLanguage={modelLanguage}
-            onModelChange={this.handleModelChange}
-            onModelLanguageChange={this.handleModelLanguageChange}
-            models={models}
-          />
-          <Container style={{ marginTop: 20 }}>
+  return (
+    <Router>
+      <div className="App">
+        <NavBar
+          headings={headings}
+          initialModel={model}
+          initialModelLanguage={modelLanguage}
+          onModelChange={setModel}
+          onModelLanguageChange={setModelLanguage}
+          models={models}
+        />
+        <Container style={{ marginTop: 20 }}>
+          <Box my={4}>
             <Switch>
               <Route path="/search">
-                <Search onError={this.handleError} model={model} modelLanguage={modelLanguage} />
+                <Search onError={handleError} model={model} modelLanguage={modelLanguage} />
               </Route>
               <Route path="/document/:id">
                 <Document
-                  onError={this.handleError}
+                  onError={handleError}
                 />
               </Route>
             </Switch>
-            <Box p={1} />
-          </Container>
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            open={showError}
-            autoHideDuration={6000}
-            onClose={this.handleErrorClose}
-            ContentProps={{
-              'aria-describedby': 'message-id',
-            }}
-            message={<span>{errorMessage || defaultErrorMessage}</span>}
-          />
-        </div>
-      </Router>
-    );
-  }
+          </Box>
+        </Container>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={showError}
+          autoHideDuration={6000}
+          onClose={() => { setShowError(false); }}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span>{errorMessage || defaultErrorMessage}</span>}
+        />
+        <Fab className={classes.fab} aria-label="add template">
+          <FavoriteIcon />
+        </Fab>
+      </div>
+    </Router>
+  );
 }
