@@ -1,14 +1,18 @@
 import React from 'react';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import AddIcon from '@material-ui/icons/Add';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Box, Container, Fab, Snackbar,
+  Box,
+  Container,
+  Fab,
+  Snackbar,
 } from '@material-ui/core';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Document from './components/Document';
 import NavBar from './components/NavBar';
 import Search from './components/Search';
 import './App.css';
+import QueryTemplateDialog from './components/QueryTemplateDialog';
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -18,6 +22,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const defaultForm = {
+  name: 'lol',
+  model: null,
+  language: null,
+};
+
 export default function App() {
   const [showError, setShowError] = React.useState(false);
   const [defaultErrorMessage] = React.useState('There was an error fetching the data!');
@@ -25,6 +35,7 @@ export default function App() {
   const [modelLanguage, setModelLanguage] = React.useState('english');
   const [model, setModel] = React.useState('vector');
   const [models, setModels] = React.useState([]);
+  const [showDialog, setShowDialog] = React.useState(false);
 
   React.useEffect(() => {
     fetch('api/v1/models')
@@ -32,9 +43,17 @@ export default function App() {
       .then((fetchedModels) => setModels(fetchedModels));
   }, []);
 
+  const handleCloseSnackbar = () => {
+    setShowError(false);
+  };
+
   const handleError = (errorMsg) => {
     setShowError(true);
     setErrorMessage(errorMsg);
+  };
+
+  const handleOpenDialog = () => {
+    setShowDialog(true);
   };
 
   const classes = useStyles();
@@ -85,15 +104,16 @@ export default function App() {
           }}
           open={showError}
           autoHideDuration={6000}
-          onClose={() => { setShowError(false); }}
+          onClose={handleCloseSnackbar}
           ContentProps={{
             'aria-describedby': 'message-id',
           }}
           message={<span>{errorMessage || defaultErrorMessage}</span>}
         />
-        <Fab className={classes.fab} aria-label="add template">
-          <FavoriteIcon />
+        <Fab onClick={handleOpenDialog} className={classes.fab} aria-label="add template">
+          <AddIcon />
         </Fab>
+        <QueryTemplateDialog open={showDialog} form={defaultForm} models={models} />
       </div>
     </Router>
   );
