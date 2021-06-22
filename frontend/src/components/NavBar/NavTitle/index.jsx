@@ -1,14 +1,18 @@
+// TODO: fix prop validation and remove line below
+/* eslint-disable react/forbid-prop-types,react/prop-types */
+
 import React from 'react';
 
-import { Box, Typography, Link } from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
+import { Box, Typography, Link } from '@material-ui/core';
+import { Link as RouterLink } from 'react-router-dom';
 
-const CustomLink = props => {
+const CustomLink = (props) => {
   const { navigate, ...rest } = props;
-  return (<Link {...rest} />);
-}
+  const ref = { ...rest };
+  return (<Link href={ref} />);
+};
 
-const NavTitle = ({ heading }) => {
+function NavTitle({ heading }) {
   return (
     <Box pr={2} key={heading.name}>
       <RouterLink
@@ -22,6 +26,6 @@ const NavTitle = ({ heading }) => {
       </RouterLink>
     </Box>
   );
-};
+}
 
 export default NavTitle;
