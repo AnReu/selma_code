@@ -35,12 +35,17 @@ export default function App() {
   const [modelLanguage, setModelLanguage] = React.useState('english');
   const [model, setModel] = React.useState('vector');
   const [models, setModels] = React.useState([]);
+  const [languages, setLanguages] = React.useState([]);
   const [showDialog, setShowDialog] = React.useState(false);
 
   React.useEffect(() => {
     fetch('api/v1/models')
       .then((response) => response.json())
       .then((fetchedModels) => setModels(fetchedModels));
+
+    fetch('api/v1/languages')
+      .then((response) => response.json())
+      .then((fetchedLanguages) => setLanguages(fetchedLanguages));
   }, []);
 
   const handleCloseSnackbar = () => {
@@ -113,7 +118,12 @@ export default function App() {
         <Fab onClick={handleOpenDialog} className={classes.fab} aria-label="add template">
           <AddIcon />
         </Fab>
-        <QueryTemplateDialog open={showDialog} form={defaultForm} models={models} />
+        <QueryTemplateDialog
+          open={showDialog}
+          form={defaultForm}
+          models={models}
+          languages={languages}
+        />
       </div>
     </Router>
   );
