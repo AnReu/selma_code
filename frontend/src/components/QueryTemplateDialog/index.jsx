@@ -17,12 +17,19 @@ import {
 //   language: null,
 // };
 
-export default function QueryTemplateDialog(props) {
-  const { open, form, models } = props;
+export default function QueryTemplateDialog({
+  open, form, models, languages,
+}) {
+  const [model, setModel] = React.useState(null);
+  const [language, setLanguage] = React.useState(null);
 
-  // const handleCloseDialog = () => {
-  //   setShowDialog(false);
-  // };
+  const handleModelChange = (event) => {
+    setModel(event.target.value);
+  };
+
+  const handleLanguageChange = (event) => {
+    setLanguage(event.target.value);
+  };
 
   return (
     <Dialog open={open} aria-labelledby="form-dialog-title">
@@ -43,28 +50,31 @@ export default function QueryTemplateDialog(props) {
             value={form.name}
           />
           <TextField
-            id="modelSelector"
+            id="select-model"
             select
             label="Model"
-            value={form.model}
+            value={model}
+            onChange={handleModelChange}
             fullWidth
           >
             {models.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+              <MenuItem key={option} value={option}>
+                {option}
               </MenuItem>
             ))}
           </TextField>
+
           <TextField
-            id="languageSelector"
+            id="select-language"
             select
             label="Language"
-            value={form.language}
+            value={language}
+            onChange={handleLanguageChange}
             fullWidth
           >
-            {models.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+            {languages.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
               </MenuItem>
             ))}
           </TextField>
