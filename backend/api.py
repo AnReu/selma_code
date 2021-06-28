@@ -81,3 +81,8 @@ def upload_file():
 def get_names_of_models():
     import backend.models
     return jsonify(backend.models.__all__)
+
+
+@app.route('/api/v1/languages')
+def get_languages():
+    return jsonify(['English', 'German'])
