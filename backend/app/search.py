@@ -3,7 +3,8 @@ import os
 import re
 import sys
 from pathlib import Path
-from .models.VectorModel.predictor import Predictor
+from backend.models.VectorModel import predictor as p
+
 
 from .HTMLCutter import HTMLCutter
 PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
@@ -23,11 +24,11 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         Modify the lines below to adapt to these changes.
     """
     if model == 'vector':
-        predictor = Predictor(data_path)
+        predictor = p.Predictor(data_path)
     elif model == 'boolean':
-        predictor = Predictor(data_path)
+        predictor = p.Predictor(data_path)
     else:
-        predictor = Predictor(data_path)
+        predictor = p.Predictor(data_path)
 
     if id is None:
         try:
