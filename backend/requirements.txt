@@ -13,6 +13,7 @@ docutils==0.15.2
 Flask==1.1.2
 Flask-SQLAlchemy==2.5.1
 Flask-Migrate==3.0.1
+flask-marshmallow==0.14.0
 gensim==3.8.3
 HeapDict==1.0.1
 idna==2.9
