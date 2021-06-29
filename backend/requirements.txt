@@ -11,6 +11,7 @@ Cython==0.29.23
 deprecation==2.1.0
 docutils==0.15.2
 Flask==1.1.2
+Flash-SQLAlchemy==2.5.1
 gensim==3.8.3
 HeapDict==1.0.1
 idna==2.9
