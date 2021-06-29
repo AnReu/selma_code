@@ -1,22 +1,16 @@
-import os
 import json
-from pathlib import Path
 import re
+from flask import jsonify
+from flask import request
+from backend import app
+from backend import db
+from backend.parser import markdown_parser
+from backend.parser import pdf_parser
+from backend.parser import tex_parser
+from backend.search import search
 
-from flask import Flask, request, jsonify
-
-
-from .db_connection import DB
-from .parser import markdown_parser, pdf_parser, tex_parser
-from .search import search
 
 ALLOWED_EXTENSIONS = {'pdf', 'tex', 'md'}
-
-app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
-
-PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
-data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
-db = DB(PROJECT_DIR + os.environ.get('DB_PATH'))
 
 
 @app.route('/api/v1/search')
