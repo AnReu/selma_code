@@ -2,12 +2,12 @@ import json
 import re
 from flask import jsonify
 from flask import request
-from backend import app
-from backend import db
+from backend.app import app
+from backend.app import db
 from backend.parser import markdown_parser
 from backend.parser import pdf_parser
 from backend.parser import tex_parser
-from backend.search import search
+from backend.app.search import search
 
 
 @app.route('/api/v1/search')
