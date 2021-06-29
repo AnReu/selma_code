@@ -10,9 +10,6 @@ from backend.parser import tex_parser
 from backend.search import search
 
 
-ALLOWED_EXTENSIONS = {'pdf', 'tex', 'md'}
-
-
 @app.route('/api/v1/search')
 def search_route():
     text = request.args.get('text')
@@ -47,7 +44,8 @@ def get_document():
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    allowed_extensions = {'pdf', 'tex', 'md'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 @app.route('/api/v1/file', methods=['POST'])
