@@ -106,6 +106,7 @@ export default function App() {
               </Route>
             </Switch>
           </Box>
+          <div>TODO: Remove me!</div>
           <div>{queryTemplates}</div>
         </Container>
         <Snackbar

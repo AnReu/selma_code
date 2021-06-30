@@ -7,7 +7,7 @@ from backend.models.VectorModel import predictor as p
 
 
 from .HTMLCutter import HTMLCutter
-PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
+PROJECT_DIR = str(Path(__file__).parents[2]) + '/'
 sys.path.insert(0, PROJECT_DIR)
 
 cutter = HTMLCutter(700, 2000)

@@ -85,7 +85,8 @@ def get_languages():
 
 @app.route('/api/v1/query-templates')
 def get_query_templates():
-    get_templates = QueryTemplate.query.get(1)
-    todo_schema = TemplateSchema(many=True)
-    template = todo_schema.dump(get_templates)
-    return make_response(jsonify({"template": template}))
+    # TODO: implement me
+    # get_templates = QueryTemplate.query.get(1)
+    # todo_schema = TemplateSchema(many=True)
+    # template = todo_schema.dump(get_templates)
+    return make_response(jsonify(['QueryTP1', 'QueryTemplate_2']))
