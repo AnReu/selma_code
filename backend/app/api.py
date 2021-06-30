@@ -2,12 +2,15 @@ import json
 import re
 from flask import jsonify
 from flask import request
+from flask import make_response
+from flask_sqlalchemy import Model
 from backend.app import app
 from backend.app import db
+from backend.app.models import QueryTemplate
+from backend.app.search import search
 from backend.parser import markdown_parser
 from backend.parser import pdf_parser
 from backend.parser import tex_parser
-from backend.app.search import search
 
 
 @app.route('/api/v1/search')
@@ -78,3 +81,11 @@ def get_names_of_models():
 @app.route('/api/v1/languages')
 def get_languages():
     return jsonify(['English', 'German'])
+
+
+@app.route('/api/v1/query-templates')
+def get_query_templates():
+    get_templates = QueryTemplate.query.get(1)
+    todo_schema = TemplateSchema(many=True)
+    template = todo_schema.dump(get_templates)
+    return make_response(jsonify({"template": template}))
