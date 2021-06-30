@@ -1,22 +1,16 @@
-import os
 import json
-from pathlib import Path
 import re
-
-from flask import Flask, request, jsonify
-
-
-from .db_connection import DB
-from .parser import markdown_parser, pdf_parser, tex_parser
-from .search import search
-
-ALLOWED_EXTENSIONS = {'pdf', 'tex', 'md'}
-
-app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
-
-PROJECT_DIR = str(Path(__file__).parents[1]) + '/'
-data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
-db = DB(PROJECT_DIR + os.environ.get('DB_PATH'))
+from flask import jsonify
+from flask import request
+from flask import make_response
+from flask_sqlalchemy import Model
+from backend.app import app
+from backend.app import db
+from backend.app.models import QueryTemplate
+from backend.app.search import search
+from backend.parser import markdown_parser
+from backend.parser import pdf_parser
+from backend.parser import tex_parser
 
 
 @app.route('/api/v1/search')
@@ -53,7 +47,8 @@ def get_document():
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    allowed_extensions = {'pdf', 'tex', 'md'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 @app.route('/api/v1/file', methods=['POST'])
@@ -81,3 +76,17 @@ def upload_file():
 def get_names_of_models():
     import backend.models
     return jsonify(backend.models.__all__)
+
+
+@app.route('/api/v1/languages')
+def get_languages():
+    return jsonify(['English', 'German'])
+
+
+@app.route('/api/v1/query-templates')
+def get_query_templates():
+    # TODO: implement me
+    # get_templates = QueryTemplate.query.get(1)
+    # todo_schema = TemplateSchema(many=True)
+    # template = todo_schema.dump(get_templates)
+    return make_response(jsonify(['QueryTP1', 'QueryTemplate_2']))

@@ -1,4 +1,4 @@
-FLASK_APP=api.py
+FLASK_APP=retrievalsystem.py
 FLASK_ENV=development
 
 DATA_DIR=data/

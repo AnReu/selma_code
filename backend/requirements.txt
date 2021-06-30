@@ -11,6 +11,9 @@ Cython==0.29.23
 deprecation==2.1.0
 docutils==0.15.2
 Flask==1.1.2
+Flask-SQLAlchemy==2.5.1
+Flask-Migrate==3.0.1
+flask-marshmallow==0.14.0
 gensim==3.8.3
 HeapDict==1.0.1
 idna==2.9
@@ -26,6 +29,7 @@ lxml==4.6.3
 lz4==3.1.3
 Markdown==3.2.2
 MarkupSafe==1.1.1
+marshmallow-sqlalchemy==0.26.1
 matchpy==0.5.4
 more-itertools==8.8.0
 multiset==2.1.1
