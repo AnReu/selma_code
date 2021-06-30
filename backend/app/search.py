@@ -3,14 +3,13 @@ import os
 import re
 import sys
 from pathlib import Path
-from backend.models.VectorModel import predictor as p
+from backend.models.VectorModel import predictor as vector_predictor
+from backend.models.PyterrierModel import predictor as pyterrier_predictor
 
 
 from .HTMLCutter import HTMLCutter
 PROJECT_DIR = str(Path(__file__).parents[2]) + '/'
 sys.path.insert(0, PROJECT_DIR)
-import VectorModel.predictor
-import PyterrierModel.predictor
 
 cutter = HTMLCutter(700, 2000)
 data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
@@ -26,14 +25,11 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         Modify the lines below to adapt to these changes.
     """
     if model == 'vector':
-        predictor = p.Predictor(data_path)
-    elif model == 'boolean':
-        predictor = VectorModel.predictor.Predictor(data_path)
+        predictor = vector_predictor.Predictor(data_path)
     elif model == 'tf_idf':
-        predictor = PyterrierModel.predictor.Predictor(data_path)
-        predictor = p.Predictor(data_path)
+        predictor = pyterrier_predictor.Predictor(data_path)
     else:
-        predictor = VectorModel.predictor.Predictor(data_path)
+        predictor = vector_predictor.Predictor(data_path)
 
     if id is None:
         try:
