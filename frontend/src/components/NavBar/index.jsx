@@ -51,8 +51,10 @@ const NavBar = ({
               value={model}
               onChange={handleChangeModel}
             >
-              {models.map((value, index) => <MenuItem value="vector" key={index + value}>{value}</MenuItem>)}
-
+              {
+                // eslint-disable-next-line max-len
+                models.map((value, index) => <MenuItem value={value} key={index + value}>{value}</MenuItem>)
+              }
             </Select>
           </FormControl>
 
