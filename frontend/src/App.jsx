@@ -37,6 +37,7 @@ export default function App() {
   const [models, setModels] = React.useState([]);
   const [languages, setLanguages] = React.useState([]);
   const [showDialog, setShowDialog] = React.useState(false);
+  const [queryTemplates, setQueryTemplates] = React.useState([]);
 
   React.useEffect(() => {
     fetch('api/v1/models')
@@ -46,6 +47,10 @@ export default function App() {
     fetch('api/v1/languages')
       .then((response) => response.json())
       .then((fetchedLanguages) => setLanguages(fetchedLanguages));
+
+    fetch('api/v1/query-templates')
+      .then((response) => response.json())
+      .then((fetchedTemplates) => setQueryTemplates(fetchedTemplates));
   }, []);
 
   const handleCloseSnackbar = () => {
@@ -101,6 +106,7 @@ export default function App() {
               </Route>
             </Switch>
           </Box>
+          <div>{queryTemplates}</div>
         </Container>
         <Snackbar
           anchorOrigin={{
