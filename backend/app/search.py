@@ -12,7 +12,10 @@ PROJECT_DIR = str(Path(__file__).parents[2]) + '/'
 sys.path.insert(0, PROJECT_DIR)
 
 cutter = HTMLCutter(700, 2000)
-data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
+
+data_path = PROJECT_DIR + 'data/'
+# TODO: remove hard-coded string
+# data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
 
 
 def search(db, text=None, code=None, equation=None, id=None, exchange=None, model=None):
