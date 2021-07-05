@@ -13,6 +13,11 @@ from backend.parser import pdf_parser
 from backend.parser import tex_parser
 
 
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
+
+
 @app.route('/api/v1/search')
 def search_route():
     text = request.args.get('text')
