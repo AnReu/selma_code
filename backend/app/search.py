@@ -3,7 +3,8 @@ import os
 import re
 import sys
 from pathlib import Path
-from backend.models.VectorModel import predictor as p
+from backend.models.VectorModel import predictor as vector_predictor
+from backend.models.PyterrierModel import predictor as pyterrier_predictor
 
 
 from .HTMLCutter import HTMLCutter
@@ -24,11 +25,11 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         Modify the lines below to adapt to these changes.
     """
     if model == 'vector':
-        predictor = p.Predictor(data_path)
-    elif model == 'boolean':
-        predictor = p.Predictor(data_path)
+        predictor = vector_predictor.Predictor(data_path)
+    elif model == 'PyterrierModel':
+        predictor = pyterrier_predictor.Predictor(data_path)
     else:
-        predictor = p.Predictor(data_path)
+        predictor = vector_predictor.Predictor(data_path)
 
     if id is None:
         try:

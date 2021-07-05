@@ -34,6 +34,10 @@ matchpy==0.5.4
 more-itertools==8.8.0
 multiset==2.1.1
 nptyping==1.4.2
+matchpy==0.5.4
+more-itertools==8.8.0
+multiset==2.1.1
+nptyping==1.4.2
 numpy==1.18.4
 packaging==20.9
 pandas==1.2.4

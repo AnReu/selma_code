@@ -33,7 +33,7 @@ export default function App() {
   const [defaultErrorMessage] = React.useState('There was an error fetching the data!');
   const [errorMessage, setErrorMessage] = React.useState(null);
   const [modelLanguage, setModelLanguage] = React.useState('english');
-  const [model, setModel] = React.useState('vector');
+  const [model, setModel] = React.useState('PyterrierModel');
   const [models, setModels] = React.useState([]);
   const [languages, setLanguages] = React.useState([]);
   const [showDialog, setShowDialog] = React.useState(false);

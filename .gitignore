@@ -6,3 +6,12 @@
 
 backend/venv
 /backend/app.db
+/backend/models/PyterrierModel/wt2g_index/data.direct.bf
+/backend/models/PyterrierModel/wt2g_index/data.document.fsarrayfile
+/backend/models/PyterrierModel/wt2g_index/data.inverted.bf
+/backend/models/PyterrierModel/wt2g_index/data.lexicon.fsomapfile
+/backend/models/PyterrierModel/wt2g_index/data.lexicon.fsomaphash
+/backend/models/PyterrierModel/wt2g_index/data.lexicon.fsomapid
+/backend/models/PyterrierModel/wt2g_index/data.meta.idx
+/backend/models/PyterrierModel/wt2g_index/data.meta.zdata
+/backend/models/PyterrierModel/wt2g_index/data.properties
