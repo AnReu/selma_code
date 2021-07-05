@@ -26,7 +26,7 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
     """
     if model == 'vector':
         predictor = vector_predictor.Predictor(data_path)
-    elif model == 'tf_idf':
+    elif model == 'PyterrierModel':
         predictor = pyterrier_predictor.Predictor(data_path)
     else:
         predictor = vector_predictor.Predictor(data_path)
