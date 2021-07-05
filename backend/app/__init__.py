@@ -17,6 +17,7 @@ migrate = Migrate(app, app_db)
 PROJECT_DIR = str(Path(__file__).parents[2]) + '/'
 # DATA_PATH = PROJECT_DIR + os.environ.get('DATA_DIR')
 # db is the DB used by information retrieval models, such as tf-idf, boolean and so on.
-db = DB(PROJECT_DIR + os.environ.get('DB_PATH'))
+# db = DB(PROJECT_DIR + os.environ.get('DB_PATH'))
+db = DB(PROJECT_DIR + 'data/db.db')
 
 from backend.app import api, models
