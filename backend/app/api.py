@@ -3,10 +3,8 @@ import re
 from flask import jsonify
 from flask import request
 from flask import make_response
-from flask_sqlalchemy import Model
 from backend.app import app
 from backend.app import db
-from backend.app.models import QueryTemplate
 from backend.app.search import search
 from backend.parser import markdown_parser
 from backend.parser import pdf_parser
