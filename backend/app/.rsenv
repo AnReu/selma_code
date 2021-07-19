@@ -1,5 +1,0 @@
-DATA_PATH="path/to/data"
-CURRENT_DB="path/to/current/db"
-DB_ATTRIBUTES="{'post_id': '13', 'post_text': 'This is the text of the post.'}"
-DATA_DIR="data/"
-DB_PATH="data/db.db"
