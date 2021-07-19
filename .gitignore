@@ -15,3 +15,5 @@ backend/venv
 /backend/models/PyterrierModel/wt2g_index/data.meta.idx
 /backend/models/PyterrierModel/wt2g_index/data.meta.zdata
 /backend/models/PyterrierModel/wt2g_index/data.properties
+
+.rsenv

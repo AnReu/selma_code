@@ -1,4 +1,3 @@
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -6,6 +5,9 @@ from pathlib import Path
 from .config import Config
 from .db_connection import DB
 from .search import search
+
+# Load environment variables specific to the retrievalsystem app.
+Config.load_rsenv()
 
 
 app = Flask(__name__, static_folder='../../frontend/build', static_url_path='/')
@@ -20,4 +22,4 @@ PROJECT_DIR = str(Path(__file__).parents[2]) + '/'
 # db = DB(PROJECT_DIR + os.environ.get('DB_PATH'))
 db = DB(PROJECT_DIR + 'data/db.db')
 
-from backend.app import api, models
+from backend.app import api, models # noqa

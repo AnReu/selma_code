@@ -1,4 +1,5 @@
 import os
+import dotenv
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -11,3 +12,9 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, '../app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    @staticmethod
+    def load_rsenv() -> bool:
+        path = dotenv.find_dotenv(".rsenv")
+        rsconfig = dotenv.load_dotenv(path, encoding="utf-8")
+        return rsconfig

@@ -1,0 +1,2 @@
+FLASK_APP=retrievalsystem.py
+FLASK_ENV=development
