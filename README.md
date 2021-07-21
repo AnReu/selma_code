@@ -22,13 +22,13 @@ sqlite3 db.db
 \
 To create the tables run:
 ```commandline
-python3 backend/db_connection.py data/db.db
+python3 backend/app/db_connection.py data/db.db
 ```
 
 \
 To fill table `searchables` with documents run:
 ```commandline
-python3 backend/json2db.py data/db.db YOUR_FILE_WITH_DOCUMENTS.json
+python3 backend/app/json2db.py data/db.db YOUR_FILE_WITH_DOCUMENTS.json
 ```
 An example for a .json file: see `data/dummy_data.json`
 
