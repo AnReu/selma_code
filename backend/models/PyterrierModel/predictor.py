@@ -7,8 +7,6 @@ class Predictor:
     def __init__(self, data_path):
         print("initialisation of the PyTerrierModel.predictor")
         # path to the data.properties of the used index
-        data_path = "/Users/gui/Development/repos/retrievalsystem/backend/models/PyterrierModel/wt2g_index/data" \
-                    ".properties"
         self.text_model = backend.models.PyterrierModel.textmodel.TF_IDFModel(data_path)
 
     def predict(self, text, code, equations, n=5):

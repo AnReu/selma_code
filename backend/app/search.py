@@ -13,10 +13,6 @@ sys.path.insert(0, PROJECT_DIR)
 
 cutter = HTMLCutter(700, 2000)
 
-data_path = PROJECT_DIR + 'data/'
-# TODO: remove hard-coded string
-# data_path = PROJECT_DIR + os.environ.get('DATA_DIR')
-
 
 def search(db, text=None, code=None, equation=None, id=None, exchange=None, model=None):
     result_ids = []
@@ -28,11 +24,11 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         Modify the lines below to adapt to these changes.
     """
     if model == 'vector':
-        predictor = vector_predictor.Predictor(data_path)
+        predictor = vector_predictor.Predictor(os.environ.get('DATA_DIR'))
     elif model == 'PyterrierModel':
-        predictor = pyterrier_predictor.Predictor(data_path)
+        predictor = pyterrier_predictor.Predictor(os.getenv('PYTERRIER_MODEL_PATH'))
     else:
-        predictor = vector_predictor.Predictor(data_path)
+        predictor = vector_predictor.Predictor(os.environ.get('DATA_DIR'))
 
     if id is None:
         try:
