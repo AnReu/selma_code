@@ -41,15 +41,8 @@ export default function App() {
 
   React.useEffect(() => {
     fetch('api/v1/models')
-      .then((response) => {
-        const x = response.json();
-        console.log(x);
-        return x;
-      })
-      .then((fetchedModels) => {
-        console.log(fetchedModels);
-        return setModels(fetchedModels);
-      });
+      .then((response) => response.json())
+      .then((fetchedModels) => setModels(fetchedModels));
 
     fetch('api/v1/languages')
       .then((response) => response.json())
