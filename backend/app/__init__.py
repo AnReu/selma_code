@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,10 +18,7 @@ app.config.from_object(Config)
 app_db = SQLAlchemy(app)
 migrate = Migrate(app, app_db)
 
-PROJECT_DIR = str(Path(__file__).parents[2]) + '/'
-# DATA_PATH = PROJECT_DIR + os.environ.get('DATA_DIR')
-# db is the DB used by information retrieval models, such as tf-idf, boolean and so on.
-# db = DB(PROJECT_DIR + os.environ.get('DB_PATH'))
-db = DB(PROJECT_DIR + 'data/db.db')
+# The var db is the DB used by information retrieval models, such as tf-idf, boolean and so on.
+db = DB(os.getenv('DB_PATH'))
 
 from backend.app import api, models # noqa
