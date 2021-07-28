@@ -8,8 +8,6 @@ class TF_IDFModel:
     """
 
     def __init__(self, index_path):
-        index_path = "/Users/gui/Development/repos/retrievalsystem/backend/models/PyterrierModel/wt2g_index/data" \
-                     ".properties"
         if not pt.started():
             pt.init()
         self.index = pt.IndexFactory.of(index_path)
