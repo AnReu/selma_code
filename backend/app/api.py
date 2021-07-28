@@ -78,7 +78,9 @@ def upload_file():
 @app.route('/api/v1/models')
 def get_names_of_models():
     import backend.models
-    return jsonify(backend.models.__all__)
+    response = backend.models.__all__
+    print(response)
+    return jsonify(['lol', 'hehehe'])
 
 
 @app.route('/api/v1/languages')
