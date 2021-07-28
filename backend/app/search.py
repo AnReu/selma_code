@@ -19,10 +19,6 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
     error = ''
     status = 200
 
-    """ 
-        TODO: choose name of models and implement logic to each one of them.
-        Modify the lines below to adapt to these changes.
-    """
     if model == 'vector':
         predictor = vector_predictor.Predictor(os.environ.get('DATA_DIR'))
     elif model == 'PyterrierModel':
@@ -52,13 +48,16 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         else:
             result_ids = predictor.predict_by_id(id[0])
 
-    data = db.get_results_by_id('searchables', result_ids)
-    column_names = db.get_column_names('searchables')
+    db_table_name = os.getenv('DB_TABLE_NAME')
+    data = db.get_results_by_id(db_table_name, result_ids)
+    column_names = db.get_column_names(db_table_name)
 
     results = results_to_json(data, [description[0] for description in column_names])
 
+    db_content_attribute_name = os.getenv('DB_CONTENT_ATTRIBUTE_NAME')
+
     for result in results:
-        result['text'], result['cut'] = trim_html(result['text'])
+        result['text'], result['cut'] = trim_html(result[db_content_attribute_name])
         result['relevant_sentence'] = get_relevant_sentence(result)
 
     return {'results': results, 'error': error}, status
