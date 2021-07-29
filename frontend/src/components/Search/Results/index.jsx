@@ -24,15 +24,15 @@ const SearchResults = ({ results, isLoading = false, onRelevanceCheck }) => {
             {results.map((result) => {
               // TODO: hacky solution. refactor code
               // we need to agree on consistent naming for the tables in the db
-              let key = result.id;
+              const tempResult = { ...result };
               if (result.Id) {
-                key = result.Id;
+                tempResult.id = result.Id;
               }
 
               return (
                 <Result
-                  key={key}
-                  result={result}
+                  key={tempResult.id}
+                  result={tempResult}
                   expanded={expanded}
                   onExpand={handleExpand}
                   onRelevanceCheck={onRelevanceCheck}
