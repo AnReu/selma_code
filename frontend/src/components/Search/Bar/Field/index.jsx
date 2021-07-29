@@ -55,7 +55,7 @@ const SearchField = ({
           onKeyDown={handleKeyDown}
         />
         <FormHelperText id={`${id}-text`}>
-          <span dangerouslySetInnerHTML={{ __html: title.helperText }} />
+          <span>{title.helperText}</span>
         </FormHelperText>
       </FormControl>
     </div>

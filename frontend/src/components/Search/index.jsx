@@ -184,7 +184,7 @@ export default class Search extends Component {
             name: 'mono_search',
             query_key: 'text',
             label: 'Text',
-            helperText: 'This is a Markdown text field. For code use ``` as delimiter,<br/> like ```my code here```. For Equations use $ as delimiter.',
+            helperText: 'This is a Markdown text field. For code use ``` as delimiter, like ```my code here```. For Equations use $ as delimiter.',
           }]}
           multiline
           onQueryChange={this.handleQueryChange}
