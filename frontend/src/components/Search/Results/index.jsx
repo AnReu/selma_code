@@ -21,15 +21,24 @@ const SearchResults = ({ results, isLoading = false, onRelevanceCheck }) => {
               ? <Typography variant="h6">Search Results:</Typography>
               : null}
 
-            {results.map((result) => (
-              <Result
-                key={result.id}
-                result={result}
-                expanded={expanded}
-                onExpand={handleExpand}
-                onRelevanceCheck={onRelevanceCheck}
-              />
-            ))}
+            {results.map((result) => {
+              // TODO: hacky solution. refactor code
+              // we need to agree on consistent naming for the tables in the db
+              let key = result.id;
+              if (result.Id) {
+                key = result.Id;
+              }
+
+              return (
+                <Result
+                  key={key}
+                  result={result}
+                  expanded={expanded}
+                  onExpand={handleExpand}
+                  onRelevanceCheck={onRelevanceCheck}
+                />
+              );
+            })}
           </>
         )}
     </>
