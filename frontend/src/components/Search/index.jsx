@@ -91,6 +91,7 @@ export default class Search extends Component {
           isLoading: false,
           results: [],
         });
+        // eslint-disable-next-line
         console.error(e);
         onError(e.message !== 'Bad status code!' ? e.message : null);
       });
@@ -116,6 +117,7 @@ export default class Search extends Component {
         }
       })
       .catch((e) => {
+        // eslint-disable-next-line
         console.log(e);
         onError();
       });

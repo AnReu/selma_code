@@ -52,6 +52,7 @@ class Document extends Component {
           isLoading: false,
           document: null,
         });
+        // eslint-disable-next-line
         console.error(e);
         onError();
       });

@@ -62,6 +62,7 @@ export default class FileUpload extends Component {
       .catch((e) => {
         setIsLoading(false);
         setResults([]);
+        // eslint-disable-next-line
         console.error(e);
         onError(e.message !== 'Bad status code!' ? e.message : null);
       });
