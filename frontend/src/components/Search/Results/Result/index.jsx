@@ -43,7 +43,7 @@ const Result = ({
     >
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} className={classes.exp}>
         <div className={classes.heading}>
-          <Markdown text={`Document: ${result.relevant_sentence} ...`} />
+          <Markdown text={`Document: ${result.text}`} />
         </div>
         <FormControl
           onChange={(event) => onRelevanceCheck(result.id, event.target.value)}
