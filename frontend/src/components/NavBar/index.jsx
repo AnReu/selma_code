@@ -42,35 +42,33 @@ const NavBar = ({
       <Toolbar>
         {headings.map((heading, i) => <NavTitle heading={heading} key={i} />)}
         <div className={classes.grow} />
-        <div>
-          <FormControl className={classes.formControl}>
-            <InputLabel id="model-label">Model</InputLabel>
-            <Select
-              labelId="model-label"
-              id="model"
-              value={model}
-              onChange={handleChangeModel}
-            >
-              {
+        <FormControl className={classes.formControl}>
+          <InputLabel id="model-label">Model</InputLabel>
+          <Select
+            labelId="model-label"
+            id="model"
+            value={model}
+            onChange={handleChangeModel}
+          >
+            {
                 // eslint-disable-next-line max-len
                 models.map((value, index) => <MenuItem value={value} key={index + value}>{value}</MenuItem>)
               }
-            </Select>
-          </FormControl>
+          </Select>
+        </FormControl>
 
-          <FormControl className={classes.formControl}>
-            <InputLabel id="model-language-label">Model Language</InputLabel>
-            <Select
-              labelId="model-language-label"
-              id="model-language"
-              value={modelLanguage}
-              onChange={handleChangeModelLanguage}
-            >
-              <MenuItem value="english">English</MenuItem>
-              <MenuItem value="german">German</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
+        <FormControl className={classes.formControl}>
+          <InputLabel id="model-language-label">Model Language</InputLabel>
+          <Select
+            labelId="model-language-label"
+            id="model-language"
+            value={modelLanguage}
+            onChange={handleChangeModelLanguage}
+          >
+            <MenuItem value="english">English</MenuItem>
+            <MenuItem value="german">German</MenuItem>
+          </Select>
+        </FormControl>
       </Toolbar>
     </AppBar>
   );
