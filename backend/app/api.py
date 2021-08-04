@@ -5,6 +5,7 @@ from flask import request
 from flask import make_response
 from backend.app import app
 from backend.app import db
+from backend.app.models import QueryTemplate
 from backend.app.search import search
 from backend.parser import markdown_parser
 from backend.parser import pdf_parser
@@ -88,8 +89,7 @@ def get_languages():
 
 @app.route('/api/v1/query-templates')
 def get_query_templates():
-    # TODO: implement me
-    # get_templates = QueryTemplate.query.get(1)
-    # todo_schema = TemplateSchema(many=True)
-    # template = todo_schema.dump(get_templates)
-    return make_response(jsonify(['QueryTP1', 'QueryTemplate_2']))
+    query_result = QueryTemplate.query.all()
+    query_dictionary = map(lambda template: template.as_dict(), query_result)
+    result = list(query_dictionary)
+    return make_response(jsonify(result))
