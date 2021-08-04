@@ -7,28 +7,22 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
   TextField,
   MenuItem, DialogActions, Button,
 } from '@material-ui/core';
 
-// const defaultForm = {
-//   name: 'lol',
-//   model: null,
-//   language: null,
-// };
+import './QueryTemplateDialog.css';
 
-export default function QueryTemplateDialog({
-  open, form, models, languages,
-}) {
+export default function QueryTemplateDialog({ open, models, templates }) {
   const [model, setModel] = React.useState(null);
-  const [language, setLanguage] = React.useState(null);
+  const [name] = React.useState(null);
 
   const handleModelChange = (event) => {
     setModel(event.target.value);
-  };
-
-  const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
   };
 
   return (
@@ -47,7 +41,7 @@ export default function QueryTemplateDialog({
             label="Template's name"
             type="text"
             fullWidth
-            value={form.name}
+            value={name}
           />
           <TextField
             id="select-model"
@@ -63,22 +57,17 @@ export default function QueryTemplateDialog({
               </MenuItem>
             ))}
           </TextField>
-
-          <TextField
-            id="select-language"
-            select
-            label="Language"
-            value={language}
-            onChange={handleLanguageChange}
-            fullWidth
-          >
-            {languages.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
         </form>
+        <h3>Examples:</h3>
+        <Divider />
+        <List component="nav" className="list">
+          {templates.map((template) => (
+            <ListItem button className="list-item">
+              <ListItemText primary={`${template.name}`} />
+            </ListItem>
+          ))}
+        </List>
+
       </DialogContent>
       <DialogActions>
         <Button color="primary">

@@ -3,10 +3,11 @@
 
 import React from 'react';
 import {
-  AppBar, FormControl, InputLabel, MenuItem, Select, Toolbar,
+  AppBar, Button, FormControl, InputLabel, MenuItem, Select, Toolbar,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import NavTitle from './NavTitle';
+import QueryTemplateDialog from '../QueryTemplateDialog';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -19,11 +20,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NavBar = ({
-  headings, initialModelLanguage, initialModel, onModelChange, onModelLanguageChange, models,
+  headings,
+  initialModelLanguage,
+  initialModel,
+  models,
+  onModelChange,
+  onModelLanguageChange,
+  queryTemplates,
 }) => {
   const classes = useStyles();
   const [modelLanguage, setModelLanguage] = React.useState(initialModelLanguage);
   const [model, setModel] = React.useState(initialModel);
+  const [showDialog, setShowDialog] = React.useState(false);
 
   const handleChangeModelLanguage = (event) => {
     const { value } = event.target;
@@ -37,11 +45,24 @@ const NavBar = ({
     onModelChange(value);
   };
 
+  const handleOpenDialog = () => {
+    setShowDialog(true);
+  };
+
   return (
     <AppBar position="static" color="default">
       <Toolbar>
         {headings.map((heading, i) => <NavTitle heading={heading} key={i} />)}
         <div className={classes.grow} />
+        <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleOpenDialog}>
+          Examples
+        </Button>
+        <QueryTemplateDialog
+          open={showDialog}
+          models={models}
+          templates={queryTemplates}
+        />
+
         <FormControl className={classes.formControl}>
           <InputLabel id="model-label">Model</InputLabel>
           <Select

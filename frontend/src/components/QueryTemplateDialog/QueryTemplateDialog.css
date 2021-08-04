@@ -1,0 +1,12 @@
+.list {
+    width: 100%;
+    background-color: white;
+    position: relative;
+    overflow: auto;
+    max-height: 300px;
+    border: 1px solid #696969;
+}
+
+.list-item {
+    border-bottom: 1px solid #696969;
+}

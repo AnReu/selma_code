@@ -1,10 +1,7 @@
 import React from 'react';
-import AddIcon from '@material-ui/icons/Add';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   Box,
   Container,
-  Fab,
   Snackbar,
 } from '@material-ui/core';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -12,21 +9,6 @@ import Document from './components/Document';
 import NavBar from './components/NavBar';
 import Search from './components/Search';
 import './App.css';
-import QueryTemplateDialog from './components/QueryTemplateDialog';
-
-const useStyles = makeStyles((theme) => ({
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-  },
-}));
-
-const defaultForm = {
-  name: 'lol',
-  model: null,
-  language: null,
-};
 
 export default function App() {
   const [showError, setShowError] = React.useState(false);
@@ -35,9 +17,9 @@ export default function App() {
   const [modelLanguage, setModelLanguage] = React.useState('english');
   const [model, setModel] = React.useState('PyterrierModel');
   const [models, setModels] = React.useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [languages, setLanguages] = React.useState([]);
-  const [showDialog, setShowDialog] = React.useState(false);
-  // const [queryTemplates, setQueryTemplates] = React.useState([]);
+  const [queryTemplates, setQueryTemplates] = React.useState([]);
 
   React.useEffect(() => {
     fetch('api/v1/models')
@@ -48,9 +30,9 @@ export default function App() {
       .then((response) => response.json())
       .then((fetchedLanguages) => setLanguages(fetchedLanguages));
 
-    // fetch('api/v1/query-templates')
-    //   .then((response) => response.json())
-    //   .then((fetchedTemplates) => setQueryTemplates(fetchedTemplates));
+    fetch('api/v1/query-templates')
+      .then((response) => response.json())
+      .then((fetchedTemplates) => setQueryTemplates(fetchedTemplates));
   }, []);
 
   const handleCloseSnackbar = () => {
@@ -62,11 +44,6 @@ export default function App() {
     setErrorMessage(errorMsg);
   };
 
-  const handleOpenDialog = () => {
-    setShowDialog(true);
-  };
-
-  const classes = useStyles();
   const headings = [
     {
       name: 'RETRIEVAL',
@@ -92,6 +69,7 @@ export default function App() {
           onModelChange={setModel}
           onModelLanguageChange={setModelLanguage}
           models={models}
+          queryTemplates={queryTemplates}
         />
         <Container style={{ marginTop: 20 }}>
           <Box my={4}>
@@ -119,15 +97,6 @@ export default function App() {
             'aria-describedby': 'message-id',
           }}
           message={<span>{errorMessage || defaultErrorMessage}</span>}
-        />
-        <Fab onClick={handleOpenDialog} className={classes.fab} aria-label="add template">
-          <AddIcon />
-        </Fab>
-        <QueryTemplateDialog
-          open={showDialog}
-          form={defaultForm}
-          models={models}
-          languages={languages}
         />
       </div>
     </Router>
