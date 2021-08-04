@@ -1,8 +1,8 @@
-"""first migration: QueryTemplate
+"""fist migration: add QueryTemplate model
 
-Revision ID: 4919e8cec619
+Revision ID: 2e1843d4af07
 Revises: 
-Create Date: 2021-06-29 19:41:18.209220
+Create Date: 2021-08-04 10:51:34.627322
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4919e8cec619'
+revision = '2e1843d4af07'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,10 +23,9 @@ def upgrade():
     sa.Column('name', sa.String(length=80), nullable=False),
     sa.Column('model_name', sa.String(length=80), nullable=False),
     sa.Column('model_language', sa.String(length=120), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('model_language'),
-    sa.UniqueConstraint('model_name'),
-    sa.UniqueConstraint('name')
+    sa.Column('query_text', sa.String(length=120), nullable=False),
+    sa.Column('user', sa.String(length=120), nullable=False),
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 
