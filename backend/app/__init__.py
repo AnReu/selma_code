@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from pathlib import Path
+from flask_marshmallow import Marshmallow
 from .config import Config
 from .db_connection import DB
 from .search import search
@@ -17,6 +17,7 @@ app.config.from_object(Config)
 # app_db is the DB used by the frontend app. It stores things like QueryTemplates.
 app_db = SQLAlchemy(app)
 migrate = Migrate(app, app_db)
+ma = Marshmallow(app)
 
 # The var db is the DB used by information retrieval models, such as tf-idf, boolean and so on.
 db = DB(os.getenv('DB_PATH'))
