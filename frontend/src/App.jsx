@@ -64,8 +64,6 @@ export default function App() {
       <div className="App">
         <NavBar
           headings={headings}
-          initialModel={model}
-          initialModelLanguage={modelLanguage}
           onModelChange={setModel}
           onModelLanguageChange={setModelLanguage}
           models={models}
