@@ -20,6 +20,6 @@ migrate = Migrate(app, app_db)
 ma = Marshmallow(app)
 
 # The var db is the DB used by information retrieval models, such as tf-idf, boolean and so on.
-db = DB(os.getenv('DB_PATH'))
+db = DB(os.environ.get('DB_PATH'))
 
 from backend.app import api, models # noqa
