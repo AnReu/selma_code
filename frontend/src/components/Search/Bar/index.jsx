@@ -1,7 +1,7 @@
 // TODO: fix prop validation and remove line below
 /* eslint-disable react/forbid-prop-types,react/prop-types,react/no-array-index-key */
 
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Grid } from '@material-ui/core';
 import SearchField from './Field';
 
@@ -40,22 +40,19 @@ function getAndReplaceEquations(text, replacer = '') {
   return [matches, tempText];
 }
 
-export default class SearchBar extends Component {
-  constructor(props) {
-    super(props);
+function SearchBar(props) {
+  const {
+    tabValue, tabIndex, titles, onSearch, validation, multiline, child, onQueryChange,
+  } = props;
 
-    // Creates object with title names as keys and '' as each value
-    const fieldNames = Array.from(props.titles, (m) => ({ [m.name]: '' }));
-    this.state = Object.assign({}, ...fieldNames);
+  const fieldNames = Array.from(titles, (m) => ({ [m.name]: '' }));
 
-    this.handleQueryChange = this.handleQueryChange.bind(this);
-  }
+  const [fields, setFields] = useState(Object.assign({}, ...fieldNames));
 
-  handleQueryChange(value, title) {
-    const { onQueryChange } = this.props;
-    this.setState({
-      [title.name]: value,
-    });
+  const handleQueryChange = (value, title) => {
+    const fieldsCopy = { ...fields };
+    fieldsCopy[title.name] = value;
+    setFields(fieldsCopy);
 
     let tempValue = null;
 
@@ -70,49 +67,49 @@ export default class SearchBar extends Component {
       onQueryChange(equations, 'equations');
     }
     onQueryChange(tempValue, title.query_key);
-  }
+  };
 
-  render() {
-    const {
-      tabValue, tabIndex, titles, onSearch, validation, multiline, child,
-    } = this.props;
+  return (
+    <div hidden={tabValue !== tabIndex}>
+      <Grid container spacing={2}>
+        <Grid item md={4} sm={6} xs={12}>
+          <Grid container direction="column" spacing={1}>
+            {titles.map((title, i) => (
+              <Grid item key={i}>
+                <SearchField
+                  title={title}
+                  onQueryChange={(event) => handleQueryChange(event, title)}
+                  onEnter={onSearch}
+                  validation={validation}
+                  multiline={multiline}
+                />
+              </Grid>
+            ))}
 
-    return (
-      <div hidden={tabValue !== tabIndex}>
+            <Box p={1} />
 
-        <Grid container spacing={2}>
-          <Grid item md={4} sm={6} xs={12}>
-            <Grid container direction="column" spacing={1}>
-              {titles.map((title, i) => (
-                <Grid item key={i}>
-                  <SearchField
-                    title={title}
-                    onQueryChange={(event) => this.handleQueryChange(event, title)}
-                    onEnter={onSearch}
-                    validation={validation}
-                    multiline={multiline}
-                  />
-                </Grid>
-              ))}
-
-              <Box p={1} />
-
-            </Grid>
-
-            <Button
-              variant="contained"
-              onClick={onSearch}
-            >
-              Search
-            </Button>
           </Grid>
-          {child
-            && child(this.state)}
+
+          <Button
+            variant="contained"
+            onClick={onSearch}
+          >
+            Search
+          </Button>
+          <Button
+            variant="contained"
+          >
+            Save
+          </Button>
         </Grid>
+        {child
+            && child(fields)}
+      </Grid>
 
-        <Box p={1} />
+      <Box p={1} />
 
-      </div>
-    );
-  }
+    </div>
+  );
 }
+
+export default SearchBar;
