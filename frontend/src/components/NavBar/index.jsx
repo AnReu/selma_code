@@ -1,26 +1,46 @@
 // TODO: fix prop validation and remove line below
 /* eslint-disable react/forbid-prop-types,react/prop-types,react/no-array-index-key */
-
 import React from 'react';
 import {
-  AppBar, Button, FormControl, InputBase, InputLabel, MenuItem, Select, Toolbar,
+  AppBar, Button, FormControl, InputLabel, MenuItem, Select, Toolbar,
 } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
+import { makeStyles } from '@material-ui/core/styles';
 import NavTitle from './NavTitle';
-import QueryTemplateDialog from '../QueryTemplateDialog';
-import './NavBar.css';
+import QueryTemplatePicker from '../QueryTemplate/Picker';
 
-const NavBar = ({
-  headings,
-  models,
-  onModelChange,
-  onModelLanguageChange,
-  queryTemplates,
-}) => {
+const useStyles = makeStyles((theme) => ({
+  grow: {
+    flexGrow: 1,
+  },
+  formControl: {
+    minWidth: 160,
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+  },
+  button: {
+    marginRight: theme.spacing(2),
+  },
+}));
+
+function NavBar(props) {
+  const classes = useStyles();
+  const {
+    headings,
+    models,
+    onModelChange,
+    onModelLanguageChange,
+  } = props;
+
   const [modelLanguage, setModelLanguage] = React.useState('');
   const [model, setModel] = React.useState('');
-  const [showDialog, setShowDialog] = React.useState(false);
-  const [, setQuery] = React.useState('');
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [queryTemplates, setQueryTemplates] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch('/api/v1/query-templates')
+      .then((response) => response.json())
+      .then((fetchedTemplates) => setQueryTemplates(fetchedTemplates));
+  }, []);
 
   const handleChangeModelLanguage = (event) => {
     const { value } = event.target;
@@ -34,92 +54,44 @@ const NavBar = ({
     onModelChange(value);
   };
 
-  const handleOpenDialog = () => {
-    setShowDialog(true);
-  };
+  const handleDeleteTemplate = (template) => {
+    const { id } = template;
+    fetch(`/api/v1/query-templates/${id}`, { method: 'DELETE' })
+      .then(() => {
+        // remove deleted template from queryTemplates
+        const templatesCopy = [...queryTemplates]; // make a separate copy of the array
+        const index = templatesCopy.indexOf(template);
 
-  const handleCloseDialog = () => {
-    setShowDialog(false);
-  };
-
-  const handleQueryTemplateSelected = (value) => {
-    setShowDialog(false);
-
-    const {
-      // eslint-disable-next-line no-unused-vars,no-shadow
-      id, modelName, modelLanguage, name, queryText,
-    } = value;
-    setQuery(queryText);
-
-    console.log(value);
-
-    const params = `text=${encodeURIComponent(queryText)}&`
-               + `model=${encodeURIComponent(modelName)}&`
-               + `model-language=${encodeURIComponent(modelLanguage)}`;
-
-    fetch(`/api/v1/search?${params}`)
-      .then((response) => {
-        if (![200, 404].includes(response.status)) {
-          throw Error('Bad status code!');
+        if (index !== -1) {
+          templatesCopy.splice(index, 1);
+          setQueryTemplates(templatesCopy);
         }
-
-        // this.setState({
-        //   statusCode: response.status,
-        // });
-
-        return response.json();
-      })
-      .then((json) => {
-        console.log(json);
-        // if (statusCode === 404) {
-        //   throw Error(json.error);
-        // }
-
-        // this.setState({
-        //   isLoading: false,
-        //   results: json.results,
-        // });
       })
       .catch((e) => {
-        console.log(e);
-        // this.setState({
-        //   isLoading: false,
-        //   results: [],
-        // });
-        // eslint-disable-next-line
-        // console.error(e);
-        // onError(e.message !== 'Bad status code!' ? e.message : null);
+        console.error(e);
       });
-    // searchExample(value);
   };
 
   return (
     <AppBar position="static" color="default">
       <Toolbar>
         {headings.map((heading, i) => <NavTitle heading={heading} key={i} />)}
-        <div className="grow" />
-        <div className="search">
-          <div className="searchIcon">
-            <SearchIcon />
-          </div>
-          <InputBase
-            placeholder="Search…"
-            className="inputBase"
-            inputProps={{ 'aria-label': 'search' }}
-          />
-        </div>
-        <Button className="example-button" aria-controls="simple-menu" aria-haspopup="true" onClick={handleOpenDialog}>
-          Examples
+        <div className={classes.grow} />
+        <Button
+          className={classes.button}
+          variant="contained"
+          color="primary"
+          onClick={() => setIsOpen(true)}
+        >
+          Query Examples
         </Button>
-        <QueryTemplateDialog
-          open={showDialog}
-          models={models}
+        <QueryTemplatePicker
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
           templates={queryTemplates}
-          onClose={handleCloseDialog}
-          onSelect={handleQueryTemplateSelected}
+          onDeleteTemplate={handleDeleteTemplate}
         />
-        <div className="grow" />
-        <FormControl className="formControl">
+        <FormControl className={classes.formControl}>
           <InputLabel id="model-label">Model</InputLabel>
           <Select
             labelId="model-label"
@@ -134,7 +106,7 @@ const NavBar = ({
           </Select>
         </FormControl>
 
-        <FormControl className="formControl">
+        <FormControl className={classes.formControl}>
           <InputLabel id="model-language-label">Model Language</InputLabel>
           <Select
             labelId="model-language-label"
@@ -142,13 +114,13 @@ const NavBar = ({
             value={modelLanguage}
             onChange={handleChangeModelLanguage}
           >
-            <MenuItem value="english">English</MenuItem>
-            <MenuItem value="german">German</MenuItem>
+            <MenuItem value="English">English</MenuItem>
+            <MenuItem value="German">German</MenuItem>
           </Select>
         </FormControl>
       </Toolbar>
     </AppBar>
   );
-};
+}
 
 export default NavBar;

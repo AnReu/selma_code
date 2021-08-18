@@ -16,7 +16,7 @@ const SearchResults = ({ results, isLoading = false, onRelevanceCheck }) => {
       {isLoading
         ? <CircularProgress />
         : (
-          <>
+          <div>
             {results.length
               ? <Typography variant="h6">Search Results:</Typography>
               : null}
@@ -39,7 +39,7 @@ const SearchResults = ({ results, isLoading = false, onRelevanceCheck }) => {
                 />
               );
             })}
-          </>
+          </div>
         )}
     </>
   );

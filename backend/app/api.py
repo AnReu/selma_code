@@ -1,17 +1,16 @@
+import datetime
 import json
 import re
-from flask import jsonify
-from flask import request
-from flask import make_response
+from flask import jsonify, request, make_response
 from backend.app import app
 from backend.app import db
+from backend.app import app_db
 from backend.app.models import QueryTemplate, QueryTemplateSchema
 from backend.app.search import search
 from backend.parser import markdown_parser
 from backend.parser import pdf_parser
 from backend.parser import tex_parser
-
-query_templates_schema = QueryTemplateSchema(many=True)
+from marshmallow import ValidationError
 
 
 @app.route('/')
@@ -92,6 +91,39 @@ def get_languages():
 @app.route('/api/v1/query-templates')
 def get_all_query_templates():
     all_templates = QueryTemplate.query.all()
-    result = query_templates_schema.dump(all_templates)
-    return jsonify(result)
+    schema = QueryTemplateSchema(many=True)
+    results = schema.dump(all_templates)
+    print(results)
+    return jsonify(results)
+
+
+@app.route('/api/v1/query-templates/<id>', methods=['DELETE'])
+def delete_query_template_by_id(id):
+    get_query_template = QueryTemplate.query.get(id)
+    app_db.session.delete(get_query_template)
+    app_db.session.commit()
+    # TODO fix code below
+    return make_response(f'woooooooow {id}', 204)
+
+
+@app.route('/api/v1/query-templates', methods=['POST'])
+def create_query_template():
+    schema = QueryTemplateSchema()
+    json_data = request.get_json()
+    if not json_data:
+        return {"message": "No input data provided"}, 400
+    # Validate and deserialize input
+    try:
+        data = schema.load(json_data)
+    except ValidationError as err:
+        return {"errors": err.messages}, 422
+    # Create new QueryTemplate
+    query_template = QueryTemplate()
+    query_template.from_dict(data)
+    app_db.session.add(query_template)
+    app_db.session.commit()
+    result = schema.dump(QueryTemplate.query.get(query_template.id))
+    return {"message": "Created new Query Template.", "queryTemplate": result}
+
+
 

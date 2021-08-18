@@ -143,7 +143,7 @@ export default class Search extends Component {
 
   render() {
     const { tabValue, results, isLoading } = this.state;
-    const { onError, modelLanguage } = this.props;
+    const { onError, modelLanguage, model } = this.props;
 
     const idValidation = (value) => {
       let exchange = [];
@@ -182,6 +182,8 @@ export default class Search extends Component {
         </Tabs>
         <Box p={1} />
         <SearchBar
+          modelLanguage={modelLanguage}
+          model={model}
           titles={[{
             name: 'mono_search',
             query_key: 'text',
@@ -201,6 +203,8 @@ export default class Search extends Component {
         />
 
         <SearchBar
+          modelLanguage={modelLanguage}
+          model={model}
           titles={[
             {
               name: 'text',
@@ -239,6 +243,8 @@ export default class Search extends Component {
         />
 
         <SearchBar
+          modelLanguage={modelLanguage}
+          model={model}
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
           titles={[{

@@ -3,7 +3,15 @@
 
 import React, { useState } from 'react';
 import { Box, Button, Grid } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import SearchField from './Field';
+import QueryTemplateCreator from '../../QueryTemplate/Creator';
+
+const useStyles = makeStyles(() => ({
+  buttons: {
+    margin: 8,
+  },
+}));
 
 function getSortedMatches(matches) {
   matches.sort((a, b) => (a.index < b.index ? -1 : 1));
@@ -41,13 +49,24 @@ function getAndReplaceEquations(text, replacer = '') {
 }
 
 function SearchBar(props) {
+  const classes = useStyles();
   const {
-    tabValue, tabIndex, titles, onSearch, validation, multiline, child, onQueryChange,
+    model,
+    modelLanguage,
+    tabValue,
+    tabIndex,
+    titles,
+    onSearch,
+    validation,
+    multiline,
+    child,
+    onQueryChange,
   } = props;
 
   const fieldNames = Array.from(titles, (m) => ({ [m.name]: '' }));
 
   const [fields, setFields] = useState(Object.assign({}, ...fieldNames));
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleQueryChange = (value, title) => {
     const fieldsCopy = { ...fields };
@@ -78,7 +97,7 @@ function SearchBar(props) {
               <Grid item key={i}>
                 <SearchField
                   title={title}
-                  onQueryChange={(event) => handleQueryChange(event, title)}
+                  onChange={(event) => handleQueryChange(event, title)}
                   onEnter={onSearch}
                   validation={validation}
                   multiline={multiline}
@@ -91,15 +110,18 @@ function SearchBar(props) {
           </Grid>
 
           <Button
+            className={classes.buttons}
             variant="contained"
             onClick={onSearch}
           >
             Search
           </Button>
           <Button
+            className={classes.buttons}
             variant="contained"
+            onClick={() => setIsOpen(true)}
           >
-            Save
+            Create Query Template
           </Button>
         </Grid>
         {child
@@ -107,6 +129,15 @@ function SearchBar(props) {
       </Grid>
 
       <Box p={1} />
+
+      <QueryTemplateCreator
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        currentQueryText={fields.mono_search}
+        currentModelLanguage={modelLanguage}
+        currentModel={model}
+        onCreateTemplate={}
+      />
 
     </div>
   );

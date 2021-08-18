@@ -18,10 +18,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 const SearchField = ({
-  title, onQueryChange, onEnter, multiline, validation = (x) => x,
+  title, onChange, onEnter, multiline, validation = (x) => x,
 }) => {
   const classes = useStyles();
-  const [value, handleValueChange] = useState('');
+  const [value, setValue] = useState('');
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 13 && !e.shiftKey) {
@@ -30,14 +30,15 @@ const SearchField = ({
   };
 
   const handleQueryChange = (event) => {
-    handleValueChange(event.target.value);
-    onQueryChange(validation(event.target.value));
+    const newValue = event.target.value;
+    setValue(newValue);
+    onChange(validation(newValue));
   };
 
   const id = `searchfield-${title.name}`;
 
   return (
-    <div>
+    <>
       <FormControl fullWidth>
         <InputLabel htmlFor={id} className={classes.label}>{title.label}</InputLabel>
         <Input
@@ -58,7 +59,7 @@ const SearchField = ({
           <span>{title.helperText}</span>
         </FormHelperText>
       </FormControl>
-    </div>
+    </>
   );
 };
 

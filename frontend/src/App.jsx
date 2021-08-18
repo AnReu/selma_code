@@ -19,7 +19,6 @@ export default function App() {
   const [models, setModels] = React.useState([]);
   // eslint-disable-next-line no-unused-vars
   const [languages, setLanguages] = React.useState([]);
-  const [queryTemplates, setQueryTemplates] = React.useState([]);
 
   React.useEffect(() => {
     fetch('api/v1/models')
@@ -29,10 +28,6 @@ export default function App() {
     fetch('api/v1/languages')
       .then((response) => response.json())
       .then((fetchedLanguages) => setLanguages(fetchedLanguages));
-
-    fetch('api/v1/query-templates')
-      .then((response) => response.json())
-      .then((fetchedTemplates) => setQueryTemplates(fetchedTemplates));
   }, []);
 
   const handleCloseSnackbar = () => {
@@ -67,7 +62,6 @@ export default function App() {
           onModelChange={setModel}
           onModelLanguageChange={setModelLanguage}
           models={models}
-          queryTemplates={queryTemplates}
         />
         <Container style={{ marginTop: 20 }}>
           <Box my={4}>
