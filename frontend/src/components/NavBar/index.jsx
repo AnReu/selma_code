@@ -27,20 +27,15 @@ function NavBar(props) {
   const {
     headings,
     models,
+    templates,
     onModelChange,
     onModelLanguageChange,
+    onDeleteTemplate,
   } = props;
 
   const [modelLanguage, setModelLanguage] = React.useState('');
   const [model, setModel] = React.useState('');
   const [isOpen, setIsOpen] = React.useState(false);
-  const [queryTemplates, setQueryTemplates] = React.useState([]);
-
-  React.useEffect(() => {
-    fetch('/api/v1/query-templates')
-      .then((response) => response.json())
-      .then((fetchedTemplates) => setQueryTemplates(fetchedTemplates));
-  }, []);
 
   const handleChangeModelLanguage = (event) => {
     const { value } = event.target;
@@ -52,24 +47,6 @@ function NavBar(props) {
     const { value } = event.target;
     setModel(value);
     onModelChange(value);
-  };
-
-  const handleDeleteTemplate = (template) => {
-    const { id } = template;
-    fetch(`/api/v1/query-templates/${id}`, { method: 'DELETE' })
-      .then(() => {
-        // remove deleted template from queryTemplates
-        const templatesCopy = [...queryTemplates]; // make a separate copy of the array
-        const index = templatesCopy.indexOf(template);
-
-        if (index !== -1) {
-          templatesCopy.splice(index, 1);
-          setQueryTemplates(templatesCopy);
-        }
-      })
-      .catch((e) => {
-        console.error(e);
-      });
   };
 
   return (
@@ -88,8 +65,8 @@ function NavBar(props) {
         <QueryTemplatePicker
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
-          templates={queryTemplates}
-          onDeleteTemplate={handleDeleteTemplate}
+          templates={templates}
+          onDeleteTemplate={(template) => onDeleteTemplate(template)}
         />
         <FormControl className={classes.formControl}>
           <InputLabel id="model-label">Model</InputLabel>

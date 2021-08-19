@@ -143,7 +143,9 @@ export default class Search extends Component {
 
   render() {
     const { tabValue, results, isLoading } = this.state;
-    const { onError, modelLanguage, model } = this.props;
+    const {
+      onError, modelLanguage, model, onCreateTemplate,
+    } = this.props;
 
     const idValidation = (value) => {
       let exchange = [];
@@ -193,6 +195,7 @@ export default class Search extends Component {
           multiline
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
+          onCreateTemplate={(template) => onCreateTemplate(template)}
           tabValue={tabValue}
           tabIndex={0}
           child={(state = { mono_search: '' }) => (
@@ -229,6 +232,7 @@ export default class Search extends Component {
           ]}
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
+          onCreateTemplate={(template) => onCreateTemplate(template)}
           tabValue={tabValue}
           tabIndex={1}
           child={(state = { equations: '' }) => (
@@ -247,6 +251,7 @@ export default class Search extends Component {
           model={model}
           onQueryChange={this.handleQueryChange}
           onSearch={this.handleSearch}
+          onCreateTemplate={(template) => onCreateTemplate(template)}
           titles={[{
             name: 'id',
             query_key: 'id',

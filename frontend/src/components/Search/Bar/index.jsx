@@ -61,6 +61,7 @@ function SearchBar(props) {
     multiline,
     child,
     onQueryChange,
+    onCreateTemplate,
   } = props;
 
   const fieldNames = Array.from(titles, (m) => ({ [m.name]: '' }));
@@ -136,7 +137,7 @@ function SearchBar(props) {
         currentQueryText={fields.mono_search}
         currentModelLanguage={modelLanguage}
         currentModel={model}
-        onCreateTemplate={}
+        onCreateTemplate={(template) => onCreateTemplate(template)}
       />
 
     </div>

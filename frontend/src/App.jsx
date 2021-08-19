@@ -19,6 +19,7 @@ export default function App() {
   const [models, setModels] = React.useState([]);
   // eslint-disable-next-line no-unused-vars
   const [languages, setLanguages] = React.useState([]);
+  const [queryTemplates, setQueryTemplates] = React.useState([]);
 
   React.useEffect(() => {
     fetch('api/v1/models')
@@ -28,6 +29,10 @@ export default function App() {
     fetch('api/v1/languages')
       .then((response) => response.json())
       .then((fetchedLanguages) => setLanguages(fetchedLanguages));
+
+    fetch('/api/v1/query-templates')
+      .then((response) => response.json())
+      .then((fetchedTemplates) => setQueryTemplates(fetchedTemplates));
   }, []);
 
   const handleCloseSnackbar = () => {
@@ -37,6 +42,30 @@ export default function App() {
   const handleError = (errorMsg) => {
     setShowError(true);
     setErrorMessage(errorMsg);
+  };
+
+  const handleCreateTemplate = (template) => {
+    const templatesCopy = [...queryTemplates];
+    templatesCopy.push(template);
+    setQueryTemplates(templatesCopy);
+  };
+
+  const handleDeleteTemplate = (template) => {
+    const { id } = template;
+    fetch(`/api/v1/query-templates/${id}`, { method: 'DELETE' })
+      .then(() => {
+        // remove deleted template from queryTemplates
+        const templatesCopy = [...queryTemplates]; // make a separate copy of the array
+        const index = templatesCopy.indexOf(template);
+
+        if (index !== -1) {
+          templatesCopy.splice(index, 1);
+          setQueryTemplates(templatesCopy);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   const headings = [
@@ -61,13 +90,20 @@ export default function App() {
           headings={headings}
           onModelChange={setModel}
           onModelLanguageChange={setModelLanguage}
+          onDeleteTemplate={(template) => handleDeleteTemplate(template)}
           models={models}
+          templates={queryTemplates}
         />
         <Container style={{ marginTop: 20 }}>
           <Box my={4}>
             <Switch>
               <Route path="/search">
-                <Search onError={handleError} model={model} modelLanguage={modelLanguage} />
+                <Search
+                  onError={handleError}
+                  model={model}
+                  modelLanguage={modelLanguage}
+                  onCreateTemplate={handleCreateTemplate}
+                />
               </Route>
               <Route path="/document/:id">
                 <Document

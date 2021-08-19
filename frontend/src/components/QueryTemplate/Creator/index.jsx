@@ -54,7 +54,7 @@ export default function QueryTemplateCreator(props) {
   const classes = useStyles();
   const {
     // eslint-disable-next-line no-unused-vars
-    isOpen, currentQueryText, currentModelLanguage, currentModel, onClose,
+    isOpen, currentQueryText, currentModelLanguage, currentModel, onClose, onCreateTemplate,
   } = props;
 
   const [modelName, setModelName] = React.useState('');
@@ -95,15 +95,14 @@ export default function QueryTemplateCreator(props) {
           throw Error(`Bad status code! ErrorCode: ${response.status}`);
         }
 
-        return response;
+        return response.json();
       })
-      .then((response) => {
-        if (response.status === 404) {
-          throw Error(response.json.error);
-        }
+      .then((json) => {
+        const newQueryTemplate = json.queryTemplate;
         setSuccess(true);
         setIsLoading(false);
         onClose();
+        onCreateTemplate(newQueryTemplate);
       })
       .catch((e) => {
         setSuccess(true);
