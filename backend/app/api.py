@@ -85,7 +85,7 @@ def get_names_of_models():
 
 @app.route('/api/v1/languages')
 def get_languages():
-    return jsonify(['English', 'German'])
+    return jsonify(['english', 'german'])
 
 
 @app.route('/api/v1/query-templates')

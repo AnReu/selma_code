@@ -125,7 +125,7 @@ export default function QueryTemplateCreator(props) {
               label="Template's name"
               fullWidth
               value={templateName}
-              onChange={(e) => setTemplateName(e.target.value)}
+              onChange={(e) => { setTemplateName(e.target.value); }}
               onBlur={(e) => setTemplateName(e.target.value)}
             />
           </Grid>
@@ -140,8 +140,8 @@ export default function QueryTemplateCreator(props) {
                 onChange={(e) => setModelName(e.target.value)}
                 input={<Input />}
               >
-                <MenuItem value="PyterrierModel">PyTerrier</MenuItem>
-                <MenuItem value="VectorModel">Vector</MenuItem>
+                <MenuItem value="PyterrierModel">PyTerrierModel</MenuItem>
+                <MenuItem value="VectorModel">VectorModel</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -172,8 +172,8 @@ export default function QueryTemplateCreator(props) {
                 onChange={(e) => setDatabase(e.target.value)}
                 input={<Input />}
               >
-                <MenuItem value="English">Stackoverflow</MenuItem>
-                <MenuItem value="German">CodeSearchNet</MenuItem>
+                <MenuItem value="stackoverflow">Stackoverflow</MenuItem>
+                <MenuItem value="codesearchnet">CodeSearchNet</MenuItem>
               </Select>
             </FormControl>
           </Grid>

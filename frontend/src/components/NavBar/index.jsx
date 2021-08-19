@@ -49,6 +49,12 @@ function NavBar(props) {
     onModelChange(value);
   };
 
+  const handleSelectTemplate = (selected) => {
+    setModel(selected.modelName);
+    setModelLanguage(selected.modelLanguage);
+    setIsOpen(false);
+  };
+
   return (
     <AppBar position="static" color="default">
       <Toolbar>
@@ -64,9 +70,10 @@ function NavBar(props) {
         </Button>
         <QueryTemplatePicker
           isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
           templates={templates}
+          onClose={() => setIsOpen(false)}
           onDeleteTemplate={(template) => onDeleteTemplate(template)}
+          onSelect={(template) => handleSelectTemplate(template)}
         />
         <FormControl className={classes.formControl}>
           <InputLabel id="model-label">Model</InputLabel>
@@ -91,8 +98,8 @@ function NavBar(props) {
             value={modelLanguage}
             onChange={handleChangeModelLanguage}
           >
-            <MenuItem value="English">English</MenuItem>
-            <MenuItem value="German">German</MenuItem>
+            <MenuItem value="english">English</MenuItem>
+            <MenuItem value="german">German</MenuItem>
           </Select>
         </FormControl>
       </Toolbar>
