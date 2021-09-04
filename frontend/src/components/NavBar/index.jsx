@@ -31,6 +31,7 @@ function NavBar(props) {
     onModelChange,
     onModelLanguageChange,
     onDeleteTemplate,
+    onSelectTemplate,
   } = props;
 
   const [modelLanguage, setModelLanguage] = React.useState('');
@@ -53,6 +54,7 @@ function NavBar(props) {
     setModel(selected.modelName);
     setModelLanguage(selected.modelLanguage);
     setIsOpen(false);
+    onSelectTemplate();
   };
 
   return (

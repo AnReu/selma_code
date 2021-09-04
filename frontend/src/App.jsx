@@ -68,6 +68,10 @@ export default function App() {
       });
   };
 
+  const handleSelectTemplate = () => {
+
+  };
+
   const headings = [
     {
       name: 'RETRIEVAL',
@@ -91,6 +95,7 @@ export default function App() {
           onModelChange={setModel}
           onModelLanguageChange={setModelLanguage}
           onDeleteTemplate={(template) => handleDeleteTemplate(template)}
+          onSelectTemplate={(template) => handleSelectTemplate(template)}
           models={models}
           templates={queryTemplates}
         />

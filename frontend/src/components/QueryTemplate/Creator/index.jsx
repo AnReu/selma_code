@@ -15,10 +15,11 @@ import {
   Select,
   MenuItem,
   Input,
-  CircularProgress,
+  CircularProgress, Collapse,
 } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -63,6 +64,7 @@ export default function QueryTemplateCreator(props) {
   const [queryText, setQueryText] = React.useState('');
   const [templateName, setTemplateName] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
+  const [hasError, setHasError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
 
   React.useEffect(() => {
@@ -92,7 +94,7 @@ export default function QueryTemplateCreator(props) {
     })
       .then((response) => {
         if (![200, 404].includes(response.status)) {
-          throw Error(`Bad status code! ErrorCode: ${response.status}`);
+          // throw Error(`Bad status code! ErrorCode: ${response.status}`);
         }
 
         return response.json();
@@ -104,16 +106,20 @@ export default function QueryTemplateCreator(props) {
         onClose();
         onCreateTemplate(newQueryTemplate);
       })
-      .catch((e) => {
+      .catch(() => {
         setSuccess(true);
+        setHasError(true);
         setIsLoading(false);
-        throw Error(e.message !== 'Bad status code!' ? e.message : '');
+        // throw Error(e.message !== 'Bad status code!' ? e.message : '');
       });
   };
 
   return (
     <Dialog onClose={() => onClose()} open={isOpen} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Create Query Template</DialogTitle>
+      <Collapse in={hasError}>
+        <Alert severity="error">Oops!</Alert>
+      </Collapse>
       <Divider />
       <DialogContent>
         <Grid container spacing={3}>
