@@ -46,7 +46,7 @@ const SearchField = ({
           value={value}
           fullWidth
           multiline={multiline}
-          rowsMax="10"
+          maxRows="10"
           endAdornment={(
             <IconButton className={classes.icon} onClick={() => handleQueryChange({ target: { value: '' } })}>
               <ClearIcon />

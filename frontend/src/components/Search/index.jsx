@@ -237,7 +237,7 @@ export default class Search extends Component {
           tabIndex={1}
           child={(state = { equations: '' }) => (
             <Grid item md={8} xs={12}>
-              <Grid container alignItems="flex-start" justify="flex-start">
+              <Grid container alignItems="flex-start" justifyContent="flex-start">
                 <Grid item>
                   <Markdown text={textToMarkdown(state.equations)} />
                 </Grid>
