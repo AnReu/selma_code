@@ -3,22 +3,26 @@ import ReactDOM from 'react-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import './index.css';
 import { ThemeProvider } from '@material-ui/core/styles';
+import { Provider } from 'react-redux';
 import App from './App';
 import theme from './theme';
 import * as serviceWorker from './serviceWorker';
+import store from './store';
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
     <React.StrictMode>
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline />
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </React.StrictMode>
   </ThemeProvider>,
   document.getElementById('root'),
 );
 
-// If you want your app to work offline and load faster, you can change
+// If you want your store to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
