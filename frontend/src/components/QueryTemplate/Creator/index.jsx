@@ -20,6 +20,8 @@ import {
 import { green } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
+import { useSelector } from 'react-redux';
+import { useAddQueryTemplateMutation } from '../../../services/queryTemplates';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -52,67 +54,107 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function QueryTemplateCreator(props) {
-  const classes = useStyles();
+  // Props
   const {
-    // eslint-disable-next-line no-unused-vars
-    isOpen, currentQueryText, currentModelLanguage, currentModel, onClose, onCreateTemplate,
+    isOpen, onClose,
   } = props;
 
+  // Hooks
+  // Local State
+  // TODO: consider renaming vars to sth like: 'formLanguage', 'formName', ...
   const [modelName, setModelName] = React.useState('');
   const [modelLanguage, setModelLanguage] = React.useState('');
   const [database, setDatabase] = React.useState('');
   const [queryText, setQueryText] = React.useState('');
   const [templateName, setTemplateName] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [hasError, setHasError] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
-
+  const [hasError] = React.useState(false);
+  const [success] = React.useState(false);
+  // Global State
+  const [addQueryTemplate, { isLoading }] = useAddQueryTemplateMutation();
+  const currentQueryText = useSelector((state) => state.queryText);
+  const currentModel = useSelector((state) => state.model);
+  const currentModelLanguage = useSelector((state) => state.language);
   React.useEffect(() => {
     setModelName(currentModel);
     setModelLanguage(currentModelLanguage);
     setQueryText(currentQueryText);
   }, [currentQueryText]);
 
+  // Styles
+  const classes = useStyles();
   const buttonClassname = clsx({
     [classes.buttonSuccess]: success,
   });
 
-  const handleSaveQueryTemplate = () => {
-    setSuccess(false);
-    setIsLoading(true);
-
-    const body = JSON.stringify({
-      name: templateName, queryText, modelName, modelLanguage, user: 'Homer',
-    });
-    const headers = new Headers({ 'content-type': 'application/json' });
-
-    fetch('/api/v1/query-templates', {
-      method: 'POST',
-      body,
-      cache: 'no-cache',
-      headers,
-    })
-      .then((response) => {
-        if (![200, 404].includes(response.status)) {
-          // throw Error(`Bad status code! ErrorCode: ${response.status}`);
-        }
-
-        return response.json();
-      })
-      .then((json) => {
-        const newQueryTemplate = json.queryTemplate;
-        setSuccess(true);
-        setIsLoading(false);
-        onClose();
-        onCreateTemplate(newQueryTemplate);
-      })
-      .catch(() => {
-        setSuccess(true);
-        setHasError(true);
-        setIsLoading(false);
-        // throw Error(e.message !== 'Bad status code!' ? e.message : '');
-      });
+  // Handlers
+  const canSave = [templateName, modelName, modelLanguage, queryText].every(Boolean) && !isLoading;
+  const resetForm = () => {
+    setModelName('');
+    setModelLanguage('');
+    setQueryText(currentQueryText);
+    setTemplateName('');
   };
+  const handleSaveQueryTemplate = async () => {
+    if (canSave) {
+      try {
+        const newTemplate = {
+          name: templateName, queryText, modelName, modelLanguage, user: 'Homer',
+        };
+        await addQueryTemplate(newTemplate).unwrap();
+        resetForm();
+        onClose();
+      } catch (err) {
+        console.error('Failed to create the template: ', err);
+      }
+    }
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
+  // const handleSaveQueryTemplate = () => {
+  //
+  //   return addQueryTemplate(newTemplate).then(() => {
+  //     console.log('lol');
+  //   });
+
+  // setSuccess(false);
+  // setIsLoading(true);
+  //
+  // const body = JSON.stringify({
+  //   name: templateName, queryText, modelName, modelLanguage, user: 'Homer',
+  // });
+  // const headers = new Headers({ 'content-type': 'application/json' });
+  //
+  // fetch('/api/v1/query-templates', {
+  //   method: 'POST',
+  //   body,
+  //   cache: 'no-cache',
+  //   headers,
+  // })
+  //   .then((response) => {
+  //     if (![200, 404].includes(response.status)) {
+  //       // throw Error(`Bad status code! ErrorCode: ${response.status}`);
+  //     }
+  //
+  //     return response.json();
+  //   })
+  //   .then((json) => {
+  //     const newQueryTemplate = json.queryTemplate;
+  //     setSuccess(true);
+  //     setIsLoading(false);
+  //     onClose();
+  //     onCreateTemplate(newQueryTemplate);
+  //   })
+  //   .catch(() => {
+  //     setSuccess(true);
+  //     setHasError(true);
+  //     setIsLoading(false);
+  //     // throw Error(e.message !== 'Bad status code!' ? e.message : '');
+  //   });
+  // };
 
   return (
     <Dialog onClose={() => onClose()} open={isOpen} aria-labelledby="form-dialog-title">
@@ -191,13 +233,15 @@ export default function QueryTemplateCreator(props) {
               label="Query"
               fullWidth
               value={queryText}
+              onChange={(e) => { setQueryText(e.target.value); }}
+              onBlur={(e) => setQueryText(e.target.value)}
             />
           </Grid>
 
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={() => onClose()}>
+        <Button color="primary" onClick={() => handleClose()}>
           Cancel
         </Button>
         <div className={classes.wrapper}>

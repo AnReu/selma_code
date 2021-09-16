@@ -4,9 +4,12 @@
 import React, { useState } from 'react';
 import { Box, Button, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useDispatch } from 'react-redux';
 import SearchField from './Field';
 import QueryTemplateCreator from '../../QueryTemplate/Creator';
+import actions from '../../../actions';
 
+// Auxiliary functions
 const useStyles = makeStyles(() => ({
   buttons: {
     margin: 8,
@@ -49,7 +52,10 @@ function getAndReplaceEquations(text, replacer = '') {
 }
 
 function SearchBar(props) {
+  // Styles
   const classes = useStyles();
+
+  // Props
   const {
     model,
     modelLanguage,
@@ -61,14 +67,16 @@ function SearchBar(props) {
     multiline,
     child,
     onQueryChange,
-    onCreateTemplate,
   } = props;
 
+  // Hooks
   const fieldNames = Array.from(titles, (m) => ({ [m.name]: '' }));
 
   const [fields, setFields] = useState(Object.assign({}, ...fieldNames));
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
+  // Handlers
   const handleQueryChange = (value, title) => {
     const fieldsCopy = { ...fields };
     fieldsCopy[title.name] = value;
@@ -77,6 +85,7 @@ function SearchBar(props) {
     let tempValue = null;
 
     if (title.name === 'mono_search') {
+      dispatch(actions.setQueryText(value));
       const replacer = '```';
       const [code] = getAndReplaceCode(value, replacer);
       const [equations] = getAndReplaceEquations(value, replacer);
@@ -137,7 +146,6 @@ function SearchBar(props) {
         currentQueryText={fields.mono_search}
         currentModelLanguage={modelLanguage}
         currentModel={model}
-        onCreateTemplate={(template) => onCreateTemplate(template)}
       />
 
     </div>
