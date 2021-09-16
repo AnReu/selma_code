@@ -21,6 +21,15 @@ const modelReducer = (state = {}, action) => {
   }
 };
 
+const queryTextReducer = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_QUERY_TEXT':
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 // Default initial state
 const initialState = {
   language: 'english',
@@ -31,6 +40,7 @@ export default configureStore({
   reducer: {
     language: languageReducer,
     model: modelReducer,
+    queryText: queryTextReducer,
     [rsApi.reducerPath]: rsApi.reducer,
   },
   preloadedState: initialState,

@@ -8,4 +8,9 @@ const setModel = (model) => ({
   payload: model,
 });
 
-export default { setLanguage, setModel };
+const setQueryText = (queryText) => ({
+  type: 'SET_QUERY_TEXT',
+  payload: queryText,
+});
+
+export default { setLanguage, setModel, setQueryText };
