@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { Box, Typography, Link } from '@material-ui/core';
+import { Box, Typography, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
 const CustomLink = (props) => {

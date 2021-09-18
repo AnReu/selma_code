@@ -2,7 +2,7 @@
 /* eslint-disable react/forbid-prop-types,react/prop-types */
 
 import React, { Component } from 'react';
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import { DropzoneDialog } from 'material-ui-dropzone';
 
 export default class FileUpload extends Component {

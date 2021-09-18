@@ -2,9 +2,8 @@
 /* eslint-disable react/forbid-prop-types */
 import React, { Component } from 'react';
 import propTypes from 'prop-types';
-
-import { Box, CircularProgress, Paper } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { Box, CircularProgress, Paper } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { withRouter } from 'react-router-dom';
 import Markdown from '../Markdown';
 

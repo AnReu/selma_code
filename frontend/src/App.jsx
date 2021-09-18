@@ -1,12 +1,9 @@
 /* eslint-disable no-underscore-dangle,no-unused-vars */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Box,
-  Container,
-  Snackbar,
-} from '@material-ui/core';
+
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Box, Container, Snackbar } from '@mui/material';
 import Document from './components/Document';
 import NavBar from './components/NavBar';
 import Search from './components/Search';

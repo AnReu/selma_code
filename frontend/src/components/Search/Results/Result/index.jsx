@@ -4,16 +4,17 @@
 import React from 'react';
 
 import {
-  ExpansionPanel,
-  ExpansionPanelDetails, ExpansionPanelSummary,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   FormControl,
   FormControlLabel,
   FormLabel,
   Radio,
   RadioGroup,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { makeStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { makeStyles } from '@mui/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import Markdown from '../../../Markdown';
 
@@ -26,7 +27,7 @@ const useStyles = makeStyles(() => ({
   formControl: {
     paddingRight: '2%',
   },
-  expansionPanelDetails: {
+  AccordionDetails: {
     flexDirection: 'column',
   },
 }));
@@ -37,11 +38,11 @@ const Result = ({
   const classes = useStyles();
 
   return (
-    <ExpansionPanel
+    <Accordion
       expanded={expanded === result.id}
       onChange={onExpand(result.id)}
     >
-      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} className={classes.exp}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} className={classes.exp}>
         <div className={classes.heading}>
           <Markdown text={`Document: ${result.text}`} />
         </div>
@@ -68,16 +69,16 @@ const Result = ({
             />
           </RadioGroup>
         </FormControl>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails className={classes.expansionPanelDetails}>
+      </AccordionSummary>
+      <AccordionDetails className={classes.AccordionDetails}>
         <Markdown text={result.text} />
         <div>
           <RouterLink to={`/document/${result.id}`} target="_blank">
             Full Document
           </RouterLink>
         </div>
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 

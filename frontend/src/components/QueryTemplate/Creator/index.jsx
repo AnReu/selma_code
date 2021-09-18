@@ -16,9 +16,9 @@ import {
   MenuItem,
   Input,
   CircularProgress, Collapse,
-} from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
-import { makeStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import { green } from '@mui/material/colors';
+import { makeStyles } from '@mui/styles';
 import Alert from '@material-ui/lab/Alert';
 import { useSelector } from 'react-redux';
 import { useAddQueryTemplateMutation } from '../../../services/queryTemplates';

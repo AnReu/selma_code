@@ -3,19 +3,23 @@
 import React from 'react';
 import {
   AppBar, Button, FormControl, InputLabel, MenuItem, Select, Toolbar,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { useDispatch, useSelector } from 'react-redux';
 import NavTitle from './NavTitle';
 import QueryTemplatePicker from '../QueryTemplate/Picker';
+import actions from '../../actions';
 
+// TODO: fix styling
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
   formControl: {
     minWidth: 160,
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
+    marginLeft: 32,
+    marginRight: 32,
+    backgroundColor: 'red',
   },
   button: {
     marginRight: theme.spacing(2),
@@ -23,38 +27,34 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function NavBar(props) {
+  // Styles
   const classes = useStyles();
+
+  // Props
   const {
     headings,
     models,
-    templates,
-    onModelChange,
-    onModelLanguageChange,
     onDeleteTemplate,
-    onSelectTemplate,
   } = props;
 
-  const [modelLanguage, setModelLanguage] = React.useState('');
-  const [model, setModel] = React.useState('');
+  // Hooks
+  const language = useSelector((state) => state.language);
+  const model = useSelector((state) => state.model);
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = React.useState(false);
 
+  // Handlers
   const handleChangeModelLanguage = (event) => {
     const { value } = event.target;
-    setModelLanguage(value);
-    onModelLanguageChange(value);
+    dispatch(actions.setLanguage(value));
+    // TODO: check which function should be called here
+    // onModelLanguageChange(value);
   };
-
   const handleChangeModel = (event) => {
     const { value } = event.target;
-    setModel(value);
-    onModelChange(value);
-  };
-
-  const handleSelectTemplate = (selected) => {
-    setModel(selected.modelName);
-    setModelLanguage(selected.modelLanguage);
-    setIsOpen(false);
-    onSelectTemplate();
+    dispatch(actions.setModel(value));
+    // TODO: check which function should be called here
+    // onModelChange(value);
   };
 
   return (
@@ -72,12 +72,10 @@ function NavBar(props) {
         </Button>
         <QueryTemplatePicker
           isOpen={isOpen}
-          templates={templates}
           onClose={() => setIsOpen(false)}
           onDeleteTemplate={(template) => onDeleteTemplate(template)}
-          onSelect={(template) => handleSelectTemplate(template)}
         />
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <InputLabel id="model-label">Model</InputLabel>
           <Select
             labelId="model-label"
@@ -92,12 +90,12 @@ function NavBar(props) {
           </Select>
         </FormControl>
 
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <InputLabel id="model-language-label">Model Language</InputLabel>
           <Select
             labelId="model-language-label"
             id="model-language"
-            value={modelLanguage}
+            value={language}
             onChange={handleChangeModelLanguage}
           >
             <MenuItem value="english">English</MenuItem>

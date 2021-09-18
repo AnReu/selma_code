@@ -4,9 +4,9 @@
 import React, { useState } from 'react';
 import {
   FormControl, FormHelperText, IconButton, Input, InputLabel,
-} from '@material-ui/core';
-import ClearIcon from '@material-ui/icons/Clear';
-import { makeStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import ClearIcon from '@mui/icons-material';
 
 const useStyles = makeStyles(() => ({
   icon: {

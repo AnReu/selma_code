@@ -2,8 +2,8 @@
 /* eslint-disable react/forbid-prop-types,react/prop-types,react/no-array-index-key */
 
 import React, { useState } from 'react';
-import { Box, Button, Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Box, Button, Grid } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { useDispatch } from 'react-redux';
 import SearchField from './Field';
 import QueryTemplateCreator from '../../QueryTemplate/Creator';
@@ -111,6 +111,7 @@ function SearchBar(props) {
                   onEnter={onSearch}
                   validation={validation}
                   multiline={multiline}
+                  va
                 />
               </Grid>
             ))}
