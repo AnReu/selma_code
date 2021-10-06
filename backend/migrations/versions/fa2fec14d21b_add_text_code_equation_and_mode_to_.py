@@ -1,8 +1,8 @@
-"""first migration
+"""add text, code, equation and mode to QueryTemplate
 
-Revision ID: 37e9e7531e22
+Revision ID: fa2fec14d21b
 Revises: 
-Create Date: 2021-08-16 07:04:59.701489
+Create Date: 2021-10-04 17:54:39.032404
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '37e9e7531e22'
+revision = 'fa2fec14d21b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,9 +21,12 @@ def upgrade():
     op.create_table('query_template',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=80), nullable=False),
-    sa.Column('model_name', sa.String(length=80), nullable=False),
-    sa.Column('model_language', sa.String(length=120), nullable=False),
-    sa.Column('query_text', sa.String(length=120), nullable=False),
+    sa.Column('model', sa.String(length=80), nullable=False),
+    sa.Column('mode', sa.String(length=80), nullable=False),
+    sa.Column('language', sa.String(length=120), nullable=False),
+    sa.Column('text', sa.String(length=120), nullable=True),
+    sa.Column('code', sa.String(length=120), nullable=True),
+    sa.Column('equation', sa.String(length=120), nullable=True),
     sa.Column('user', sa.String(length=120), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
