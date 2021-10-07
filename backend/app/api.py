@@ -1,8 +1,9 @@
 import datetime
 import json
 import re
+import os
 from flask import jsonify, request, make_response
-from backend.app import app
+from backend.app import app, DATA_DIR
 from backend.app import db
 from backend.app import app_db
 from backend.app.models import QueryTemplate, QueryTemplateSchema
@@ -86,6 +87,15 @@ def get_names_of_models():
 @app.route('/api/v1/languages')
 def get_languages():
     return jsonify(['english', 'german'])
+
+
+@app.route('/api/v1/dbs')
+def get_dbs():
+    dbs = []
+    for file in os.listdir(DATA_DIR):
+        if file.endswith(".db"):
+            dbs.append(file)
+    return jsonify(dbs)
 
 
 @app.route('/api/v1/query-templates')
