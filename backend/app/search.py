@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from backend.models.VectorModel import predictor as vector_predictor
 from backend.models.PyterrierModel import predictor as pyterrier_predictor
+from backend.app import DATA_DIR
 
 
 from .HTMLCutter import HTMLCutter
@@ -20,12 +21,12 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
     status = 200
 
     if model == 'vector':
-        predictor = vector_predictor.Predictor(os.environ.get('DATA_DIR'))
+        predictor = vector_predictor.Predictor(DATA_DIR)
     elif model == 'PyterrierModel':
         # PYTERRIER_MODEL_PATH is the path to the data.properties of the used index
         predictor = pyterrier_predictor.Predictor(os.environ.get('PYTERRIER_MODEL_PATH'))
     else:
-        predictor = vector_predictor.Predictor(os.environ.get('DATA_DIR'))
+        predictor = vector_predictor.Predictor(DATA_DIR)
 
     if id is None:
         try:

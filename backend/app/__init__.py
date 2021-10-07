@@ -6,13 +6,13 @@ from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 from .config import Config
 from .db_connection import DB
-from .search import search
 
 # Load environment variables specific to the retrievalsystem app.
 Config.load_rsenv()
 
-
 app = Flask(__name__, static_folder='../../frontend/build', static_url_path='/')
+DATA_DIR = os.path.join(os.path.dirname(app.instance_path), 'data')
+
 app.config.from_object(Config)
 # app_db is the DB used by the frontend app. It stores things like QueryTemplates.
 app_db = SQLAlchemy(app)
