@@ -1,5 +1,6 @@
 import gensim
 import numpy as np
+import os
 from gensim import matutils
 import re
 import json
@@ -96,7 +97,11 @@ class WordTokenizer:
     """Tokenizer for splitting a text passage into sentences and words, and normalize them."""
 
     def __init__(self, data_path):
-        self.stopwords = json.load(open(data_path+'stopwords.json'))
+        self.stopwords = json.load(
+            open(
+                os.path.join(data_path, 'stopwords.json')
+            )
+        )
 
     def split_text(self, text):
         return re.split('\. |\? |! ', text)

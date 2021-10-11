@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from backend.models.VectorModel import predictor as vector_predictor
 from backend.models.PyterrierModel import predictor as pyterrier_predictor
-from backend.app import DATA_DIR
+from backend.app.config import Config
 
 
 from .HTMLCutter import HTMLCutter
@@ -20,13 +20,15 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
     error = ''
     status = 200
 
+    print(Config.DATA_DIR)
+
     if model == 'vector':
-        predictor = vector_predictor.Predictor(DATA_DIR)
+        predictor = vector_predictor.Predictor(Config.DATA_DIR)
     elif model == 'PyterrierModel':
         # PYTERRIER_MODEL_PATH is the path to the data.properties of the used index
         predictor = pyterrier_predictor.Predictor(os.environ.get('PYTERRIER_MODEL_PATH'))
     else:
-        predictor = vector_predictor.Predictor(DATA_DIR)
+        predictor = vector_predictor.Predictor(Config.DATA_DIR)
 
     if id is None:
         try:
@@ -39,7 +41,7 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         exchange_id = int(id)
 
         con, cur = db.create_connection()
-        query = 'SELECT {} FROM {} WHERE exchange_id={}'.format('id', 'searchables', exchange_id)
+        query = 'SELECT {} FROM {} WHERE exchange_id={}'.format('id', 'Documents', exchange_id)
         cur.execute(query)
         id = cur.fetchone()
         con.close()
@@ -50,24 +52,14 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         else:
             result_ids = predictor.predict_by_id(id[0])
 
-    # TODO: when name of tables and columns have been made consistent
-    # among all DBs, then we will not need this env var anymore.
-    # For now: DB_TABLE_NAME = 'searchables' if db = db.db or
-    # DB_TABLE_NAME = 'POST' if db = postdb.db
-    db_table_name = os.environ.get('DB_TABLE_NAME')
-    data = db.get_results_by_id(db_table_name, result_ids)
-    column_names = db.get_column_names(db_table_name)
+    data = db.get_results_by_id('Documents', result_ids)
+    column_names = db.get_column_names('Documents')
 
     results = results_to_json(data, [description[0] for description in column_names])
-
-    # TODO: when name of tables and columns have been made consistent
-    # among all DBs, then we will not need this env var anymore.
-    # For now: DB_CONTENT_ATTRIBUTE_NAME = 'text' if db = db.db or
-    # DB_CONTENT_ATTRIBUTE_NAME = 'Body' if db = postdb.db
-    db_content_attribute_name = os.environ.get('DB_CONTENT_ATTRIBUTE_NAME')
+    db_content_attribute_name = 'body'
 
     for result in results:
-        result['text'], result['cut'] = trim_html(result[db_content_attribute_name])
+        result['body'], result['cut'] = trim_html(result[db_content_attribute_name])
         result['relevant_sentence'] = get_relevant_sentence(result)
 
     return {'results': results, 'error': error}, status
@@ -88,7 +80,7 @@ def trim_html(html):
 
 
 def get_relevant_sentence(result):
-    return Parser.get_first(result['text'])
+    return Parser.get_first(result['body'])
 
 
 class Parser(HTMLParser):

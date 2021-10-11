@@ -22,7 +22,7 @@ class DB:
     def create_structure(self):
         con, cur = self.create_connection()
 
-        cur.execute('CREATE TABLE IF NOT EXISTS searchables ('
+        cur.execute('CREATE TABLE IF NOT EXISTS Documents ('
                     'id INTEGER PRIMARY KEY AUTOINCREMENT,'
                     'exchange_id INTEGER,'
                     'text TEXT NOT NULL,'
@@ -33,7 +33,7 @@ class DB:
                     'id INTEGER,'
                     'query TEXT,'
                     'relevant TEXT,'
-                    'FOREIGN KEY (id) REFERENCES searchables (id)'
+                    'FOREIGN KEY (id) REFERENCES PO (id)'
                     ')')
 
         con.commit()

@@ -1,3 +1,4 @@
+import os
 from backend.models.VectorModel.model import VectorModel, WordVectorModel, TexTokenizer, WordTokenizer
 
 
@@ -5,9 +6,11 @@ class Predictor:
     """Predictor for most similar documents."""
 
     def __init__(self, data_path):
-        self.eq_model = VectorModel(data_path + 'nctr_se_latex2vec.model', data_path + 'dummy_t2v_features.npy',
+        self.eq_model = VectorModel(os.path.join(data_path, 'nctr_se_latex2vec.model'),
+                                    os.path.join(data_path, 'dummy_t2v_features.npy'),
                                     TexTokenizer())
-        self.text_model = WordVectorModel(data_path + 'se_w2v.model', data_path + 'dummy_w2v_features.npy',
+        self.text_model = WordVectorModel(os.path.join(data_path, 'se_w2v.model'),
+                                          os.path.join(data_path, 'dummy_w2v_features.npy'),
                                           WordTokenizer(data_path))
 
     def predict(self, text, code, equations, n=5):

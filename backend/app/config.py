@@ -14,9 +14,17 @@ class Config(object):
     # SQLALCHEMY_TRACK_MODIFICATIONS = False disables, sending a signal to
     # the application every time a change is about to be made in the database.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    DATA_DIR = ''
 
     @staticmethod
     def load_rsenv() -> bool:
         path = dotenv.find_dotenv(".rsenv")
         rsconfig = dotenv.load_dotenv(path, encoding="utf-8")
         return rsconfig
+
+    @staticmethod
+    def set_data_dir(app_path):
+        try:
+            Config.DATA_DIR = os.path.join(app_path, 'data')
+        except Exception as error:
+            print(f'oops... error = {error}')

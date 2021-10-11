@@ -3,7 +3,7 @@ import json
 import re
 import os
 from flask import jsonify, request, make_response
-from backend.app import app, DATA_DIR
+from backend.app import app
 from backend.app import db
 from backend.app import app_db
 from backend.app.models import QueryTemplate, QueryTemplateSchema
@@ -12,6 +12,8 @@ from backend.parser import markdown_parser
 from backend.parser import pdf_parser
 from backend.parser import tex_parser
 from marshmallow import ValidationError
+from backend.app.db_connection import DB
+from backend.app.config import Config
 
 
 @app.route('/')
@@ -24,12 +26,17 @@ def search_route():
     text = request.args.get('text')
     code = request.args.get('code')
     equation = request.args.get('equations')
-    id = request.args.get('id')
+    _id = request.args.get('id')
     exchange = request.args.get('exchange') or 'physics,stackexchange'
     exchange = exchange.split(',')
     model = request.args.get('model')
     model_language = request.args.get('model-language')
-    return search(db, text, code, equation, id, exchange, model)
+    db_name = request.args.get('db')
+    db_path = os.path.join(Config.DATA_DIR, db_name)
+    print(f'db_path = {db_path}')
+    _db = DB(db_path)
+
+    return search(_db, text, code, equation, _id, exchange, model, model_language)
 
 
 @app.route('/api/v1/relevance', methods=['POST'])
@@ -48,7 +55,7 @@ def relevance():
 @app.route('/api/v1/document')
 def get_document():
     id = request.args.get('id')
-    document = db.get_results_by_id('searchables', [id], ['text'])[0][0]
+    document = db.get_results_by_id('Documents', [id], ['text'])[0][0]
     return {'document': re.subn(r'<img', '<img style="max-width: 100%"', document)[0]}
 
 
@@ -92,7 +99,7 @@ def get_languages():
 @app.route('/api/v1/dbs')
 def get_dbs():
     dbs = []
-    for file in os.listdir(DATA_DIR):
+    for file in os.listdir('lol'):
         if file.endswith(".db"):
             dbs.append(file)
     return jsonify(dbs)

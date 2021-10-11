@@ -11,7 +11,7 @@ from .db_connection import DB
 Config.load_rsenv()
 
 app = Flask(__name__, static_folder='../../frontend/build', static_url_path='/')
-DATA_DIR = os.path.join(os.path.dirname(app.instance_path), 'data')
+Config.set_data_dir(os.path.dirname(app.instance_path))
 
 app.config.from_object(Config)
 # app_db is the DB used by the frontend app. It stores things like QueryTemplates.
