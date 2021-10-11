@@ -15,7 +15,7 @@ sys.path.insert(0, PROJECT_DIR)
 cutter = HTMLCutter(700, 2000)
 
 
-def search(db, text=None, code=None, equation=None, id=None, exchange=None, model=None):
+def search(db, text=None, code=None, equation=None, id=None, exchange=None, model=None, model_language=None):
     result_ids = []
     error = ''
     status = 200
