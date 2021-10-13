@@ -143,4 +143,14 @@ def create_query_template():
     return {"message": "Created new Query Template.", "queryTemplate": result}
 
 
+@app.route('/api/v1/configs', methods=['POST'])
+def update_config_vars():
+    print(f'before: {Config.DB_PATH}')
+    json_data = request.get_json()
+    Config.DB_PATH = json_data['db_path']
+    print(f'after: {Config.DB_PATH}')
+    return make_response(f'woooooooow {Config.DB_PATH}', 204)
+
+
+
 

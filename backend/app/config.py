@@ -14,7 +14,12 @@ class Config(object):
     # SQLALCHEMY_TRACK_MODIFICATIONS = False disables, sending a signal to
     # the application every time a change is about to be made in the database.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
     DATA_DIR = ''
+    DB_PATH = ''
+    PYTERRIER_MODEL_PATH = ''
+    DB_TABLE_NAME = ''
+    DB_CONTENT_ATTRIBUTE_NAME = ''
 
     @staticmethod
     def load_rsenv() -> bool:
