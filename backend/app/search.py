@@ -20,15 +20,13 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
     error = ''
     status = 200
 
-    print(Config.DATA_DIR)
-
     if model == 'vector':
-        predictor = vector_predictor.Predictor(Config.DATA_DIR)
+        predictor = vector_predictor.Predictor(Config.get_data_dir())
     elif model == 'PyterrierModel':
         # PYTERRIER_MODEL_PATH is the path to the data.properties of the used index
-        predictor = pyterrier_predictor.Predictor(os.environ.get('PYTERRIER_MODEL_PATH'))
+        predictor = pyterrier_predictor.Predictor(Config.get_data_pyterrier_model_path())
     else:
-        predictor = vector_predictor.Predictor(Config.DATA_DIR)
+        predictor = vector_predictor.Predictor(Config.get_data_dir())
 
     if id is None:
         try:
