@@ -1,6 +1,8 @@
 import os
-import dotenv
-basedir = os.path.abspath(os.path.dirname(__file__))
+from dotenv import load_dotenv, find_dotenv
+
+basedir = find_dotenv("app/.rsenv")
+load_dotenv(basedir, encoding="utf-8")
 
 
 class Config(object):
@@ -22,26 +24,33 @@ class Config(object):
     __DB_CONTENT_ATTRIBUTE_NAME = None
 
     @staticmethod
-    def load_rsenv() -> bool:
-        path = dotenv.find_dotenv("app/.rsenv")
-        rsconfig = dotenv.load_dotenv(path, encoding="utf-8")
-        return rsconfig
-
-    @staticmethod
-    def set_data_dir(app_path):
-        try:
-            Config.DATA_DIR = os.path.join(app_path, 'data')
-        except Exception as error:
-            print(f'oops... error = {error}')
-
-    @staticmethod
-    def get_db_path(self):
-        if self.__DB_PATH:
-            return self.__DB_PATH
+    def get_db_path():
+        if Config.__DB_PATH:
+            return Config.__DB_PATH
         try:
             return os.environ.get('DB_PATH')
         except Exception as error:
-            print(f'Could not find DB_PATH. Variable was not set in frondend nor using .rsenv')
+            print(f'Could not find DB_PATH. Variable was not set in frontend nor using .rsenv')
+            raise
+
+    @staticmethod
+    def get_data_dir():
+        if Config.__DATA_DIR:
+            return Config.__DATA_DIR
+        try:
+            return os.environ.get('DATA_DIR')
+        except Exception as error:
+            print(f'Could not find DATA_DIR. Variable was not set in frontend nor using .rsenv')
+            raise
+
+    @staticmethod
+    def get_data_pyterrier_model_path():
+        if Config.__PYTERRIER_MODEL_PATH:
+            return Config.__PYTERRIER_MODEL_PATH
+        try:
+            return os.environ.get('PYTERRIER_MODEL_PATH')
+        except Exception as error:
+            print(f'Could not find PYTERRIER_MODEL_PATH. Variable was not set in frondend nor using .rsenv')
             raise
 
 
