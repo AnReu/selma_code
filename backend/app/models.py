@@ -1,6 +1,5 @@
-from backend.app import app_db as db
+from backend.app import db
 from backend.app import ma
-from marshmallow import post_load
 
 
 class QueryTemplate(db.Model):
@@ -33,7 +32,8 @@ class CamelCaseSchema (ma.SQLAlchemySchema):
     """Schema that uses camel-case for its external representation
     and snake-case for its internal representation.
     """
-    def on_bind_field(self, field_name, field_obj):
+    @staticmethod
+    def on_bind_field(field_name, field_obj):
         field_obj.data_key = camelcase(field_obj.data_key or field_name)
 
 
