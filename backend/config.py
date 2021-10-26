@@ -50,7 +50,27 @@ class Config(object):
         try:
             return os.environ.get('PYTERRIER_MODEL_PATH')
         except Exception as error:
-            print(f'Could not find PYTERRIER_MODEL_PATH. Variable was not set in frondend nor using .rsenv')
+            print(f'Could not find PYTERRIER_MODEL_PATH. Variable was not set in frontend nor using .rsenv')
+            raise
+
+    @staticmethod
+    def get_db_content_attribute_name():
+        if Config.__DB_CONTENT_ATTRIBUTE_NAME:
+            return Config.__DB_CONTENT_ATTRIBUTE_NAME
+        try:
+            return os.environ.get('DB_CONTENT_ATTRIBUTE_NAME')
+        except Exception as error:
+            print(f'Could not find DB_CONTENT_ATTRIBUTE_NAME. Variable was not set in frontend nor using .rsenv')
+            raise
+
+    @staticmethod
+    def get_db_table_name():
+        if Config.__DB_TABLE_NAME:
+            return Config.__DB_TABLE_NAME
+        try:
+            return os.environ.get('DB_TABLE_NAME')
+        except Exception as error:
+            print(f'Could not find DB_TABLE_NAME. Variable was not set in frontend nor using .rsenv')
             raise
 
 
