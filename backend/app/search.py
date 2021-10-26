@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from backend.models.VectorModel import predictor as vector_predictor
 from backend.models.PyterrierModel import predictor as pyterrier_predictor
-from backend.app.config import Config
+from backend.config import Config
 
 
 from .HTMLCutter import HTMLCutter
