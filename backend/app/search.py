@@ -24,7 +24,7 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
         predictor = vector_predictor.Predictor(Config.get_data_dir())
     elif model == 'PyterrierModel':
         # PYTERRIER_MODEL_PATH is the path to the data.properties of the used index
-        predictor = pyterrier_predictor.Predictor(Config.get_data_pyterrier_model_path())
+        predictor = pyterrier_predictor.Predictor(Config.get_pyterrier_model_path())
     else:
         predictor = vector_predictor.Predictor(Config.get_data_dir())
 
