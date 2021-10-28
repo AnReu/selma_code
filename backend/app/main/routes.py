@@ -145,13 +145,14 @@ def create_query_template():
 
 @bp.route('/api/v1/configs', methods=['GET'])
 def get_config_vars():
-    config_vars = [
-        Config.get_data_dir(),
-        Config.get_db_path(),
-        Config.get_db_table_name(),
-        Config.get_db_content_attribute_name(),
-        Config.get_data_pyterrier_model_path()
-    ]
+    config_vars = {
+        "data_dir": Config.DATA_DIR if Config.DATA_DIR else "",
+        "db_path": Config.DB_PATH if Config.DB_PATH else "",
+        "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
+        "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME if Config.DB_CONTENT_ATTRIBUTE_NAME else "",
+        "pyterrier_model_path": Config.PYTERRIER_MODEL_PATH if Config.PYTERRIER_MODEL_PATH else ""
+    }
+    print(config_vars)
     return make_response(jsonify(config_vars), 200)
 
 
@@ -160,27 +161,27 @@ def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
     if 'data_dir' in json_data:
-        Config.__DATA_DIR = json_data['data_dir']
-        modified_fields.append('db_path')
+        Config.DATA_DIR = json_data['data_dir']
+        modified_fields.append('data_dir')
     else:
-        Config.__DARA_DIR = None
+        Config.DATA_DIR = None
 
     if 'db_path' in json_data:
-        Config.__DB_PATH = json_data['db_path']
+        Config.DB_PATH = json_data['db_path']
         modified_fields.append('db_path')
     else:
-        Config.__DB_PATH = None
+        Config.DB_PATH = None
 
     if 'db_table_name' in json_data:
-        Config.__DB_TABLE_NAME = json_data['db_table_name']
+        Config.DB_TABLE_NAME = json_data['db_table_name']
         modified_fields.append('db_table_name')
     else:
-        Config.__DB_TABLE_NAME = None
+        Config.DB_TABLE_NAME = None
 
     if 'db_content_attribute_name' in json_data:
-        Config.__DB_CONTENT_ATTRIBUTE_NAME = json_data['db_content_attribute_name']
+        Config.DB_CONTENT_ATTRIBUTE_NAME = json_data['db_content_attribute_name']
         modified_fields.append('db_content_attribute_name')
     else:
-        Config.__DB_CONTENT_ATTRIBUTE_NAME = None
+        Config.DB_CONTENT_ATTRIBUTE_NAME = None
 
     return make_response(jsonify(modified_fields), 204)

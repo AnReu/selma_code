@@ -17,16 +17,16 @@ class Config(object):
     # the application every time a change is about to be made in the database.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    __DATA_DIR = None
-    __DB_PATH = None
-    __PYTERRIER_MODEL_PATH = None
-    __DB_TABLE_NAME = None
-    __DB_CONTENT_ATTRIBUTE_NAME = None
+    DATA_DIR = None
+    DB_PATH = None
+    PYTERRIER_MODEL_PATH = None
+    DB_TABLE_NAME = None
+    DB_CONTENT_ATTRIBUTE_NAME = None
 
     @staticmethod
     def get_db_path():
-        if Config.__DB_PATH:
-            return Config.__DB_PATH
+        if Config.DB_PATH:
+            return Config.DB_PATH
         try:
             return os.environ.get('DB_PATH')
         except Exception as error:
@@ -35,8 +35,8 @@ class Config(object):
 
     @staticmethod
     def get_data_dir():
-        if Config.__DATA_DIR:
-            return Config.__DATA_DIR
+        if Config.DATA_DIR:
+            return Config.DATA_DIR
         try:
             return os.environ.get('DATA_DIR')
         except Exception as error:
@@ -44,9 +44,9 @@ class Config(object):
             raise
 
     @staticmethod
-    def get_data_pyterrier_model_path():
-        if Config.__PYTERRIER_MODEL_PATH:
-            return Config.__PYTERRIER_MODEL_PATH
+    def get_pyterrier_model_path():
+        if Config.PYTERRIER_MODEL_PATH:
+            return Config.PYTERRIER_MODEL_PATH
         try:
             return os.environ.get('PYTERRIER_MODEL_PATH')
         except Exception as error:
@@ -55,8 +55,8 @@ class Config(object):
 
     @staticmethod
     def get_db_content_attribute_name():
-        if Config.__DB_CONTENT_ATTRIBUTE_NAME:
-            return Config.__DB_CONTENT_ATTRIBUTE_NAME
+        if Config.DB_CONTENT_ATTRIBUTE_NAME:
+            return Config.DB_CONTENT_ATTRIBUTE_NAME
         try:
             return os.environ.get('DB_CONTENT_ATTRIBUTE_NAME')
         except Exception as error:
@@ -65,8 +65,8 @@ class Config(object):
 
     @staticmethod
     def get_db_table_name():
-        if Config.__DB_TABLE_NAME:
-            return Config.__DB_TABLE_NAME
+        if Config.DB_TABLE_NAME:
+            return Config.DB_TABLE_NAME
         try:
             return os.environ.get('DB_TABLE_NAME')
         except Exception as error:
