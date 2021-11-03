@@ -99,7 +99,7 @@ def get_languages():
 @bp.route('/api/v1/dbs')
 def get_dbs():
     dbs = []
-    for file in os.listdir('lol'):
+    for file in os.listdir(Config.get_data_dir()):
         if file.endswith(".db"):
             dbs.append(file)
     return jsonify(dbs)
