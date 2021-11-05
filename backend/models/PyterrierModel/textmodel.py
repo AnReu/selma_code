@@ -13,8 +13,10 @@ class TF_IDFModel:
         self.index = pt.IndexFactory.of(index_path)
 
     def predict(self, query, N=5):
-        tf_idf = pt.BatchRetrieve(self.index, wmodel="TF_IDF", properties={"tokeniser": "UTFTokeniser"})
+        tf_idf = pt.BatchRetrieve(
+            self.index, wmodel="TF_IDF", properties={"tokeniser": "UTFTokeniser"}
+        )
         result = tf_idf.search(query)
-        docnolist = result['docno'].values.tolist()
+        docnolist = result["docno"].values.tolist()
         thelist = docnolist[:N]
         return thelist

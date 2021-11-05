@@ -15,10 +15,20 @@ class QueryTemplate(db.Model):
     url = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return '<QueryTemplate %r>' % self.name
+        return "<QueryTemplate %r>" % self.name
 
     def from_dict(self, data):
-        for field in ['model', 'language', 'name', 'text', 'user', 'code', 'equation', 'mode', 'url']:
+        for field in [
+            "model",
+            "language",
+            "name",
+            "text",
+            "user",
+            "code",
+            "equation",
+            "mode",
+            "url",
+        ]:
             if field in data:
                 setattr(self, field, data[field])
 
@@ -28,10 +38,11 @@ def camelcase(s):
     return next(parts) + "".join(i.title() for i in parts)
 
 
-class CamelCaseSchema (ma.SQLAlchemySchema):
+class CamelCaseSchema(ma.SQLAlchemySchema):
     """Schema that uses camel-case for its external representation
     and snake-case for its internal representation.
     """
+
     @staticmethod
     def on_bind_field(field_name, field_obj):
         field_obj.data_key = camelcase(field_obj.data_key or field_name)

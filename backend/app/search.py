@@ -9,20 +9,30 @@ from backend.config import Config
 
 
 from .HTMLCutter import HTMLCutter
-PROJECT_DIR = str(Path(__file__).parents[2]) + '/'
+
+PROJECT_DIR = str(Path(__file__).parents[2]) + "/"
 sys.path.insert(0, PROJECT_DIR)
 
 cutter = HTMLCutter(700, 2000)
 
 
-def search(db, text=None, code=None, equation=None, id=None, exchange=None, model=None, model_language=None):
+def search(
+    db,
+    text=None,
+    code=None,
+    equation=None,
+    id=None,
+    exchange=None,
+    model=None,
+    model_language=None,
+):
     result_ids = []
-    error = ''
+    error = ""
     status = 200
 
-    if model == 'vector':
+    if model == "vector":
         predictor = vector_predictor.Predictor(Config.get_data_dir())
-    elif model == 'PyterrierModel':
+    elif model == "PyterrierModel":
         # PYTERRIER_MODEL_PATH is the path to the data.properties of the used index
         predictor = pyterrier_predictor.Predictor(Config.get_pyterrier_model_path())
     else:
@@ -33,34 +43,36 @@ def search(db, text=None, code=None, equation=None, id=None, exchange=None, mode
             result_ids = predictor.predict(text, code, equation)
         except KeyError:
             result_ids = []
-            error = 'Key Error: word not in vocabulary'
+            error = "Key Error: word not in vocabulary"
             status = 404
-    elif exchange == ['physics', 'stackexchange']:
+    elif exchange == ["physics", "stackexchange"]:
         exchange_id = int(id)
 
         con, cur = db.create_connection()
-        query = 'SELECT {} FROM {} WHERE exchange_id={}'.format('id', 'Documents', exchange_id)
+        query = "SELECT {} FROM {} WHERE exchange_id={}".format(
+            "id", "Documents", exchange_id
+        )
         cur.execute(query)
         id = cur.fetchone()
         con.close()
 
         if not id:
-            error = 'ID not present'
+            error = "ID not present"
             status = 404
         else:
             result_ids = predictor.predict_by_id(id[0])
 
-    data = db.get_results_by_id('Documents', result_ids)
-    column_names = db.get_column_names('Documents')
+    data = db.get_results_by_id("Documents", result_ids)
+    column_names = db.get_column_names("Documents")
 
     results = results_to_json(data, [description[0] for description in column_names])
-    db_content_attribute_name = 'body'
+    db_content_attribute_name = "body"
 
     for result in results:
-        result['body'], result['cut'] = trim_html(result[db_content_attribute_name])
-        result['relevant_sentence'] = get_relevant_sentence(result)
+        result["body"], result["cut"] = trim_html(result[db_content_attribute_name])
+        result["relevant_sentence"] = get_relevant_sentence(result)
 
-    return {'results': results, 'error': error}, status
+    return {"results": results, "error": error}, status
 
 
 def results_to_json(results, column_names):
@@ -74,23 +86,23 @@ def results_to_json(results, column_names):
 
 
 def trim_html(html):
-    return cutter.cut(re.subn(r'<img[^>]*>', '<strong>[Image]</strong>', html)[0])
+    return cutter.cut(re.subn(r"<img[^>]*>", "<strong>[Image]</strong>", html)[0])
 
 
 def get_relevant_sentence(result):
-    return Parser.get_first(result['body'])
+    return Parser.get_first(result["body"])
 
 
 class Parser(HTMLParser):
     def __init__(self):
         super().__init__()
-        self.first_data = ''
+        self.first_data = ""
 
     def handle_data(self, data):
         data = data.strip()
-        if data == '':
+        if data == "":
             return
-        if self.first_data == '':
+        if self.first_data == "":
             self.first_data = data
 
     @staticmethod
@@ -99,7 +111,9 @@ class Parser(HTMLParser):
         parser = Parser()
         parser.feed(data)
 
-        first_sentence = ''.join(re.split('([.?!])', parser.first_data, 1)[:2]).replace('\n', '')
+        first_sentence = "".join(re.split("([.?!])", parser.first_data, 1)[:2]).replace(
+            "\n", ""
+        )
         if len(first_sentence) > line_limit:
             first_sentence = Parser.__handle_long_sentence(first_sentence, line_limit)
         return first_sentence
@@ -110,8 +124,8 @@ class Parser(HTMLParser):
 
         eq_list = Parser.__find_equations(first_sentence)
         current_length = 0
-        sentence = ''
-        critical_segment = ''
+        sentence = ""
+        critical_segment = ""
 
         for index, el in enumerate(eq_list):
             current_length += len(el)
@@ -125,7 +139,7 @@ class Parser(HTMLParser):
             if len(sentence) + len(critical_segment) <= line_limit + soft_limit:
                 sentence += critical_segment
             else:
-                if critical_segment[0] == '$':
+                if critical_segment[0] == "$":
                     if current_length > 0:
                         pass
                     else:
@@ -140,22 +154,24 @@ class Parser(HTMLParser):
                             break
                         else:
                             sentence += el
-                    if critical_segment[:3] == '```':
+                    if critical_segment[:3] == "```":
                         pass
                     else:
-                        last_space_index = Parser.__get_last_index(critical_segment[:line_limit - current_length], ' ')
+                        last_space_index = Parser.__get_last_index(
+                            critical_segment[: line_limit - current_length], " "
+                        )
                         sentence += critical_segment[:last_space_index]
         return sentence
 
     @staticmethod
     def __find_equations(string):
-        blocks = re.split('(\$\$)', string)
+        blocks = re.split("(\$\$)", string)
         blocks = Parser.__concat_with_delimiter(blocks)
         results = []
 
         for index, element in enumerate(blocks):
             if index % 2 == 0:
-                inlines = re.split('(\$)', element)
+                inlines = re.split("(\$)", element)
                 results.extend(Parser.__concat_with_delimiter(inlines))
             else:
                 results.append(element)
@@ -163,12 +179,12 @@ class Parser(HTMLParser):
 
     @staticmethod
     def __find_code(string):
-        blocks = re.split('(```)', string)
+        blocks = re.split("(```)", string)
         return Parser.__concat_with_delimiter(blocks)
 
     @staticmethod
     def __concat_with_delimiter(data):
-        delimiter = ''
+        delimiter = ""
         results = []
         for index, element in enumerate(data):
             if index % 4 == 0:
