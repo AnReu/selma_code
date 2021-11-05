@@ -1,8 +1,8 @@
 import os
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 
-basedir = find_dotenv("app/.rsenv")
-load_dotenv(basedir, encoding="utf-8")
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, "app", ".rsenv"), encoding="utf-8")
 
 
 class Config(object):
