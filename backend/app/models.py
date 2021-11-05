@@ -13,6 +13,7 @@ class QueryTemplate(db.Model):
     equation = db.Column(db.String(120), nullable=True)
     user = db.Column(db.String(120), nullable=False)
     url = db.Column(db.String(120), nullable=False)
+    database = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
         return "<QueryTemplate %r>" % self.name
@@ -28,9 +29,24 @@ class QueryTemplate(db.Model):
             "equation",
             "mode",
             "url",
+            "database",
         ]:
             if field in data:
                 setattr(self, field, data[field])
+
+    def as_dict(self):
+        return {
+            "model": self.model,
+            "language": self.language,
+            "name": self.name,
+            "text": self.text,
+            "user": self.user,
+            "code": self.code,
+            "equation": self.equation,
+            "mode": self.mode,
+            "url": self.url,
+            "database": self.database,
+        }
 
 
 def camelcase(s):
@@ -64,3 +80,4 @@ class QueryTemplateSchema(CamelCaseSchema):
     equation = ma.auto_field()
     user = ma.auto_field()
     url = ma.auto_field()
+    database = ma.auto_field()
