@@ -115,17 +115,15 @@ def get_all_query_templates():
     all_templates = QueryTemplate.query.all()
     schema = QueryTemplateSchema(many=True)
     results = schema.dump(all_templates)
-    print(results)
     return jsonify(results)
 
 
 @bp.route("/api/v1/query-templates/<id>", methods=["DELETE"])
 def delete_query_template_by_id(id):
-    get_query_template = QueryTemplate.query.get(id)
-    db.session.delete(get_query_template)
+    query_template = QueryTemplate.query.get(id)
+    db.session.delete(query_template)
     db.session.commit()
-    # TODO fix code below
-    return make_response(f"woooooooow {id}", 204)
+    return jsonify(query_template.as_dict())
 
 
 @bp.route("/api/v1/query-templates", methods=["POST"])
