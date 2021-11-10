@@ -27,6 +27,7 @@ const apiWithConfigs = emptySplitApi.injectEndpoints({
   endpoints: (build) => ({
     getConfigs: build.query<Config, void>({
       query: () => '/configs',
+      providesTags: ['Configs'],
     }),
     updateConfigs: build.mutation<Config, Partial<Config>>({
       query: (data) => {
