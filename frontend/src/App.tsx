@@ -3,7 +3,6 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import { MathJaxContext } from 'better-react-mathjax';
 import SearchPage from './features/search/SearchPage';
-import LandingPage from './features/LandingPage';
 import AboutPage from './features/AboutPage';
 import StoreSnackbar from './features/snackbar/StoreSnackbar';
 import ConfigsPage from './features/user/ConfigsPage';
@@ -33,7 +32,7 @@ export default function App() {
               <Route path="/about" component={AboutPage} />
               <Route path="/search" component={SearchPage} />
               <Route path="/settings" component={ConfigsPage} />
-              <Route exact path="/" component={LandingPage} />
+              <Route exact path="/" component={SearchPage} />
             </Switch>
             <StoreSnackbar />
           </MathJaxContext>
