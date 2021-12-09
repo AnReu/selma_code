@@ -22,5 +22,5 @@ class Predictor:
         else:
             return list(range(n))
 
-    '''def predict_by_id(self, id, N=5):
-        return self.eq_model.predict_by_id(id, N)'''
+    """def predict_by_id(self, id, N=5):
+        return self.eq_model.predict_by_id(id, N)"""

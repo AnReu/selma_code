@@ -3,7 +3,6 @@ from html import unescape
 
 
 class HTMLCutter(HTMLParser):
-
     def __init__(self, min_length: int, max_length: int):
         super().__init__()
         self.min_length = min_length
@@ -37,14 +36,14 @@ class HTMLCutter(HTMLParser):
         self.opened_tags.reverse()
 
     def handle_data(self, data):
-        data = data.strip('\n')
+        data = data.strip("\n")
         if not data:
             return
         if self.finished:
             return
         if self.current_length + len(data) > self.max_length:
             self.finished = True
-            data = data[:self.max_length - self.current_length]
+            data = data[: self.max_length - self.current_length]
         self.current_length += len(data)
         self.data_list.append(data)
 
@@ -61,12 +60,14 @@ class HTMLCutter(HTMLParser):
                 cutting_point = point
 
         cutting_point = cutting_point + len(self.data_list[len(self.data_list) - 1])
-        html_special_char_offset = len(data[:cutting_point]) - len(unescape(data[:cutting_point]))
+        html_special_char_offset = len(data[:cutting_point]) - len(
+            unescape(data[:cutting_point])
+        )
         return cutting_point + html_special_char_offset
 
     def cut(self, data: str):
-        addition = ''
-        closing_tags = ''
+        addition = ""
+        closing_tags = ""
         self.reset()
 
         self.feed(data)
@@ -77,9 +78,12 @@ class HTMLCutter(HTMLParser):
             cutting_point = len(data)
         else:
             self.opened_tags.reverse()
-            closing_tags = ''.join('</{}>'.format(tag) for tag in self.opened_tags)
+            closing_tags = "".join("</{}>".format(tag) for tag in self.opened_tags)
 
-            if len(data.strip('\n')) != len(data[:cutting_point] + closing_tags):
-                addition = ' ...'
+            if len(data.strip("\n")) != len(data[:cutting_point] + closing_tags):
+                addition = " ..."
 
-        return data[:cutting_point] + addition + closing_tags, True if addition else False
+        return (
+            data[:cutting_point] + addition + closing_tags,
+            True if addition else False,
+        )

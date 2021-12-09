@@ -17,3 +17,6 @@ backend/venv
 /backend/models/PyterrierModel/wt2g_index/data.properties
 
 .rsenv
+
+# macos metadata
+.DS_Store
