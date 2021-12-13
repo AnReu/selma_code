@@ -168,7 +168,6 @@ def get_config_vars():
         if Config.ALLOWED_SEARCH_MODES
         else default_allowed_search_modes,
     }
-    print(config_vars)
     return make_response(jsonify(config_vars), 200)
 
 
