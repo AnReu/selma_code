@@ -13,12 +13,12 @@ class Predictor:
     def __init__(self, data_path):
         self.eq_model = VectorModel(
             os.path.join(data_path, "nctr_se_latex2vec.model"),
-            os.path.join(data_path, "dummy_t2v_features.npy"),
+            os.path.join(data_path, "q_and_a_t2v_features.npy"),
             TexTokenizer(),
         )
         self.text_model = WordVectorModel(
             os.path.join(data_path, "se_w2v.model"),
-            os.path.join(data_path, "dummy_w2v_features.npy"),
+            os.path.join(data_path, "q_and_a_w2v_features.npy"),
             WordTokenizer(data_path),
         )
 
