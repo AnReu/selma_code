@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'test') {
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={defaultDark}>
+    <ThemeProvider theme={defaultLight}>
       <Provider store={store}>
         <App />
       </Provider>
