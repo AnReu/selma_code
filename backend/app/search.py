@@ -66,10 +66,10 @@ def search(
     column_names = db.get_column_names("Documents")
 
     results = results_to_json(data, [description[0] for description in column_names])
-    db_content_attribute_name = "body"
+    db_content_attribute_name = Config.get_db_content_attribute_name()
 
     for result in results:
-        result["body"], result["cut"] = trim_html(result[db_content_attribute_name])
+        result[db_content_attribute_name], result["cut"] = trim_html(result[db_content_attribute_name])
         result["relevant_sentence"] = get_relevant_sentence(result)
 
     return {"results": results, "error": error}, status
@@ -90,7 +90,7 @@ def trim_html(html):
 
 
 def get_relevant_sentence(result):
-    return Parser.get_first(result["body"])
+    return Parser.get_first(result[Config.get_db_content_attribute_name()])
 
 
 class Parser(HTMLParser):
