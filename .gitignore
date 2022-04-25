@@ -22,3 +22,5 @@ backend/venv
 .DS_Store
 
 __pycache__
+indexes/
+backend/parser/__pycache__
