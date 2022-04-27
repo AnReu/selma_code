@@ -24,7 +24,7 @@ class DB:
         con, cur = self.create_connection()
 
         cur.execute(
-            "CREATE TABLE IF NOT EXISTS Documents ("
+            "CREATE TABLE IF NOT EXISTS documents ("
             "id INTEGER PRIMARY KEY AUTOINCREMENT,"
             "exchange_id INTEGER,"
             "text TEXT NOT NULL,"
