@@ -30,13 +30,8 @@ def search_route():
     model = request.args.get("model")
     model_language = request.args.get("model-language")
     db_name = request.args.get("db")
-    if db_name:
-        db_path = os.path.join(Config.get_data_dir(), db_name)
-    else:
-        db_path = Config.get_db_path()
-    _db = DB(db_path)
 
-    return search(_db, text, code, equation, _id, exchange, model, model_language)
+    return search(db_name, text, code, equation, _id, exchange, model, model_language)
 
 
 @bp.route("/api/v1/relevance", methods=["POST"])
@@ -57,7 +52,8 @@ def relevance():
 @bp.route("/api/v1/document")
 def get_document():
     id = request.args.get("id")
-    document = db.get_results_by_id("Documents", [id], ["text"])[0][0]
+    table_name = Config.get_db_table_name()
+    document = db.get_results_by_id(table_name, [id], ["text"])[0][0]
     return {"document": re.subn(r"<img", '<img style="max-width: 100%"', document)[0]}
 
 
