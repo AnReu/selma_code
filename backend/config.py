@@ -18,81 +18,88 @@ class Config(object):
     # the application every time a change is about to be made in the database.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    DATA_DIR = None
-    DB_PATH = None
-    PYTERRIER_MODEL_PATH = None
+    DATABASES_DIR_PATH = None
+    DATABASE_PATH = None
+    INDEXES_DIR_PATH = None
+    INDEX_PATH = None
     DB_TABLE_NAME = None
     DB_CONTENT_ATTRIBUTE_NAME = None
     ALLOWED_SEARCH_MODES = None
 
     @staticmethod
-    def get_db_path():
-        if Config.DB_PATH:
-            return Config.DB_PATH
-        try:
-            return os.environ.get("DB_PATH")
-        except Exception as error:
-            print(
-                f"Could not find DB_PATH. Variable was not set in frontend nor using .rsenv"
-            )
-            raise
+    def get_database_path(db_name):
+        if Config.DATABASE_PATH:
+            return Config.DATABASE_PATH
+
+        custom_database_path = os.environ.get("DATABASE_PATH")
+        if custom_database_path is not None:
+            return os.environ.get("DATABASE_PATH")
+
+        return os.path.join(Config.get_databases_dir_path(), db_name)
 
     @staticmethod
-    def get_data_dir():
-        if Config.DATA_DIR:
-            return Config.DATA_DIR
-        try:
-            return os.environ.get("DATA_DIR")
-        except Exception as error:
-            print(
-                f"Could not find DATA_DIR. Variable was not set in frontend nor using .rsenv"
-            )
-            raise
+    def get_databases_dir_path():
+        if Config.DATABASES_DIR_PATH:
+            return Config.DATABASES_DIR_PATH
+        
+        custom_databases_dir_path = os.environ.get("DATABASES_DIR_PATH")
+        if custom_databases_dir_path is not None:
+            return os.environ.get("DATABASES_DIR_PATH")
+
+        return os.path.join(os.getcwd(), 'databases')
+
 
     @staticmethod
-    def get_pyterrier_model_path():
-        if Config.PYTERRIER_MODEL_PATH:
-            return Config.PYTERRIER_MODEL_PATH
-        try:
-            return os.environ.get("PYTERRIER_MODEL_PATH")
-        except Exception as error:
-            print(
-                f"Could not find PYTERRIER_MODEL_PATH. Variable was not set in frontend nor using .rsenv"
-            )
-            raise
+    def get_indexes_dir_path():
+        if Config.INDEXES_DIR_PATH:
+            return Config.INDEXES_DIR_PATH
+
+        custom_indexes_dir_path = os.environ.get("INDEXES_DIR_PATH")
+        if custom_indexes_dir_path is not None:
+            return os.environ.get("INDEXES_DIR_PATH")
+
+        return os.path.join(os.getcwd(), 'indexes')
 
     @staticmethod
     def get_db_content_attribute_name():
         if Config.DB_CONTENT_ATTRIBUTE_NAME:
             return Config.DB_CONTENT_ATTRIBUTE_NAME
-        try:
+
+        custom_db_content_attribute_name = os.environ.get("DB_CONTENT_ATTRIBUTE_NAME")
+        if custom_db_content_attribute_name is not None:
             return os.environ.get("DB_CONTENT_ATTRIBUTE_NAME")
-        except Exception as error:
-            print(
-                f"Could not find DB_CONTENT_ATTRIBUTE_NAME. Variable was not set in frontend nor using .rsenv"
-            )
-            raise
+
+        return 'body'
 
     @staticmethod
     def get_db_table_name():
         if Config.DB_TABLE_NAME:
             return Config.DB_TABLE_NAME
-        try:
+        
+        custom_db_table_name = os.environ.get("DB_TABLE_NAME")
+        if custom_db_table_name is not None:
             return os.environ.get("DB_TABLE_NAME")
-        except Exception as error:
-            print(
-                f"Could not find DB_TABLE_NAME. Variable was not set in frontend nor using .rsenv"
-            )
-            raise
+
+        return 'documents'
 
     @staticmethod
     def get_allowed_search_modes():
         if Config.ALLOWED_SEARCH_MODES:
             return Config.ALLOWED_SEARCH_MODES
-        try:
+
+        custom_allowed_search_modes = os.environ.get("ALLOWED_SEARCH_MODES")
+        if custom_allowed_search_modes is not None:
             return os.environ.get("ALLOWED_SEARCH_MODES")
-        except Exception as error:
-            print(
-                f"Could not find ALLOWED_SEARCH_MODES. Variable was not set in frontend nor using .rsenv"
-            )
-            raise
+
+        return True
+    
+    @staticmethod
+    def get_index_path(db_name):
+        if Config.INDEX_PATH:
+            return Config.INDEX_PATH
+
+        custom_index_path = os.environ.get("INDEX_PATH")
+        if custom_index_path is not None:
+            return os.environ.get("INDEX_PATH")
+
+        return os.path.join(Config.get_indexes_dir_path(), db_name[:-3])

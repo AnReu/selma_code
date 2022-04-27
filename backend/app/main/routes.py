@@ -9,7 +9,6 @@ from backend.parser import markdown_parser
 from backend.parser import pdf_parser
 from backend.parser import tex_parser
 from marshmallow import ValidationError
-from backend.app.db_connection import DB
 from backend.config import Config
 from backend.app.main import bp
 
@@ -100,7 +99,7 @@ def get_languages():
 @bp.route("/api/v1/dbs")
 def get_dbs():
     dbs = []
-    for file in os.listdir(Config.get_data_dir()):
+    for file in os.listdir(Config.get_databases_dir_path()):
         if file.endswith(".db"):
             dbs.append(file)
     return jsonify(dbs)
@@ -151,14 +150,14 @@ def get_config_vars():
         "file": True,
     }
     config_vars = {
-        "data_dir": Config.DATA_DIR if Config.DATA_DIR else "",
-        "db_path": Config.DB_PATH if Config.DB_PATH else "",
+        "data_dir": Config.DATABASES_DIR_PATH if Config.DATABASES_DIR_PATH else "",
+        "db_path": Config.DATABASE_PATH if Config.DATABASE_PATH else "",
         "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
         "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME
         if Config.DB_CONTENT_ATTRIBUTE_NAME
         else "",
-        "pyterrier_model_path": Config.PYTERRIER_MODEL_PATH
-        if Config.PYTERRIER_MODEL_PATH
+        "indexes_dir_path": Config.INDEXES_DIR_PATH
+        if Config.INDEXES_DIR_PATH
         else "",
         "allowed_search_modes": Config.ALLOWED_SEARCH_MODES
         if Config.ALLOWED_SEARCH_MODES
@@ -172,16 +171,16 @@ def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
     if "data_dir" in json_data:
-        Config.DATA_DIR = json_data["data_dir"]
+        Config.DATABASES_DIR_PATH = json_data["data_dir"]
         modified_fields.append("data_dir")
     else:
-        Config.DATA_DIR = None
+        Config.DATABASES_DIR_PATH = None
 
     if "db_path" in json_data:
-        Config.DB_PATH = json_data["db_path"]
+        Config.DATABASE_PATH = json_data["db_path"]
         modified_fields.append("db_path")
     else:
-        Config.DB_PATH = None
+        Config.DATABASE_PATH = None
 
     if "db_table_name" in json_data:
         Config.DB_TABLE_NAME = json_data["db_table_name"]
