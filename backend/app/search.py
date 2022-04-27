@@ -6,6 +6,7 @@ from pathlib import Path
 from backend.models.VectorModel import predictor as vector_predictor
 from backend.models.PyterrierModel import predictor as pyterrier_predictor
 from backend.config import Config
+from backend.app.db_connection import DB
 
 
 from .HTMLCutter import HTMLCutter
@@ -17,7 +18,7 @@ cutter = HTMLCutter(700, 2000)
 
 
 def search(
-    db,
+    db_name,
     text=None,
     code=None,
     equation=None,
@@ -29,6 +30,8 @@ def search(
     result_ids = []
     error = ""
     status = 200
+
+    db = DB(Config.get_database_path(db_name))
 
     # Name of the column of the DB, where the content of each document is stored
     content_attribute_name = Config.get_db_content_attribute_name()
@@ -44,7 +47,7 @@ def search(
     try:
         if model == "VectorModel":
             predictor = vector_predictor.Predictor(index_path)
-    elif model == "PyterrierModel":
+        elif model == "PyterrierModel":
             predictor = pyterrier_predictor.Predictor(index_path)
     except Exception as error:
         print(f'Predictor could not be found for the given model ({model})')
@@ -79,7 +82,6 @@ def search(
     column_names = db.get_column_names(db_table_name)
 
     results = results_to_json(data, [description[0] for description in column_names])
-    db_content_attribute_name = Config.get_db_content_attribute_name()
 
     for result in results:
         result[content_attribute_name], result["cut"] = trim_html(result[content_attribute_name])
