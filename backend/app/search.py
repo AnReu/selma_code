@@ -33,11 +33,23 @@ def search(
     # Name of the column of the DB, where the content of each document is stored
     content_attribute_name = Config.get_db_content_attribute_name()
     db_table_name = Config.get_db_table_name()
+
+    try:
+        index_path = Config.get_index_path(db_name)
+    except Exception as error:
+        print(f'Index path could not be found for the given db_name ({db_name})')
+        print(error)
+        raise
+
+    try:
+        if model == "VectorModel":
+            predictor = vector_predictor.Predictor(index_path)
     elif model == "PyterrierModel":
-        # PYTERRIER_MODEL_PATH is the path to the data.properties of the used index
-        predictor = pyterrier_predictor.Predictor(Config.get_pyterrier_model_path())
-    else:
-        predictor = vector_predictor.Predictor(Config.get_data_dir())
+            predictor = pyterrier_predictor.Predictor(index_path)
+    except Exception as error:
+        print(f'Predictor could not be found for the given model ({model})')
+        print(error)
+        raise
 
     if id is None:
         try:
