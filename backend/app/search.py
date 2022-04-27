@@ -30,8 +30,9 @@ def search(
     error = ""
     status = 200
 
-    if model == "vector":
-        predictor = vector_predictor.Predictor(Config.get_data_dir())
+    # Name of the column of the DB, where the content of each document is stored
+    content_attribute_name = Config.get_db_content_attribute_name()
+    db_table_name = Config.get_db_table_name()
     elif model == "PyterrierModel":
         # PYTERRIER_MODEL_PATH is the path to the data.properties of the used index
         predictor = pyterrier_predictor.Predictor(Config.get_pyterrier_model_path())
@@ -50,7 +51,7 @@ def search(
 
         con, cur = db.create_connection()
         query = "SELECT {} FROM {} WHERE exchange_id={}".format(
-            "id", "Documents", exchange_id
+            "id", db_table_name, exchange_id
         )
         cur.execute(query)
         id = cur.fetchone()
@@ -62,14 +63,14 @@ def search(
         else:
             result_ids = predictor.predict_by_id(id[0])
 
-    data = db.get_results_by_id("Documents", result_ids)
-    column_names = db.get_column_names("Documents")
+    data = db.get_results_by_id(db_table_name, result_ids)
+    column_names = db.get_column_names(db_table_name)
 
     results = results_to_json(data, [description[0] for description in column_names])
     db_content_attribute_name = Config.get_db_content_attribute_name()
 
     for result in results:
-        result[db_content_attribute_name], result["cut"] = trim_html(result[db_content_attribute_name])
+        result[content_attribute_name], result["cut"] = trim_html(result[content_attribute_name])
         result["relevant_sentence"] = get_relevant_sentence(result)
 
     return {"results": results, "error": error}, status
