@@ -13,8 +13,8 @@ def insert_to_documents(db_path, json_path):
     id = 0
     for date in data:
         cur.execute(
-            "INSERT INTO Documents (id, exchange_id, body, is_question) VALUES (?, ?,?,?)",
-            (id, int(date["id"]), date["body"], int(date["is_question"])),
+            "INSERT INTO documents (id, exchange_id, text, is_question) VALUES (?, ?,?,?)",
+            (id, int(date["id"]), date["text"], 1),
         )
         id += 1
 
