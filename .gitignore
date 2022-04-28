@@ -9,7 +9,6 @@
 /backend/app.db
 /backend/models/PyterrierModel/wt2g_index
 /backend/venv
-/frontend/build
 
 # environment variables
 .rsenv
