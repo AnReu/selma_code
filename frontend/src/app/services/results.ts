@@ -1,15 +1,18 @@
 import { emptySplitApi } from '.';
 
 export interface Result {
-    acceptedAnswerId: number | null;
-    body: string,
-    id: number;
-    parentId: number;
-    postTypeId: number;
-    title: string;
-    tags: string | null;
-    cut: boolean;
-    relevantSentence: string;
+  acceptedAnswerId?: number | null;
+  body: string;
+  id: number;
+  parentId?: number;
+  postTypeId?: number;
+  title: string;
+  tags: string | null;
+  cut: boolean;
+  relevantSentence: string;
+  language?: string;
+  comment?: string;
+  url?: string;
 }
 
 // TODO: change the response data structure in the backend then here.
