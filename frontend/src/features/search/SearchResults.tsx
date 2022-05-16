@@ -16,7 +16,6 @@ export default function SearchResults() {
   const {
     data, isLoading, isFetching, isError,
   } = useGetResultsQuery(params ?? skipToken);
-  const results = data?.results;
 
   if (isError) {
     return (
@@ -53,7 +52,11 @@ export default function SearchResults() {
     );
   }
 
-  if (!!results && results.length === 0) {
+  if (!data) {
+    return null;
+  }
+
+  if (data.results.length === 0) {
     return (
       <Box
         sx={{
@@ -63,13 +66,8 @@ export default function SearchResults() {
           textAlign: 'center',
         }}
       >
-        <Typography variant="h3" color="textPrimary">No posts :(</Typography>
+        <Typography variant="body1" color="textPrimary">0 results</Typography>
       </Box>
-    );
-  } if (!results) {
-    // TODO: fix this grid system
-    return (
-      <Box sx={{ flexGrow: 1, height: '100%' }} />
     );
   }
 
@@ -82,7 +80,7 @@ export default function SearchResults() {
     >
       <Typography variant="h4" color="textPrimary">Results:</Typography>
       <List sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: 3 }}>
-        {results?.map((result) => <SearchResult key={result.id} result={result} />)}
+        {data.results.map((result) => <SearchResult key={result.id} result={result} />)}
       </List>
     </Paper>
   );
