@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -6,16 +7,36 @@ import Paper from '@mui/material/Paper';
 import { listItemClasses } from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 import { skipToken } from '@reduxjs/toolkit/query/react';
+import Button from '@mui/material/Button';
 import SearchResult from './SearchResult';
-import { useGetResultsQuery } from '../../app/services/results';
+import { Result, useGetResultsQuery } from '../../app/services/results';
 import { useAppSelector } from '../../app/hooks';
 import { selectParams } from './searchSlice';
+
+const RESULTS_PER_PAGE = 10;
 
 export default function SearchResults() {
   const params = useAppSelector(selectParams);
   const {
     data, isLoading, isFetching, isError,
   } = useGetResultsQuery(params ?? skipToken);
+  const [currentPageResults, setCurrentPageResults] = React.useState<Result[]>([]);
+  const [endIndex, setEndIndex] = React.useState(RESULTS_PER_PAGE);
+
+  const updateShownResults = () => {
+    if (data) {
+      const shownResults = data.results.slice(0, endIndex);
+      setCurrentPageResults(shownResults);
+    }
+  };
+
+  const handleLoadMore = () => {
+    setEndIndex(endIndex + RESULTS_PER_PAGE);
+  };
+
+  React.useEffect(() => {
+    updateShownResults();
+  }, []);
 
   if (isError) {
     return (
@@ -80,8 +101,17 @@ export default function SearchResults() {
     >
       <Typography variant="h4" color="textPrimary">Results:</Typography>
       <List sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: 3 }}>
-        {data.results.map((result) => <SearchResult key={result.id} result={result} />)}
+        {data.results.slice(0, endIndex).map(
+          (result) => <SearchResult key={result.id} result={result} />,
+        )}
       </List>
+      <Button
+        variant="contained"
+        onClick={handleLoadMore}
+        disabled={endIndex >= data.results.length}
+      >
+        Load more
+      </Button>
     </Paper>
   );
 }
