@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export function addDelimiters(str: string): string {
   return `\`\`\`java\n${str}\n\`\`\``;
@@ -16,6 +16,7 @@ export default function CodeMarkdown(props: CodeMarkdownProps) {
 
   return (
     <ReactMarkdown
+      className="code-block"
       components={{
         code({
           node, inline, className, children, ...properties
@@ -23,7 +24,7 @@ export default function CodeMarkdown(props: CodeMarkdownProps) {
           const match = /language-(\w+)/.exec(className || '');
           return !inline && match ? (
             <SyntaxHighlighter
-              style={dark}
+              style={materialDark}
               language={match[1]}
               PreTag="div"
               {...properties}
