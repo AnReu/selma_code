@@ -56,7 +56,7 @@ def search(
 
     if id is None:
         try:
-            result_ids = predictor.predict(text, code, equation)
+            result_ids = predictor.predict(text, code, equation, n=100)
         except KeyError:
             result_ids = []
             error = "Key Error: word not in vocabulary"
