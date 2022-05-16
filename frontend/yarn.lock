@@ -3290,10 +3290,10 @@ batch@0.6.1:
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha1-3DQxT05nkxgJP8dgJyUl+UvyXBY=
 
-better-react-mathjax@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/better-react-mathjax/-/better-react-mathjax-1.0.3.tgz#4bf30627e0c1a42892a539b854d0ed3f0e25f8ef"
-  integrity sha512-vtWGBlgGilcKO6ryDTk/1JIhv4SfzCMHb8gkMz4ZCuI70t1VGbN6XMouFBWJKoiWlsZvGVxF++6UW3fbdjI+6g==
+better-react-mathjax@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/better-react-mathjax/-/better-react-mathjax-2.0.1.tgz#e68f1d21c79b26d2a80feb2298f355ef6af0c84a"
+  integrity sha512-Q9+2ScyNNuB7s7d9JxCoDm1Ms5rgfFoVmdhCWrKpO1BK8wMEI+DdDjaQUGBOa6AtaWemsy2VNSLFlyrNUnUG+A==
   dependencies:
     mathjax-full "^3.2.0"
 
