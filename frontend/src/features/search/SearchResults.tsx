@@ -6,6 +6,7 @@ import List from '@mui/material/List';
 import Paper from '@mui/material/Paper';
 import { listItemClasses } from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 import Button from '@mui/material/Button';
 import SearchResult from './SearchResult';
@@ -93,12 +94,7 @@ export default function SearchResults() {
   }
 
   return (
-    <Paper
-      sx={{
-        px: 16,
-        py: 2,
-      }}
-    >
+    <Stack sx={{ px: 16, py: 2 }}>
       <Typography variant="h4" color="textPrimary">Results:</Typography>
       <List sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: 3 }}>
         {data.results.slice(0, endIndex).map(
@@ -106,12 +102,13 @@ export default function SearchResults() {
         )}
       </List>
       <Button
+        sx={{ p: 2, mt: 2 }}
         variant="contained"
         onClick={handleLoadMore}
         disabled={endIndex >= data.results.length}
       >
         Load more
       </Button>
-    </Paper>
+    </Stack>
   );
 }
