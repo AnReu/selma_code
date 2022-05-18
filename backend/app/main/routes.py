@@ -169,16 +169,27 @@ def get_config_vars():
 @bp.route("/api/v1/configs", methods=["POST"])
 def update_config_vars():
     json_data = request.get_json()
+    print(json_data)
     modified_fields = []
-    if "data_dir" in json_data:
-        Config.DATABASES_DIR_PATH = json_data["data_dir"]
-        modified_fields.append("data_dir")
+    if "indexes_dir_path" in json_data:
+        Config.INDEXES_DIR_PATH = json_data["indexes_dir_path"]
+        modified_fields.append("indexes_dir_path")
+    else:
+        Config.INDEX_PATH = None
+    if "index_path" in json_data:
+        Config.INDEX_PATH = json_data["index_path"]
+        modified_fields.append("index_path")
+    else:
+        Config.DATABASES_DIR_PATH = None
+    if "databases_dir_path" in json_data:
+        Config.DATABASES_DIR_PATH = json_data["databases_dir_path"]
+        modified_fields.append("databases_dir_path")
     else:
         Config.DATABASES_DIR_PATH = None
 
-    if "db_path" in json_data:
-        Config.DATABASE_PATH = json_data["db_path"]
-        modified_fields.append("db_path")
+    if "database_path" in json_data:
+        Config.DATABASE_PATH = json_data["database_path"]
+        modified_fields.append("database_path")
     else:
         Config.DATABASE_PATH = None
 
