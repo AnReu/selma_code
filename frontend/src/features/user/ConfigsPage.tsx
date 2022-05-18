@@ -67,11 +67,19 @@ export default function ConfigsPage() {
       <Stack spacing={2}>
         <TextField
           onChange={handleTextChange}
-          label="DB_PATH"
+          label="DATABASE_PATH"
           variant="filled"
-          name="db_path"
-          id="db_path"
-          value={cfg.db_path}
+          name="database_path"
+          id="database_path"
+          value={cfg.database_path}
+        />
+        <TextField
+          onChange={handleTextChange}
+          label="DATABASES_DIR_PATH"
+          variant="filled"
+          name="databases_dir_path"
+          id="databases_dir_path"
+          value={cfg.databases_dir_path}
         />
         <TextField
           onChange={handleTextChange}
@@ -91,11 +99,19 @@ export default function ConfigsPage() {
         />
         <TextField
           onChange={handleTextChange}
-          label="DATA_DIR"
+          label="INDEX_PATH"
           variant="filled"
-          name="data_dir"
-          id="data_dir"
-          value={cfg.data_dir}
+          name="index_path"
+          id="index_path"
+          value={cfg.index_path}
+        />
+        <TextField
+          onChange={handleTextChange}
+          label="INDEXES_DIR_PATH"
+          variant="filled"
+          name="indexes_dir_path"
+          id="indexes_dir_path"
+          value={cfg.indexes_dir_path}
         />
 
         <FormGroup row>

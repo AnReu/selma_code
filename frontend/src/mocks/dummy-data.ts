@@ -25,10 +25,12 @@ export const r2: Result = {
 };
 
 export const cfg: Config = {
-  db_path: 'myDbPath',
+  database_path: 'myDbPath',
   db_table_name: 'myTableName',
   db_content_attribute_name: 'myContentAttributeName',
-  data_dir: 'myDataDir',
+  databases_dir_path: 'myDataDir',
+  index_path: '',
+  indexes_dir_path: '',
   allowed_search_modes: {
     default: true, separated: false, url: false, file: true,
   },

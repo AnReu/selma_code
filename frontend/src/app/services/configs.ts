@@ -1,10 +1,12 @@
 import { emptySplitApi } from '.';
 
 export interface Config {
-  db_path: string;
+  database_path: string;
   db_table_name: string;
   db_content_attribute_name: string;
-  data_dir: string;
+  databases_dir_path: string;
+  index_path: string;
+  indexes_dir_path: string;
   allowed_search_modes: {
     default: boolean,
     separated: boolean,
@@ -14,10 +16,12 @@ export interface Config {
 }
 
 export const emptyConfig: Config = {
-  db_path: '',
+  database_path: '',
   db_table_name: '',
   db_content_attribute_name: '',
-  data_dir: '',
+  databases_dir_path: '',
+  index_path: '',
+  indexes_dir_path: '',
   allowed_search_modes: {
     default: true, separated: true, url: true, file: true,
   },
