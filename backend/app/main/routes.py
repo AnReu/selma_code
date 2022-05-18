@@ -150,18 +150,13 @@ def get_config_vars():
         "file": True,
     }
     config_vars = {
-        "data_dir": Config.DATABASES_DIR_PATH if Config.DATABASES_DIR_PATH else "",
-        "db_path": Config.DATABASE_PATH if Config.DATABASE_PATH else "",
+        "databases_dir_path": Config.DATABASES_DIR_PATH if Config.DATABASES_DIR_PATH else "",
+        "database_path": Config.DATABASE_PATH if Config.DATABASE_PATH else "",
         "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
-        "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME
-        if Config.DB_CONTENT_ATTRIBUTE_NAME
-        else "",
-        "indexes_dir_path": Config.INDEXES_DIR_PATH
-        if Config.INDEXES_DIR_PATH
-        else "",
-        "allowed_search_modes": Config.ALLOWED_SEARCH_MODES
-        if Config.ALLOWED_SEARCH_MODES
-        else default_allowed_search_modes,
+        "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME if Config.DB_CONTENT_ATTRIBUTE_NAME else "",
+        "indexes_dir_path": Config.INDEXES_DIR_PATH if Config.INDEXES_DIR_PATH else "",
+        "index_path": Config.INDEX_PATH if Config.INDEX_PATH else "",
+        "allowed_search_modes": Config.ALLOWED_SEARCH_MODES if Config.ALLOWED_SEARCH_MODES else default_allowed_search_modes,
     }
     return make_response(jsonify(config_vars), 200)
 
@@ -169,7 +164,6 @@ def get_config_vars():
 @bp.route("/api/v1/configs", methods=["POST"])
 def update_config_vars():
     json_data = request.get_json()
-    print(json_data)
     modified_fields = []
     if "indexes_dir_path" in json_data:
         Config.INDEXES_DIR_PATH = json_data["indexes_dir_path"]

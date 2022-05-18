@@ -21,16 +21,18 @@ export default function ConfigsPage() {
   const [updateConfigs, { isLoading: isUpdating }] = useUpdateConfigsMutation();
 
   const {
-    data: config = emptyConfig,
+    data,
     isSuccess,
     isLoading,
     isError,
   } = useGetConfigsQuery();
 
-  const [cfg, setCfg] = React.useState<Config>(config);
+  const [cfg, setCfg] = React.useState<Config>(emptyConfig);
 
   React.useEffect(() => {
-    setCfg(config);
+    if (data) {
+      setCfg(data);
+    }
   }, [isSuccess]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
