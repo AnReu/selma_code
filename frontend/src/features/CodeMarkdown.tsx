@@ -24,6 +24,7 @@ export default function CodeMarkdown(props: CodeMarkdownProps) {
           const match = /language-(\w+)/.exec(className || '');
           return !inline && match ? (
             <SyntaxHighlighter
+              wrapLongLines
               style={materialDark}
               language={match[1]}
               PreTag="div"
