@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import Toolbar from '@mui/material/Toolbar';
 import InputLabel from '@mui/material/InputLabel';
@@ -20,6 +23,7 @@ import FileUploadSearchBar from '../search/FileUploadSearchBar';
 import { useGetDatabasesQuery } from '../../app/services/databases';
 import { useGetLanguagesQuery } from '../../app/services/languages';
 import { useGetModelsQuery } from '../../app/services/models';
+import SettingsForm from './SettingsForm';
 import {
   selectModel,
   selectLanguage,
@@ -87,6 +91,7 @@ export default function NavbarWithTabs() {
   const db = useAppSelector(selectDb);
   const language = useAppSelector(selectLanguage);
   const mode = useAppSelector(selectMode);
+  const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
   const handleChangeModel = (event: SelectChangeEvent) => {
     dispatch(setModel(event.target.value as string));
@@ -170,6 +175,7 @@ export default function NavbarWithTabs() {
               edge="end"
               aria-haspopup="true"
               color="inherit"
+              onClick={() => setIsDialogOpen(true)}
             >
               <SettingsIcon />
             </IconButton>
@@ -202,6 +208,20 @@ export default function NavbarWithTabs() {
       <TabPanel value="file" currentMode={mode} dir={theme.direction}>
         <FileUploadSearchBar />
       </TabPanel>
+      <Dialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      >
+        <DialogTitle>
+          Settings
+        </DialogTitle>
+        <DialogContent>
+          <SettingsForm
+            setIsDialogOpen={setIsDialogOpen}
+          />
+        </DialogContent>
+
+      </Dialog>
     </Box>
   );
 }
