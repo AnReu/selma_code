@@ -17,7 +17,7 @@ import {
   useGetConfigsQuery,
 } from '../../app/services/configs';
 
-export default function ConfigsPage() {
+export default function SettingsModal() {
   const [updateConfigs, { isLoading: isUpdating }] = useUpdateConfigsMutation();
 
   const {

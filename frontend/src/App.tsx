@@ -5,7 +5,7 @@ import { MathJaxContext } from 'better-react-mathjax';
 import SearchPage from './features/search/SearchPage';
 import AboutPage from './features/AboutPage';
 import StoreSnackbar from './features/snackbar/StoreSnackbar';
-import ConfigsPage from './features/user/ConfigsPage';
+import SettingsModal from './features/navbar/SettingsModal';
 
 const config = {
   loader: { load: ['[tex]/html'] },
@@ -31,7 +31,7 @@ export default function App() {
             <Switch>
               <Route path="/about" component={AboutPage} />
               <Route path="/search" component={SearchPage} />
-              <Route path="/settings" component={ConfigsPage} />
+              <Route path="/settings" component={SettingsModal} />
               <Route exact path="/" component={SearchPage} />
             </Switch>
             <StoreSnackbar />

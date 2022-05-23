@@ -1,14 +1,14 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { rest } from 'msw';
-import ConfigsPage from '../features/user/ConfigsPage';
+import SettingsModal from '../features/navbar/SettingsModal';
 import { renderWithProviders } from '../test-utils';
 import { cfg } from '../mocks/dummy-data';
 import { server } from '../setupTests';
 
 describe('ConfigsPage', () => {
   it('render one TextField for each config variable', async () => {
-    renderWithProviders(<ConfigsPage />);
+    renderWithProviders(<SettingsModal />);
 
     expect(await screen.findByText('DB_PATH')).toBeTruthy();
     expect(screen.getByText('DB_TABLE_NAME')).toBeTruthy();
@@ -17,7 +17,7 @@ describe('ConfigsPage', () => {
   });
 
   it('fetch current values from backend and display them', async () => {
-    renderWithProviders(<ConfigsPage />);
+    renderWithProviders(<SettingsModal />);
 
     // test if progressbar is displayed when page is being loaded
     screen.getByRole('progressbar');
@@ -43,7 +43,7 @@ describe('ConfigsPage', () => {
         (req, res, ctx) => res(ctx.status(403)),
       ),
     );
-    renderWithProviders(<ConfigsPage />);
+    renderWithProviders(<SettingsModal />);
     await screen.findByRole('contentinfo');
   });
 });
