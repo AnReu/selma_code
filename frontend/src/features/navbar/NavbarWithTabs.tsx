@@ -1,19 +1,17 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
-import Menu from '@mui/material/Menu';
 import FormControl from '@mui/material/FormControl';
 import Toolbar from '@mui/material/Toolbar';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { Link } from 'react-router-dom';
 import TemplateListDialog from '../templates/TemplateListDialog';
 import DefaultSearchBar from '../search/DefaultSearchBar';
 import SeparatedSearchBar from '../search/SeparatedSearchBar';
@@ -88,11 +86,7 @@ export default function NavbarWithTabs() {
   const model = useAppSelector(selectModel);
   const db = useAppSelector(selectDb);
   const language = useAppSelector(selectLanguage);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
   const mode = useAppSelector(selectMode);
-
-  const isMenuOpen = Boolean(anchorEl);
 
   const handleChangeModel = (event: SelectChangeEvent) => {
     dispatch(setModel(event.target.value as string));
@@ -109,40 +103,6 @@ export default function NavbarWithTabs() {
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     dispatch(setMode(newValue as SearchMode));
   };
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const menuId = 'account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem component={Link} to="/settings">Settings</MenuItem>
-    </Menu>
-  );
 
   return (
     <Box sx={{ bgcolor: 'background.paper' }}>
@@ -208,12 +168,10 @@ export default function NavbarWithTabs() {
             <IconButton
               size="large"
               edge="end"
-              aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircleIcon />
+              <SettingsIcon />
             </IconButton>
           </Box>
 
@@ -244,8 +202,6 @@ export default function NavbarWithTabs() {
       <TabPanel value="file" currentMode={mode} dir={theme.direction}>
         <FileUploadSearchBar />
       </TabPanel>
-
-      {renderMenu}
     </Box>
   );
 }
