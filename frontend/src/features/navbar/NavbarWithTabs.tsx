@@ -20,20 +20,14 @@ import DefaultSearchBar from '../search/DefaultSearchBar';
 import SeparatedSearchBar from '../search/SeparatedSearchBar';
 import URLSearchBar from '../search/URLSearchBar';
 import FileUploadSearchBar from '../search/FileUploadSearchBar';
-import { useGetDatabasesQuery } from '../../app/services/databases';
-import { useGetLanguagesQuery } from '../../app/services/languages';
 import { useGetModelsQuery } from '../../app/services/models';
 import SettingsForm from './SettingsForm';
 import {
   selectModel,
-  selectLanguage,
   setModel,
-  setLanguage,
   selectMode,
   setMode,
   SearchMode,
-  setDb,
-  selectDb,
 } from '../search/searchSlice';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { emptyConfig, useGetConfigsQuery } from '../../app/services/configs';
@@ -83,26 +77,14 @@ function a11yProps(index: number) {
 export default function NavbarWithTabs() {
   const dispatch = useAppDispatch();
   const theme = useTheme();
-  const { data: languages = [] } = useGetLanguagesQuery();
   const { data: models = [] } = useGetModelsQuery();
-  const { data: dbs = [] } = useGetDatabasesQuery();
   const { data: config = emptyConfig } = useGetConfigsQuery();
   const model = useAppSelector(selectModel);
-  const db = useAppSelector(selectDb);
-  const language = useAppSelector(selectLanguage);
   const mode = useAppSelector(selectMode);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
   const handleChangeModel = (event: SelectChangeEvent) => {
     dispatch(setModel(event.target.value as string));
-  };
-
-  const handleChangeLanguage = (event: SelectChangeEvent) => {
-    dispatch(setLanguage(event.target.value as string));
-  };
-
-  const handleChangeDb = (event: SelectChangeEvent) => {
-    dispatch(setDb(event.target.value as string));
   };
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -126,23 +108,7 @@ export default function NavbarWithTabs() {
           <Box sx={{ flexGrow: 1 }} />
 
           <TemplateListDialog />
-
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
-            <FormControl sx={{ mx: 2, minWidth: 200 }} variant="filled">
-              <InputLabel id="model-select-label">Database</InputLabel>
-              <Select
-                size="small"
-                autoWidth
-                labelId="db-select-label"
-                id="db-select"
-                value={db}
-                onChange={handleChangeDb}
-              >
-                {dbs?.map((_db) => <MenuItem key={_db} value={_db}>{_db}</MenuItem>)}
-              </Select>
-            </FormControl>
-
             <FormControl sx={{ mx: 2, minWidth: 200 }} variant="filled">
               <InputLabel id="model-select-label">Model</InputLabel>
               <Select
@@ -156,19 +122,6 @@ export default function NavbarWithTabs() {
                 {models?.map((mod) => <MenuItem key={mod} value={mod}>{mod}</MenuItem>)}
               </Select>
             </FormControl>
-            <FormControl sx={{ mx: 2, minWidth: 200 }} variant="filled">
-              <InputLabel id="modelLanguage-select-label">Model language</InputLabel>
-              <Select
-                size="small"
-                autoWidth
-                labelId="modelLanguage-select-label"
-                id="modelLanguage-select"
-                value={language}
-                onChange={handleChangeLanguage}
-              >
-                {languages?.map((lang) => <MenuItem key={lang} value={lang}>{lang}</MenuItem>)}
-              </Select>
-            </FormControl>
 
             <IconButton
               size="large"
@@ -180,7 +133,6 @@ export default function NavbarWithTabs() {
               <SettingsIcon />
             </IconButton>
           </Box>
-
         </Toolbar>
         <Tabs
           value={mode}
