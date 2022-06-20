@@ -77,7 +77,7 @@ export default function SettingsForm(props: SettingsFormProps) {
         variant="filled"
         name="database_path"
         id="database_path"
-        value={cfg.database_path}
+        value={cfg.db_path}
       />
       <TextField
         onChange={handleTextChange}
@@ -85,7 +85,7 @@ export default function SettingsForm(props: SettingsFormProps) {
         variant="filled"
         name="databases_dir_path"
         id="databases_dir_path"
-        value={cfg.databases_dir_path}
+        value={cfg.dbs_path}
       />
       <TextField
         onChange={handleTextChange}
@@ -117,7 +117,7 @@ export default function SettingsForm(props: SettingsFormProps) {
         variant="filled"
         name="indexes_dir_path"
         id="indexes_dir_path"
-        value={cfg.indexes_dir_path}
+        value={cfg.indexes_path}
       />
 
       <FormGroup row>
