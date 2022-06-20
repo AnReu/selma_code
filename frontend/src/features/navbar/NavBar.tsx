@@ -4,15 +4,13 @@ import AppBar from '@mui/material/AppBar';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
 import Toolbar from '@mui/material/Toolbar';
-import InputLabel from '@mui/material/InputLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import TemplateListDialog from '../templates/TemplateListDialog';
@@ -83,7 +81,7 @@ export default function NavBar() {
   const mode = useAppSelector(selectMode);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
-  const handleChangeModel = (event: SelectChangeEvent) => {
+  const handleChangeModel = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setModel(event.target.value as string));
   };
 
@@ -109,19 +107,19 @@ export default function NavBar() {
 
           <TemplateListDialog />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <FormControl sx={{ mx: 2, minWidth: 200 }} variant="filled">
-              <InputLabel id="model-select-label">Model</InputLabel>
-              <Select
-                size="small"
-                autoWidth
-                labelId="model-select-label"
-                id="model-select"
-                value={model}
-                onChange={handleChangeModel}
-              >
-                {models?.map((mod) => <MenuItem key={mod} value={mod}>{mod}</MenuItem>)}
-              </Select>
-            </FormControl>
+
+            <TextField
+              select
+              size="small"
+              label="Model"
+              id="model-select"
+              value={model}
+              onChange={handleChangeModel}
+              sx={{ mx: 2, minWidth: 200 }}
+              variant="filled"
+            >
+              {models?.map((mod) => <MenuItem key={mod} value={mod}>{mod}</MenuItem>)}
+            </TextField>
 
             <IconButton
               size="large"
