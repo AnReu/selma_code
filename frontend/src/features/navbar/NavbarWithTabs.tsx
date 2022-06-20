@@ -74,7 +74,7 @@ function a11yProps(index: number) {
   };
 }
 
-export default function NavbarWithTabs() {
+export default function NavBar() {
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const { data: models = [] } = useGetModelsQuery();
