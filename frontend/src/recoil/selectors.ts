@@ -1,4 +1,4 @@
-import { selector } from 'recoil';
+import { atom, selector, useRecoilState } from 'recoil';
 import { queryParametersState } from './atoms';
 
 export const searchParamsState = selector({
@@ -53,3 +53,76 @@ export const languagesState = selector<string[]>({
   key: 'languages',
   get: () => ['english'],
 });
+
+export interface Config {
+  db_path: string;
+  db_table_name: string;
+  db_content_attribute_name: string;
+  dbs_path: string;
+  index_path: string;
+  indexes_path: string;
+  allowed_search_modes: {
+    default: boolean,
+    separated: boolean,
+    url: boolean,
+    file: boolean,
+  }
+}
+
+export const emptyConfig: Config = {
+  db_path: '',
+  db_table_name: '',
+  db_content_attribute_name: '',
+  dbs_path: '',
+  index_path: '',
+  indexes_path: '',
+  allowed_search_modes: {
+    default: true, separated: true, url: true, file: true,
+  },
+};
+
+export const configsState = atom({
+  key: 'configs',
+  default: selector({
+    key: 'configsLoader',
+    get: async () => {
+      const response = await fetch('http://127.0.0.1:5000/api/v1/data-structure');
+      return response.formData;
+    },
+  }),
+});
+
+declare interface UpdateConfigsParams {
+  id: number
+}
+
+function useConfigsMutations() {
+  const [configs, setConfigs] = useRecoilState(configsState);
+
+  const updateConfigs = async (updatedConfig: UpdateConfigsParams) {
+    await fetch('http://127.0.0.1:5000/api/v1/data-structure', { method: 'POST' })
+    //update remotely await put/patch
+    // const newConfigs = make a copy of current config, change the updated value
+    setConfigs(newConfigs)
+  }
+}
+
+// const apiWithConfigs = emptySplitApi.injectEndpoints({
+//   endpoints: (build) => ({
+//     getConfigs: build.query<Config, void>({
+//       query: () => '/configs',
+//       providesTags: ['Configs'],
+//     }),
+//     updateConfigs: build.mutation<Config, Partial<Config>>({
+//       query: (data) => {
+//         const { ...body } = data;
+//         return {
+//           url: '/configs',
+//           method: 'POST',
+//           body,
+//         };
+//       },
+//     }),
+//   }),
+//   overrideExisting: false,
+// });
