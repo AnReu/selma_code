@@ -22,14 +22,13 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 // Others
 import { green } from '@mui/material/colors';
-import { useGetLanguagesQuery } from '../../app/services/languages';
-import { useGetModelsQuery } from '../../app/services/models';
-import { useGetDatabasesQuery } from '../../app/services/databases';
+import { useRecoilValue } from 'recoil';
 import { useAddTemplateMutation, Template, emptyTemplate } from '../../app/services/templates';
 import { SearchMode } from '../search/searchSlice';
 import { setSnackbarText, toggleSnackbar } from '../snackbar/snackbarSlice';
 import { useAppDispatch } from '../../app/hooks';
 import Markdown from '../Markdown';
+import { dbsState, filteredModelsState, languagesState } from '../../recoil/selectors';
 
 interface TemplateCreateDialogProps {
   open: boolean;
@@ -41,9 +40,9 @@ export default function TemplateCreateDialog(props: TemplateCreateDialogProps) {
   const { open, onClose } = props;
 
   // State
-  const { data: languages = [] } = useGetLanguagesQuery();
-  const { data: models = [] } = useGetModelsQuery();
-  const { data: databases = [] } = useGetDatabasesQuery();
+  const languages = useRecoilValue(languagesState);
+  const models = useRecoilValue(filteredModelsState);
+  const dbs = useRecoilValue(dbsState);
   const [form, setForm] = React.useState<Template>(emptyTemplate);
 
   const isDisabled = (name: string) => name !== form.mode;
@@ -110,7 +109,7 @@ export default function TemplateCreateDialog(props: TemplateCreateDialogProps) {
       await addTemplate(newTemplate).unwrap();
       setForm(emptyTemplate);
       onClose();
-      dispatch(setSnackbarText('✅‎‎ Template created successfully.'));
+      dispatch(setSnackbarText('✅ Template created successfully.'));
       dispatch(toggleSnackbar(true));
     } catch (e) {
       dispatch(setSnackbarText('😢 Something went wront. Your template could not be created.'));
@@ -172,7 +171,7 @@ export default function TemplateCreateDialog(props: TemplateCreateDialogProps) {
                 value={form.database}
                 onChange={(e: SelectChangeEvent) => handleSelectFormFieldChange(e, 'database')}
               >
-                {databases?.map((db) => <MenuItem key={db} value={db}>{db}</MenuItem>)}
+                {dbs.map((db) => <MenuItem key={db} value={db}>{db}</MenuItem>)}
               </Select>
             </FormControl>
           </Grid>

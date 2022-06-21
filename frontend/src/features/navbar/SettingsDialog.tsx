@@ -11,18 +11,21 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Config,
   emptyConfig,
   useUpdateConfigsMutation,
   useGetConfigsQuery,
 } from '../../app/services/configs';
-import { useGetLanguagesQuery } from '../../app/services/languages';
-import { useGetDatabasesQuery } from '../../app/services/databases';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { queryParametersState } from '../../recoil/atoms';
 import {
-  setDb, setLanguage, selectDb, selectLanguage,
-} from '../search/searchSlice';
+  dataStructureQueryState,
+  dbsState,
+  filteredModelsState,
+  filteredIndexesState,
+  languagesState,
+} from '../../recoil/selectors';
 
 export interface SimpleDialogProps {
   isOpen: boolean;
@@ -31,12 +34,13 @@ export interface SimpleDialogProps {
 
 export default function SettingsDialog(props: SimpleDialogProps) {
   const { onClose, isOpen } = props;
-  const dispatch = useAppDispatch();
-  const { data: languages = [] } = useGetLanguagesQuery();
-  const { data: dbs = [] } = useGetDatabasesQuery();
-  const db = useAppSelector(selectDb);
-  const language = useAppSelector(selectLanguage);
+  const languages = useRecoilValue(languagesState);
+  const dbs = useRecoilValue(dbsState);
+  const models = useRecoilValue(filteredModelsState);
+  const indexes = useRecoilValue(filteredIndexesState);
+  const dataStructure = useRecoilValue(dataStructureQueryState);
   const [updateConfigs, { isLoading: isUpdating }] = useUpdateConfigsMutation();
+  const [queryParameters, setQueryParameters] = useRecoilState(queryParametersState);
 
   const {
     data,
@@ -68,12 +72,10 @@ export default function SettingsDialog(props: SimpleDialogProps) {
     }));
   };
 
-  const handleChangeDb = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setDb(event.target.value as string));
-  };
-
-  const handleChangeLanguage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setLanguage(event.target.value as string));
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    const newParameters = { ...queryParameters, [name]: value };
+    setQueryParameters(newParameters);
   };
 
   const handleUpdateConfig = async () => {
@@ -81,6 +83,13 @@ export default function SettingsDialog(props: SimpleDialogProps) {
     const nonEmptyCfg = Object.fromEntries(Object.entries(cfg).filter(([, v]) => v !== ''));
     await updateConfigs(nonEmptyCfg);
     onClose();
+  };
+
+  const isIndexSelectDisabled = () => {
+    const { model } = queryParameters;
+    if (model === '') return true;
+    const { db } = queryParameters;
+    return dataStructure[db][model].length === 0;
   };
 
   if (isLoading) return (<LinearProgress />);
@@ -101,27 +110,52 @@ export default function SettingsDialog(props: SimpleDialogProps) {
       </DialogTitle>
       <DialogContent>
 
-        <Stack spacing={2}>
-          <TextField
-            label="language"
-            name="language"
-            value={language}
-            onChange={handleChangeLanguage}
-            defaultValue={language}
-            select
-          >
-            {languages.map((lang) => <MenuItem key={lang} value={lang}>{lang}</MenuItem>)}
-          </TextField>
-
+        <Stack sx={{ pt: 2 }} spacing={2}>
           <TextField
             label="Database"
             name="db"
-            value={db}
-            onChange={handleChangeDb}
-            defaultValue={db}
+            value={queryParameters.db}
+            onChange={handleChange}
+            defaultValue={queryParameters.db}
             select
           >
             {dbs.map((database) => <MenuItem key={database} value={database}>{database}</MenuItem>)}
+          </TextField>
+
+          <TextField
+            label="Model"
+            name="model"
+            value={queryParameters.model}
+            onChange={handleChange}
+            defaultValue={queryParameters.model}
+            disabled={queryParameters.db === ''}
+            select
+          >
+            {models.map((model) => <MenuItem key={model} value={model}>{model}</MenuItem>)}
+          </TextField>
+
+          <TextField
+            label="Index"
+            name="index"
+            value={queryParameters.index}
+            onChange={handleChange}
+            defaultValue={queryParameters.index}
+            disabled={isIndexSelectDisabled()}
+            select
+          >
+            {indexes.map((index) => <MenuItem key={index} value={index}>{index}</MenuItem>)}
+          </TextField>
+
+          <TextField
+            label="language"
+            name="language"
+            value={queryParameters.language}
+            onChange={handleChange}
+            defaultValue={queryParameters.language}
+            disabled
+            select
+          >
+            {languages.map((lang) => <MenuItem key={lang} value={lang}>{lang}</MenuItem>)}
           </TextField>
 
           <TextField
