@@ -1,12 +1,11 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import LinearProgress from '@mui/material/LinearProgress';
+import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -18,6 +17,12 @@ import {
   useUpdateConfigsMutation,
   useGetConfigsQuery,
 } from '../../app/services/configs';
+import { useGetLanguagesQuery } from '../../app/services/languages';
+import { useGetDatabasesQuery } from '../../app/services/databases';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import {
+  setDb, setLanguage, selectDb, selectLanguage,
+} from '../search/searchSlice';
 
 export interface SimpleDialogProps {
   isOpen: boolean;
@@ -26,6 +31,11 @@ export interface SimpleDialogProps {
 
 export default function SettingsDialog(props: SimpleDialogProps) {
   const { onClose, isOpen } = props;
+  const dispatch = useAppDispatch();
+  const { data: languages = [] } = useGetLanguagesQuery();
+  const { data: dbs = [] } = useGetDatabasesQuery();
+  const db = useAppSelector(selectDb);
+  const language = useAppSelector(selectLanguage);
   const [updateConfigs, { isLoading: isUpdating }] = useUpdateConfigsMutation();
 
   const {
@@ -58,6 +68,14 @@ export default function SettingsDialog(props: SimpleDialogProps) {
     }));
   };
 
+  const handleChangeDb = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setDb(event.target.value as string));
+  };
+
+  const handleChangeLanguage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setLanguage(event.target.value as string));
+  };
+
   const handleUpdateConfig = async () => {
     // filter empty properties
     const nonEmptyCfg = Object.fromEntries(Object.entries(cfg).filter(([, v]) => v !== ''));
@@ -84,6 +102,28 @@ export default function SettingsDialog(props: SimpleDialogProps) {
       <DialogContent>
 
         <Stack spacing={2}>
+          <TextField
+            label="language"
+            name="language"
+            value={language}
+            onChange={handleChangeLanguage}
+            defaultValue={language}
+            select
+          >
+            {languages.map((lang) => <MenuItem key={lang} value={lang}>{lang}</MenuItem>)}
+          </TextField>
+
+          <TextField
+            label="Database"
+            name="db"
+            value={db}
+            onChange={handleChangeDb}
+            defaultValue={db}
+            select
+          >
+            {dbs.map((database) => <MenuItem key={database} value={database}>{database}</MenuItem>)}
+          </TextField>
+
           <TextField
             onChange={handleTextChange}
             label="DATABASE_PATH"
