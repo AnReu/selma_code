@@ -12,13 +12,15 @@ from marshmallow import ValidationError
 from backend.config import Config
 from backend.app.main import bp
 
+URL_PREFIX = "/api/v1"
+
 
 @bp.route("/")
 def index():
     return current_app.send_static_file("index.html")
 
 
-@bp.route("/api/v1/search")
+@bp.route(f"{URL_PREFIX}/search")
 def search_route():
     text = request.args.get("text")
     code = request.args.get("code")
@@ -33,7 +35,7 @@ def search_route():
     return search(db_name, text, code, equation, _id, exchange, model, model_language)
 
 
-@bp.route("/api/v1/relevance", methods=["POST"])
+@bp.route(f"{URL_PREFIX}/relevance", methods=["POST"])
 def relevance():
     data = json.loads(request.data)
 
@@ -48,7 +50,7 @@ def relevance():
     return "", 204
 
 
-@bp.route("/api/v1/document")
+@bp.route(f"{URL_PREFIX}/document")
 def get_document():
     id = request.args.get("id")
     table_name = Config.get_db_table_name()
@@ -61,7 +63,7 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in allowed_extensions
 
 
-@bp.route("/api/v1/file", methods=["POST"])
+@bp.route(f"{URL_PREFIX}/file", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
         return "No file present", 400
@@ -84,19 +86,19 @@ def upload_file():
         return "Only PDFs are allowed file types", 403
 
 
-@bp.route("/api/v1/models")
+@bp.route(f"{URL_PREFIX}/models")
 def get_names_of_models():
     import backend.models
 
     return jsonify(backend.models.__all__)
 
 
-@bp.route("/api/v1/languages")
+@bp.route(f"{URL_PREFIX}/languages")
 def get_languages():
     return jsonify(["english", "german"])
 
 
-@bp.route("/api/v1/dbs")
+@bp.route(f"{URL_PREFIX}/dbs")
 def get_dbs():
     dbs = []
     for file in os.listdir(Config.get_databases_dir_path()):
@@ -105,7 +107,7 @@ def get_dbs():
     return jsonify(dbs)
 
 
-@bp.route("/api/v1/query-templates")
+@bp.route(f"{URL_PREFIX}/query-templates")
 def get_all_query_templates():
     all_templates = QueryTemplate.query.all()
     schema = QueryTemplateSchema(many=True)
@@ -113,7 +115,7 @@ def get_all_query_templates():
     return jsonify(results)
 
 
-@bp.route("/api/v1/query-templates/<id>", methods=["DELETE"])
+@bp.route(f"{URL_PREFIX}/query-templates/<id>", methods=["DELETE"])
 def delete_query_template_by_id(id):
     query_template = QueryTemplate.query.get(id)
     db.session.delete(query_template)
@@ -121,7 +123,7 @@ def delete_query_template_by_id(id):
     return jsonify(query_template.as_dict())
 
 
-@bp.route("/api/v1/query-templates", methods=["POST"])
+@bp.route(f"{URL_PREFIX}/query-templates", methods=["POST"])
 def create_query_template():
     schema = QueryTemplateSchema()
     json_data = request.get_json()
@@ -141,7 +143,7 @@ def create_query_template():
     return {"message": "Created new Query Template.", "queryTemplate": result}
 
 
-@bp.route("/api/v1/configs", methods=["GET"])
+@bp.route(f"{URL_PREFIX}/configs", methods=["GET"])
 def get_config_vars():
     default_allowed_search_modes = {
         "default": True,
@@ -161,7 +163,7 @@ def get_config_vars():
     return make_response(jsonify(config_vars), 200)
 
 
-@bp.route("/api/v1/configs", methods=["POST"])
+@bp.route(f"{URL_PREFIX}/configs", methods=["POST"])
 def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
