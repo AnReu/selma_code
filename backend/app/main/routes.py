@@ -86,27 +86,6 @@ def upload_file():
         return "Only PDFs are allowed file types", 403
 
 
-@bp.route(f"{URL_PREFIX}/models")
-def get_names_of_models():
-    import backend.models
-
-    return jsonify(backend.models.__all__)
-
-
-@bp.route(f"{URL_PREFIX}/languages")
-def get_languages():
-    return jsonify(["english", "german"])
-
-
-@bp.route(f"{URL_PREFIX}/dbs")
-def get_dbs():
-    dbs = []
-    for file in os.listdir(Config.get_databases_dir_path()):
-        if file.endswith(".db"):
-            dbs.append(file)
-    return jsonify(dbs)
-
-
 @bp.route(f"{URL_PREFIX}/query-templates")
 def get_all_query_templates():
     all_templates = QueryTemplate.query.all()
