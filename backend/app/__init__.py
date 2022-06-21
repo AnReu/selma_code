@@ -1,5 +1,6 @@
 # import os
 from flask import Flask
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from backend.config import Config
@@ -14,6 +15,7 @@ ma = Marshmallow()
 
 def create_app(config_class=Config):
     app = Flask(__name__, static_folder="../../frontend/build", static_url_path="/")
+    CORS(app, support_credentials=True)
     app.config.from_object(config_class)
 
     db.init_app(app)

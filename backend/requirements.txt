@@ -9,6 +9,7 @@
 # threadpoolctl==2.1.0
 Flask
 Flask-Migrate
+flast-cors
 flask-marshmallow
 gensim
 marshmallow-sqlalchemy
