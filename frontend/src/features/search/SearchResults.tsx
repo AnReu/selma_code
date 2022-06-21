@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -21,7 +20,7 @@ export default function SearchResults() {
   const {
     data, isLoading, isFetching, isError,
   } = useGetResultsQuery(params ?? skipToken);
-  const [currentPageResults, setCurrentPageResults] = React.useState<Result[]>([]);
+  const [, setCurrentPageResults] = React.useState<Result[]>([]);
   const [endIndex, setEndIndex] = React.useState(RESULTS_PER_PAGE);
 
   const updateShownResults = () => {

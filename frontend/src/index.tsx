@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-// TODO: remove the line above
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -10,7 +8,7 @@ import { setupStore } from './app/store';
 import * as serviceWorker from './serviceWorker';
 
 const defaultLight = createTheme();
-const defaultDark = createTheme({ palette: { mode: 'dark' } });
+// const defaultDark = createTheme({ palette: { mode: 'dark' } });
 
 const store = setupStore();
 
