@@ -11,7 +11,6 @@ import Tooltip from '@mui/material/Tooltip';
 import TemplateCreateDialog from '../templates/TemplateCreateDialog';
 
 interface SearchBarProps {
-  // eslint-disable-next-line no-unused-vars
   onSearch: (query: string) => void;
 }
 
