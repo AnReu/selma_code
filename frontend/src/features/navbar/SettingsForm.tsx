@@ -10,6 +10,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import {
   Config,
   emptyConfig,
@@ -17,12 +20,13 @@ import {
   useGetConfigsQuery,
 } from '../../app/services/configs';
 
-interface SettingsFormProps {
-  setIsDialogOpen: (value: boolean) => void;
+export interface SimpleDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function SettingsForm(props: SettingsFormProps) {
-  const { setIsDialogOpen } = props;
+export default function SettingsForm(props: SimpleDialogProps) {
+  const { onClose, isOpen } = props;
   const [updateConfigs, { isLoading: isUpdating }] = useUpdateConfigsMutation();
 
   const {
@@ -59,7 +63,7 @@ export default function SettingsForm(props: SettingsFormProps) {
     // filter empty properties
     const nonEmptyCfg = Object.fromEntries(Object.entries(cfg).filter(([, v]) => v !== ''));
     await updateConfigs(nonEmptyCfg);
-    setIsDialogOpen(false);
+    onClose();
   };
 
   if (isLoading) return (<LinearProgress />);
@@ -70,6 +74,16 @@ export default function SettingsForm(props: SettingsFormProps) {
   }
   // if isSuccess
   return (
+
+    <Dialog
+      open={isOpen}
+      onClose={() => onClose()}
+    >
+      <DialogTitle>
+        Settings
+      </DialogTitle>
+      <DialogContent>
+
     <Stack spacing={2}>
       <TextField
         onChange={handleTextChange}
@@ -168,5 +182,7 @@ export default function SettingsForm(props: SettingsFormProps) {
       <Button onClick={handleUpdateConfig}>Submit</Button>
       {isUpdating && <LinearProgress />}
     </Stack>
+      </DialogContent>
+    </Dialog>
   );
 }
