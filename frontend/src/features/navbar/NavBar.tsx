@@ -1,13 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import TemplateListDialog from '../templates/TemplateListDialog';
@@ -15,15 +13,8 @@ import DefaultSearchBar from '../search/DefaultSearchBar';
 import SeparatedSearchBar from '../search/SeparatedSearchBar';
 import URLSearchBar from '../search/URLSearchBar';
 import FileUploadSearchBar from '../search/FileUploadSearchBar';
-import { useGetModelsQuery } from '../../app/services/models';
 import SettingsDialog from './SettingsDialog';
-import {
-  selectModel,
-  setModel,
-  selectMode,
-  setMode,
-  SearchMode,
-} from '../search/searchSlice';
+import { selectMode, setMode, SearchMode } from '../search/searchSlice';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { emptyConfig, useGetConfigsQuery } from '../../app/services/configs';
 
@@ -72,18 +63,12 @@ function a11yProps(index: number) {
 export default function NavBar() {
   const dispatch = useAppDispatch();
   const theme = useTheme();
-  const { data: models = [] } = useGetModelsQuery();
   const { data: config = emptyConfig } = useGetConfigsQuery();
-  const model = useAppSelector(selectModel);
   const mode = useAppSelector(selectMode);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-  };
-
-  const handleChangeModel = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setModel(event.target.value as string));
   };
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -108,19 +93,6 @@ export default function NavBar() {
 
           <TemplateListDialog />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
-            <TextField
-              select
-              size="small"
-              label="Model"
-              id="model-select"
-              value={model}
-              onChange={handleChangeModel}
-              sx={{ mx: 2, minWidth: 200 }}
-              variant="filled"
-            >
-              {models?.map((mod) => <MenuItem key={mod} value={mod}>{mod}</MenuItem>)}
-            </TextField>
 
             <IconButton
               size="large"
