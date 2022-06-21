@@ -86,6 +86,25 @@ def upload_file():
         return "Only PDFs are allowed file types", 403
 
 
+@bp.route(f"{URL_PREFIX}/data-structure")
+def get_data_structure():
+    data = {
+        "codeSearchNets": {
+            "PyTerrier": ["code", "comment", "tokens", "ehiuaheiuaheiuahe"],
+            "Vector": ["w2v"],
+            "ModelWithoutIndex": []
+        },
+        "post": {
+            "PyTerrier": ["stackoverflow"]
+        },
+        "erik": {
+            "Vector": ["questions", "answers"]
+        },
+        "dbWithoutModel": {}
+    }
+    return jsonify(data)
+
+
 @bp.route(f"{URL_PREFIX}/query-templates")
 def get_all_query_templates():
     all_templates = QueryTemplate.query.all()
