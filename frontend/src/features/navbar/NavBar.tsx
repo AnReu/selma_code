@@ -16,7 +16,7 @@ import SeparatedSearchBar from '../search/SeparatedSearchBar';
 import URLSearchBar from '../search/URLSearchBar';
 import FileUploadSearchBar from '../search/FileUploadSearchBar';
 import { useGetModelsQuery } from '../../app/services/models';
-import SettingsForm from './SettingsForm';
+import SettingsDialog from './SettingsDialog';
 import {
   selectModel,
   setModel,
@@ -159,7 +159,7 @@ export default function NavBar() {
       <TabPanel value="file" currentMode={mode} dir={theme.direction}>
         <FileUploadSearchBar />
       </TabPanel>
-      <SettingsForm isOpen={isDialogOpen} onClose={handleCloseDialog} />
+      <SettingsDialog isOpen={isDialogOpen} onClose={handleCloseDialog} />
     </Box>
   );
 }
