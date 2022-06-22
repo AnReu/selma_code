@@ -1,10 +1,8 @@
 import React from 'react';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import LinearProgress from '@mui/material/LinearProgress';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -12,16 +10,12 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  Config,
-  emptyConfig,
-  useUpdateConfigsMutation,
-  useGetConfigsQuery,
-} from '../../app/services/configs';
 import { queryParametersState } from '../../recoil/atoms';
 import {
+  Config,
   dataStructureQueryState,
   dbsState,
+  emptyConfig,
   filteredModelsState,
   filteredIndexesState,
   languagesState,
@@ -39,32 +33,17 @@ export default function SettingsDialog(props: SimpleDialogProps) {
   const models = useRecoilValue(filteredModelsState);
   const indexes = useRecoilValue(filteredIndexesState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
-  const [updateConfigs, { isLoading: isUpdating }] = useUpdateConfigsMutation();
   const [queryParameters, setQueryParameters] = useRecoilState(queryParametersState);
-
-  const {
-    data,
-    isSuccess,
-    isLoading,
-    isError,
-  } = useGetConfigsQuery();
-
-  const [cfg, setCfg] = React.useState<Config>(emptyConfig);
-
-  React.useEffect(() => {
-    if (data) {
-      setCfg(data);
-    }
-  }, [isSuccess]);
+  const [configsForm, setConfigsForm] = React.useState<Config>(emptyConfig);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setCfg((values: Config) => ({ ...values, [name]: value }));
+    setConfigsForm((values: Config) => ({ ...values, [name]: value }));
   };
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
-    setCfg((values: Config) => ({
+    setConfigsForm((values: Config) => ({
       ...values,
       allowed_search_modes: {
         ...values.allowed_search_modes, [name]: checked,
@@ -79,9 +58,12 @@ export default function SettingsDialog(props: SimpleDialogProps) {
   };
 
   const handleUpdateConfig = async () => {
+    console.error('TODO');
     // filter empty properties
-    const nonEmptyCfg = Object.fromEntries(Object.entries(cfg).filter(([, v]) => v !== ''));
-    await updateConfigs(nonEmptyCfg);
+    // const nonEmptyCfg = Object.fromEntries(
+    //   Object.entries(configsForm).filter(([, v]) => v !== ''),
+    // );
+    // await updateConfigs(nonEmptyCfg);
     onClose();
   };
 
@@ -92,15 +74,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
     return dataStructure[db][model].length === 0;
   };
 
-  if (isLoading) return (<LinearProgress />);
-  if (isError) {
-    return (
-      <Box role="contentinfo">Oops 😯 something went wrong</Box>
-    );
-  }
-  // if isSuccess
   return (
-
     <Dialog
       open={isOpen}
       onClose={() => onClose()}
@@ -164,7 +138,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             variant="filled"
             name="database_path"
             id="database_path"
-            value={cfg.db_path}
+            value={configsForm.db_path}
           />
           <TextField
             onChange={handleTextChange}
@@ -172,7 +146,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             variant="filled"
             name="databases_dir_path"
             id="databases_dir_path"
-            value={cfg.dbs_path}
+            value={configsForm.dbs_path}
           />
           <TextField
             onChange={handleTextChange}
@@ -180,7 +154,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             variant="filled"
             name="db_table_name"
             id="db_table_name"
-            value={cfg.db_table_name}
+            value={configsForm.db_table_name}
           />
           <TextField
             onChange={handleTextChange}
@@ -188,7 +162,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             variant="filled"
             name="db_content_attribute_name"
             id="db_content_attribute_name"
-            value={cfg.db_content_attribute_name}
+            value={configsForm.db_content_attribute_name}
           />
           <TextField
             onChange={handleTextChange}
@@ -196,7 +170,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             variant="filled"
             name="index_path"
             id="index_path"
-            value={cfg.index_path}
+            value={configsForm.index_path}
           />
           <TextField
             onChange={handleTextChange}
@@ -204,7 +178,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             variant="filled"
             name="indexes_dir_path"
             id="indexes_dir_path"
-            value={cfg.indexes_path}
+            value={configsForm.indexes_path}
           />
 
           <FormGroup row>
@@ -213,7 +187,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
               control={(
                 <Checkbox
                   onChange={handleCheckboxChange}
-                  checked={cfg.allowed_search_modes.default}
+                  checked={configsForm.allowed_search_modes.default}
                   name="default"
                   inputProps={{ 'aria-label': 'controlled' }}
                 />
@@ -224,7 +198,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
               control={(
                 <Checkbox
                   onChange={handleCheckboxChange}
-                  checked={cfg.allowed_search_modes.separated}
+                  checked={configsForm.allowed_search_modes.separated}
                   name="separated"
                 />
               )}
@@ -234,7 +208,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
               control={(
                 <Checkbox
                   onChange={handleCheckboxChange}
-                  checked={cfg.allowed_search_modes.url}
+                  checked={configsForm.allowed_search_modes.url}
                   name="url"
                 />
               )}
@@ -244,7 +218,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
               control={(
                 <Checkbox
                   onChange={handleCheckboxChange}
-                  checked={cfg.allowed_search_modes.file}
+                  checked={configsForm.allowed_search_modes.file}
                   name="file"
                 />
               )}
@@ -253,7 +227,6 @@ export default function SettingsDialog(props: SimpleDialogProps) {
           </FormGroup>
 
           <Button onClick={handleUpdateConfig}>Submit</Button>
-          {isUpdating && <LinearProgress />}
         </Stack>
       </DialogContent>
     </Dialog>
