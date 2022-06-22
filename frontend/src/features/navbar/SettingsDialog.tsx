@@ -71,6 +71,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
     const { model } = queryParameters;
     if (model === '') return true;
     const { db } = queryParameters;
+    // TODO: if model does not exist, this throws an error
     return dataStructure[db][model].length === 0;
   };
 
