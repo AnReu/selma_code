@@ -93,18 +93,17 @@ export default function NavBar() {
           <Box sx={{ flexGrow: 1 }} />
 
           <TemplateListDialog />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
 
-            <IconButton
-              size="large"
-              edge="end"
-              aria-haspopup="true"
-              color="inherit"
-              onClick={() => setIsDialogOpen(true)}
-            >
-              <SettingsIcon />
-            </IconButton>
-          </Box>
+          <IconButton
+            size="large"
+            edge="end"
+            aria-haspopup="true"
+            color="inherit"
+            onClick={() => setIsDialogOpen(true)}
+          >
+            <SettingsIcon />
+          </IconButton>
+
         </Toolbar>
         <Tabs
           value={mode}
