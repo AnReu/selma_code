@@ -8,6 +8,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { useRecoilValue } from 'recoil';
 import TemplateListDialog from '../templates/TemplateListDialog';
 import DefaultSearchBar from '../search/DefaultSearchBar';
 import SeparatedSearchBar from '../search/SeparatedSearchBar';
@@ -16,7 +17,7 @@ import FileUploadSearchBar from '../search/FileUploadSearchBar';
 import SettingsDialog from './SettingsDialog';
 import { selectMode, setMode, SearchMode } from '../search/searchSlice';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { emptyConfig, useGetConfigsQuery } from '../../app/services/configs';
+import { configsState } from '../../recoil/selectors';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -63,7 +64,7 @@ function a11yProps(index: number) {
 export default function NavBar() {
   const dispatch = useAppDispatch();
   const theme = useTheme();
-  const { data: config = emptyConfig } = useGetConfigsQuery();
+  const configs = useRecoilValue(configsState);
   const mode = useAppSelector(selectMode);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
@@ -112,10 +113,10 @@ export default function NavBar() {
           textColor="inherit"
           variant="fullWidth"
         >
-          <Tab disabled={!config.allowed_search_modes.default} value="default" label="Default" {...a11yProps(0)} />
-          <Tab disabled={!config.allowed_search_modes.separated} value="separated" label="Separated" {...a11yProps(1)} />
-          <Tab disabled={!config.allowed_search_modes.url} value="url" label="ID or URL" {...a11yProps(2)} />
-          <Tab disabled={!config.allowed_search_modes.file} value="file" label="File" {...a11yProps(2)} />
+          <Tab disabled={!configs.allowed_search_modes.default} value="default" label="Default" {...a11yProps(0)} />
+          <Tab disabled={!configs.allowed_search_modes.separated} value="separated" label="Separated" {...a11yProps(1)} />
+          <Tab disabled={!configs.allowed_search_modes.url} value="url" label="ID or URL" {...a11yProps(2)} />
+          <Tab disabled={!configs.allowed_search_modes.file} value="file" label="File" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
 
