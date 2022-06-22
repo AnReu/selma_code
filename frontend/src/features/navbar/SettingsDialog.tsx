@@ -227,7 +227,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             />
           </FormGroup>
 
-          <Button onClick={handleUpdateConfig}>Submit</Button>
+          <Button onClick={handleUpdateConfig}>Apply</Button>
         </Stack>
       </DialogContent>
     </Dialog>
