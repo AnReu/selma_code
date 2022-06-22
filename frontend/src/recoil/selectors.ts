@@ -1,6 +1,8 @@
 import { atom, selector, useRecoilState } from 'recoil';
 import { queryParametersState } from './atoms';
 
+const baseURL = 'http://127.0.0.1:5000/api/v1';
+
 export const searchParamsState = selector({
   key: 'searchParameters',
   get: ({ get }) => {
@@ -12,7 +14,7 @@ export const searchParamsState = selector({
 export const dataStructureQueryState = selector({
   key: 'dataStructure',
   get: async () => {
-    const response = await fetch('http://127.0.0.1:5000/api/v1/data-structure');
+    const response = await fetch(`${baseURL}/data-structure`, { mode: 'cors' });
     return response.json();
   },
 });
@@ -86,7 +88,7 @@ export const configsState = atom<Config>({
   default: selector<Config>({
     key: 'configsLoader',
     get: async () => {
-      const response = await fetch('http://127.0.0.1:5000/api/v1/configs');
+      const response = await fetch(`${baseURL}/configs`, { mode: 'cors' });
       return response.json();
     },
   }),
@@ -108,8 +110,8 @@ export function useConfigsMutations() {
   const [, setConfigs] = useRecoilState(configsState);
 
   const updateConfigs = async (updatedConfigs: UpdateConfigsParams) => {
-    await fetch('http://127.0.0.1:5000/api/v1/configs',
-      { method: 'POST', body: JSON.stringify(updatedConfigs) });
+    await fetch(`${baseURL}/configs`,
+      { method: 'POST', body: JSON.stringify(updatedConfigs), mode: 'cors' });
     setConfigs(emptyConfig);
   };
 
