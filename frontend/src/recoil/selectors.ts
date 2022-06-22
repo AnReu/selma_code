@@ -81,48 +81,37 @@ export const emptyConfig: Config = {
   },
 };
 
-export const configsState = atom({
+export const configsState = atom<Config>({
   key: 'configs',
-  default: selector({
+  default: selector<Config>({
     key: 'configsLoader',
     get: async () => {
-      const response = await fetch('http://127.0.0.1:5000/api/v1/data-structure');
-      return response.formData;
+      const response = await fetch('http://127.0.0.1:5000/api/v1/configs');
+      return response.json();
     },
   }),
 });
 
-declare interface UpdateConfigsParams {
-  id: number
+export declare interface UpdateConfigsParams {
+  db_path?: string,
+  db_table_name?: '',
+  db_content_attribute_name?: string,
+  dbs_path?: string,
+  index_path?: string,
+  indexes_path?: string,
+  allowed_search_modes?: {
+    default?: boolean, separated?: boolean, url?: boolean, file?: boolean,
+  },
 }
 
-function useConfigsMutations() {
-  const [configs, setConfigs] = useRecoilState(configsState);
+export function useConfigsMutations() {
+  const [, setConfigs] = useRecoilState(configsState);
 
-  const updateConfigs = async (updatedConfig: UpdateConfigsParams) {
-    await fetch('http://127.0.0.1:5000/api/v1/data-structure', { method: 'POST' })
-    //update remotely await put/patch
-    // const newConfigs = make a copy of current config, change the updated value
-    setConfigs(newConfigs)
-  }
+  const updateConfigs = async (updatedConfigs: UpdateConfigsParams) => {
+    await fetch('http://127.0.0.1:5000/api/v1/configs',
+      { method: 'POST', body: JSON.stringify(updatedConfigs) });
+    setConfigs(emptyConfig);
+  };
+
+  return { updateConfigs };
 }
-
-// const apiWithConfigs = emptySplitApi.injectEndpoints({
-//   endpoints: (build) => ({
-//     getConfigs: build.query<Config, void>({
-//       query: () => '/configs',
-//       providesTags: ['Configs'],
-//     }),
-//     updateConfigs: build.mutation<Config, Partial<Config>>({
-//       query: (data) => {
-//         const { ...body } = data;
-//         return {
-//           url: '/configs',
-//           method: 'POST',
-//           body,
-//         };
-//       },
-//     }),
-//   }),
-//   overrideExisting: false,
-// });
