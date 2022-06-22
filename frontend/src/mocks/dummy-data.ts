@@ -1,5 +1,4 @@
 import { Result } from '../app/services/results';
-import { Config } from '../app/services/configs';
 
 export const r1: Result = {
   acceptedAnswerId: 31,
@@ -22,16 +21,4 @@ export const r2: Result = {
   tags: '2nd tag',
   cut: true,
   relevantSentence: '2nd relevant sentence',
-};
-
-export const cfg: Config = {
-  db_path: 'myDbPath',
-  db_table_name: 'myTableName',
-  db_content_attribute_name: 'myContentAttributeName',
-  dbs_path: 'myDataDir',
-  index_path: '',
-  indexes_path: '',
-  allowed_search_modes: {
-    default: true, separated: false, url: false, file: true,
-  },
 };

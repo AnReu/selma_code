@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 import { Result } from '../app/services/results';
-import { cfg, r1, r2 } from './dummy-data';
+import { r1, r2 } from './dummy-data';
 
 const adapter = createEntityAdapter<Result>();
 
@@ -17,6 +17,5 @@ export const handlers = [
   rest.get(`${baseUrl}/results`, (req, res, ctx) => res(ctx.json([r1, r2]))),
   rest.get(`${baseUrl}/languages`, (req, res, ctx) => res(ctx.json(['english', 'german']))),
   rest.get(`${baseUrl}/models`, (req, res, ctx) => res(ctx.json(['pyterrier', 'vector', 'coolModel', 'oneMoreFakeModel']))),
-  rest.get(`${baseUrl}/configs`, (req, res, ctx) => res(ctx.json(cfg))),
   rest.get(`${baseUrl}/dbs`, (req, res, ctx) => res(ctx.json(['db1', 'db2', 'myDb33']))),
 ];
