@@ -23,6 +23,14 @@ class Config(object):
     DB_TABLE_NAME = None
     DB_CONTENT_ATTRIBUTE_NAME = None
     ALLOWED_SEARCH_MODES = None
+    DATA_PATH = None
+    
+    @staticmethod
+    def get_data_path():
+        if os.environ.get("DATA_PATH"):
+            return os.environ.get("DATA_PATH")
+
+        raise Exception("DATA_PATH is not defined in .rsenv file")
 
     @staticmethod
     def get_database_path(db_name):
