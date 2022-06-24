@@ -18,9 +18,7 @@ class Config(object):
     # the application every time a change is about to be made in the database.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    DATABASES_DIR_PATH = None
     DATABASE_PATH = None
-    INDEXES_DIR_PATH = None
     INDEX_PATH = None
     DB_TABLE_NAME = None
     DB_CONTENT_ATTRIBUTE_NAME = None
@@ -31,33 +29,10 @@ class Config(object):
         if Config.DATABASE_PATH:
             return Config.DATABASE_PATH
 
-        custom_database_path = os.environ.get("DATABASE_PATH")
-        if custom_database_path is not None:
+        if os.environ.get("DATABASE_PATH"):
             return os.environ.get("DATABASE_PATH")
 
-        return os.path.join(Config.get_databases_dir_path(), db_name)
-
-    @staticmethod
-    def get_databases_dir_path():
-        if Config.DATABASES_DIR_PATH:
-            return Config.DATABASES_DIR_PATH
-        
-        custom_databases_dir_path = os.environ.get("DATABASES_DIR_PATH")
-        if custom_databases_dir_path is not None:
-            return os.environ.get("DATABASES_DIR_PATH")
-        else:
-            raise Exception('DATABASES_DIR_PATH is not defined in .rsenv file')
-
-    @staticmethod
-    def get_indexes_dir_path():
-        if Config.INDEXES_DIR_PATH:
-            return Config.INDEXES_DIR_PATH
-
-        custom_indexes_dir_path = os.environ.get("INDEXES_DIR_PATH")
-        if custom_indexes_dir_path is not None:
-            return os.environ.get("INDEXES_DIR_PATH")
-        else:
-            raise Exception('INDEXES_DIR_PATH is not defined in .rsenv file')
+        raise Exception("DATABASE_PATH is not defined in .rsenv file")
 
     @staticmethod
     def get_db_content_attribute_name():
@@ -68,18 +43,18 @@ class Config(object):
         if custom_db_content_attribute_name is not None:
             return os.environ.get("DB_CONTENT_ATTRIBUTE_NAME")
         else:
-            raise Exception('DB_CONTENT_ATTRIBUTE_NAME is not defined in .rsenv file')
+            raise Exception("DB_CONTENT_ATTRIBUTE_NAME is not defined in .rsenv file")
 
     @staticmethod
     def get_db_table_name():
         if Config.DB_TABLE_NAME:
             return Config.DB_TABLE_NAME
-        
+
         custom_db_table_name = os.environ.get("DB_TABLE_NAME")
         if custom_db_table_name is not None:
             return os.environ.get("DB_TABLE_NAME")
         else:
-            raise Exception('DB_TABLE_NAME is not defined in .rsenv file')
+            raise Exception("DB_TABLE_NAME is not defined in .rsenv file")
 
     @staticmethod
     def get_allowed_search_modes():
@@ -91,14 +66,13 @@ class Config(object):
             return os.environ.get("ALLOWED_SEARCH_MODES")
 
         return True
-    
+
     @staticmethod
     def get_index_path(db_name):
         if Config.INDEX_PATH:
             return Config.INDEX_PATH
 
-        custom_index_path = os.environ.get("INDEX_PATH")
-        if custom_index_path is not None:
+        if os.environ.get("INDEX_PATH"):
             return os.environ.get("INDEX_PATH")
 
-        return os.path.join(Config.get_indexes_dir_path(), db_name[:-3])
+        raise Exception("INDEX_PATH is not defined in .rsenv file")
