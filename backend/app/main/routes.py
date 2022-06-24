@@ -88,21 +88,22 @@ def upload_file():
 
 @bp.route(f"{URL_PREFIX}/data-structure")
 def get_data_structure():
-    data = {
-        "codeSearchNets": {
-            "PyTerrier": ["code", "comment", "tokens", "ehiuaheiuaheiuahe"],
-            "Vector": ["w2v"],
-            "ModelWithoutIndex": []
-        },
-        "post": {
-            "PyTerrier": ["stackoverflow"]
-        },
-        "erik": {
-            "Vector": ["questions", "answers"]
-        },
-        "dbWithoutModel": {}
-    }
-    return jsonify(data)
+    data_path = Config.get_data_path()
+    tree = {}
+    for db in os.listdir(data_path):
+        db_path = os.path.join(data_path,db)
+        if os.path.isdir(db_path):
+            tree[db] = {}
+            for model in os.listdir(db_path):
+                model_path = os.path.join(db_path,model)
+                if os.path.isdir(model_path):
+                    tree[db][model] = []
+                    for index in os.listdir(model_path):
+                        index_path = os.path.join(model_path, index)
+                        if os.path.isdir(index_path):
+                            tree[db][model].append(index)
+    
+    return jsonify(tree)
 
 
 @bp.route(f"{URL_PREFIX}/query-templates")
