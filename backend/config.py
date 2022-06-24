@@ -33,7 +33,7 @@ class Config(object):
         raise Exception("DATA_PATH is not defined in .rsenv file")
 
     @staticmethod
-    def get_database_path(db_name):
+    def get_database_path():
         if Config.DATABASE_PATH:
             return Config.DATABASE_PATH
 
@@ -76,7 +76,7 @@ class Config(object):
         return True
 
     @staticmethod
-    def get_index_path(db_name):
+    def get_index_path():
         if Config.INDEX_PATH:
             return Config.INDEX_PATH
 
