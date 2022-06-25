@@ -1,10 +1,12 @@
 import React from 'react';
-import Grid from '@mui/material/Grid';
 import { MathJaxContext } from 'better-react-mathjax';
 import { RecoilRoot } from 'recoil';
 import RecoilizeDebugger from 'recoilize';
+import { Routes, Route } from 'react-router-dom';
 import SearchPage from './features/search/SearchPage';
 import StoreSnackbar from './features/snackbar/StoreSnackbar';
+import ResultsPage from './ResultsPage';
+import HomePage from './HomePage';
 
 const config = {
   loader: { load: ['[tex]/html'] },
@@ -26,16 +28,14 @@ export default function App() {
     <RecoilRoot>
       <RecoilizeDebugger />
       <React.Suspense fallback={<div>Loading...</div>}>
-
-        <Grid component="main" container sx={{ bgcolor: (theme) => theme.palette.background.paper, height: '100%' }}>
-          <Grid item xs={12}>
-            <MathJaxContext config={config}>
-              <SearchPage />
-              <StoreSnackbar />
-            </MathJaxContext>
-          </Grid>
-        </Grid>
-
+        <MathJaxContext config={config}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="search" element={<SearchPage />} />
+            <Route path="results" element={<ResultsPage />} />
+          </Routes>
+          <StoreSnackbar />
+        </MathJaxContext>
       </React.Suspense>
     </RecoilRoot>
   );
