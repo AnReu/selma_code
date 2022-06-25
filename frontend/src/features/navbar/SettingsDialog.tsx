@@ -15,10 +15,10 @@ import {
   Config,
   dataStructureQueryState,
   dbsState,
-  emptyConfig,
   filteredModelsState,
   filteredIndexesState,
   languagesState,
+  configsState,
 } from '../../recoil/selectors';
 
 export interface SimpleDialogProps {
@@ -34,7 +34,8 @@ export default function SettingsDialog(props: SimpleDialogProps) {
   const indexes = useRecoilValue(filteredIndexesState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
   const [queryParameters, setQueryParameters] = useRecoilState(queryParametersState);
-  const [configsForm, setConfigsForm] = React.useState<Config>(emptyConfig);
+  const configs = useRecoilValue(configsState);
+  const [configsForm, setConfigsForm] = React.useState<Config>(configs);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
