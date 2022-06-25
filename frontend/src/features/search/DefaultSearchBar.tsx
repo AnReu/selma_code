@@ -14,30 +14,25 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SearchIcon from '@mui/icons-material/Search';
 // Others
 import Hotkeys from 'react-hot-keys';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useRecoilState } from 'recoil';
+import { Link } from 'react-router-dom';
 import CreateTemplateDialog from '../templates/TemplateCreateDialog';
-import {
-  setText, setMode, setParams, selectText,
-} from './searchSlice';
+import { queryParametersState } from '../../recoil/atoms';
 
 export default function DefaultSearchBar() {
   const inputDefaultSearchEl = React.useRef<HTMLInputElement>(null);
-  const dispatch = useAppDispatch();
   // State
-  const query = useAppSelector(selectText);
   const [open, setOpen] = React.useState(false);
   const [showTooltip, setShowTooltip] = React.useState(true);
+  const [query, setQuery] = useRecoilState(queryParametersState);
 
   // Handlers
   const handleQueryTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log(event);
-    dispatch(setText((event.target as HTMLInputElement).value));
+    setQuery({ ...query, text: event.target.value });
   };
 
   const handleSearch = () => {
-    dispatch(setText(query));
-    dispatch(setMode('default'));
-    dispatch(setParams());
+
   };
 
   const handleEnter = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -80,7 +75,7 @@ export default function DefaultSearchBar() {
                 sx={{ ml: 2, flex: 1 }}
                 placeholder="Search"
                 inputProps={{ 'aria-label': 'search' }}
-                value={query}
+                value={query.text}
                 onChange={handleQueryTextChange}
                 onKeyDown={handleEnter}
                 onFocus={() => setShowTooltip(false)}
@@ -94,9 +89,15 @@ export default function DefaultSearchBar() {
               <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
 
               <Tooltip title="Run search">
-                <IconButton sx={{ p: '10px' }} onClick={handleSearch} aria-label="run search">
-                  <SearchIcon />
-                </IconButton>
+                <Link to={{
+                  pathname: 'results',
+                  search: '?text=image&db=codeSearchNet_java&model=PyterrierModel&index=comment',
+                }}
+                >
+                  <IconButton sx={{ p: '10px' }} onClick={handleSearch} aria-label="run search">
+                    <SearchIcon />
+                  </IconButton>
+                </Link>
               </Tooltip>
             </Paper>
           </Tooltip>
