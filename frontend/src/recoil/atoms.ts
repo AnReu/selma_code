@@ -4,7 +4,8 @@ declare interface QueryParametersState {
   db: string
   model: string,
   index: string,
-  language: string
+  language: string,
+  text: string,
 }
 
 const defaultQueryParameters: QueryParametersState = {
@@ -12,6 +13,7 @@ const defaultQueryParameters: QueryParametersState = {
   model: '',
   index: '',
   language: '',
+  text: '',
 };
 
 export const queryParametersState = atom<QueryParametersState>({
