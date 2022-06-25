@@ -31,8 +31,9 @@ def search_route():
     model = request.args.get("model")
     model_language = request.args.get("model-language")
     db_name = request.args.get("db")
+    index = request.args.get("index")
 
-    return search(db_name, text, code, equation, _id, exchange, model, model_language)
+    return search(db_name, text, code, equation, _id, exchange, model, model_language, index)
 
 
 @bp.route(f"{URL_PREFIX}/relevance", methods=["POST"])
