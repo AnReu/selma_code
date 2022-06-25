@@ -15,10 +15,10 @@ import {
   Config,
   dataStructureQueryState,
   dbsState,
-  emptyConfig,
   filteredModelsState,
   filteredIndexesState,
   languagesState,
+  configsState,
 } from '../../recoil/selectors';
 
 export interface SimpleDialogProps {
@@ -34,7 +34,8 @@ export default function SettingsDialog(props: SimpleDialogProps) {
   const indexes = useRecoilValue(filteredIndexesState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
   const [queryParameters, setQueryParameters] = useRecoilState(queryParametersState);
-  const [configsForm, setConfigsForm] = React.useState<Config>(emptyConfig);
+  const configs = useRecoilValue(configsState);
+  const [configsForm, setConfigsForm] = React.useState<Config>(configs);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -141,14 +142,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             id="database_path"
             value={configsForm.db_path}
           />
-          <TextField
-            onChange={handleTextChange}
-            label="DATABASES_DIR_PATH"
-            variant="filled"
-            name="databases_dir_path"
-            id="databases_dir_path"
-            value={configsForm.dbs_path}
-          />
+
           <TextField
             onChange={handleTextChange}
             label="DB_TABLE_NAME"
@@ -157,6 +151,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             id="db_table_name"
             value={configsForm.db_table_name}
           />
+
           <TextField
             onChange={handleTextChange}
             label="DB_CONTENT_ATTRIBUTE_NAME"
@@ -165,6 +160,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             id="db_content_attribute_name"
             value={configsForm.db_content_attribute_name}
           />
+
           <TextField
             onChange={handleTextChange}
             label="INDEX_PATH"
@@ -172,14 +168,6 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             name="index_path"
             id="index_path"
             value={configsForm.index_path}
-          />
-          <TextField
-            onChange={handleTextChange}
-            label="INDEXES_DIR_PATH"
-            variant="filled"
-            name="indexes_dir_path"
-            id="indexes_dir_path"
-            value={configsForm.indexes_path}
           />
 
           <FormGroup row>

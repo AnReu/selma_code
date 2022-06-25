@@ -31,8 +31,9 @@ def search_route():
     model = request.args.get("model")
     model_language = request.args.get("model-language")
     db_name = request.args.get("db")
+    index = request.args.get("index")
 
-    return search(db_name, text, code, equation, _id, exchange, model, model_language)
+    return search(db_name, text, code, equation, _id, exchange, model, model_language, index)
 
 
 @bp.route(f"{URL_PREFIX}/relevance", methods=["POST"])
@@ -88,21 +89,22 @@ def upload_file():
 
 @bp.route(f"{URL_PREFIX}/data-structure")
 def get_data_structure():
-    data = {
-        "codeSearchNets": {
-            "PyTerrier": ["code", "comment", "tokens", "ehiuaheiuaheiuahe"],
-            "Vector": ["w2v"],
-            "ModelWithoutIndex": []
-        },
-        "post": {
-            "PyTerrier": ["stackoverflow"]
-        },
-        "erik": {
-            "Vector": ["questions", "answers"]
-        },
-        "dbWithoutModel": {}
-    }
-    return jsonify(data)
+    data_path = Config.get_data_path()
+    tree = {}
+    for db in os.listdir(data_path):
+        db_path = os.path.join(data_path,db)
+        if os.path.isdir(db_path):
+            tree[db] = {}
+            for model in os.listdir(db_path):
+                model_path = os.path.join(db_path,model)
+                if os.path.isdir(model_path):
+                    tree[db][model] = []
+                    for index in os.listdir(model_path):
+                        index_path = os.path.join(model_path, index)
+                        if os.path.isdir(index_path):
+                            tree[db][model].append(index)
+    
+    return jsonify(tree)
 
 
 @bp.route(f"{URL_PREFIX}/query-templates")
@@ -150,11 +152,9 @@ def get_config_vars():
         "file": True,
     }
     config_vars = {
-        "databases_dir_path": Config.DATABASES_DIR_PATH if Config.DATABASES_DIR_PATH else "",
         "database_path": Config.DATABASE_PATH if Config.DATABASE_PATH else "",
         "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
         "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME if Config.DB_CONTENT_ATTRIBUTE_NAME else "",
-        "indexes_dir_path": Config.INDEXES_DIR_PATH if Config.INDEXES_DIR_PATH else "",
         "index_path": Config.INDEX_PATH if Config.INDEX_PATH else "",
         "allowed_search_modes": Config.ALLOWED_SEARCH_MODES if Config.ALLOWED_SEARCH_MODES else default_allowed_search_modes,
     }
@@ -165,21 +165,12 @@ def get_config_vars():
 def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
-    if "indexes_dir_path" in json_data:
-        Config.INDEXES_DIR_PATH = json_data["indexes_dir_path"]
-        modified_fields.append("indexes_dir_path")
-    else:
-        Config.INDEX_PATH = None
+        
     if "index_path" in json_data:
         Config.INDEX_PATH = json_data["index_path"]
         modified_fields.append("index_path")
     else:
-        Config.DATABASES_DIR_PATH = None
-    if "databases_dir_path" in json_data:
-        Config.DATABASES_DIR_PATH = json_data["databases_dir_path"]
-        modified_fields.append("databases_dir_path")
-    else:
-        Config.DATABASES_DIR_PATH = None
+        Config.INDEX_PATH = None
 
     if "database_path" in json_data:
         Config.DATABASE_PATH = json_data["database_path"]

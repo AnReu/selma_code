@@ -26,23 +26,16 @@ def search(
     exchange=None,
     model=None,
     model_language=None,
+    index=None
 ):
     result_ids = []
     error = ""
     status = 200
 
     db = DB(Config.get_database_path(db_name))
-
-    # Name of the column of the DB, where the content of each document is stored
-    content_attribute_name = Config.get_db_content_attribute_name()
+    content_attribute_name = Config.get_db_content_attribute_name()  # TODO rename var
     db_table_name = Config.get_db_table_name()
-
-    try:
-        index_path = Config.get_index_path(db_name)
-    except Exception as error:
-        print(f'Index path could not be found for the given db_name ({db_name})')
-        print(error)
-        raise
+    index_path = Config.get_index_path(db=db_name, model=model, index=index)
 
     try:
         if model == "VectorModel":
