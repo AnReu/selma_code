@@ -4,10 +4,15 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import { Outlet } from 'react-router-dom';
+import IconButton from '@mui/material/IconButton/IconButton';
+import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsDialog from '../features/navbar/SettingsDialog';
 
 const pages = ['Home', 'Separated', 'ID or URL', 'File'];
 
 export default function MainLayout() {
+  const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
+
   return (
     <Box sx={{
       display: 'flex',
@@ -28,6 +33,16 @@ export default function MainLayout() {
               </Button>
             ))}
           </Box>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton
+            size="large"
+            edge="end"
+            aria-haspopup="true"
+            color="inherit"
+            onClick={() => setIsDialogOpen(true)}
+          >
+            <SettingsIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
 
@@ -40,7 +55,7 @@ export default function MainLayout() {
       >
         <Outlet />
       </main>
-
+      <SettingsDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
     </Box>
   );
 }
