@@ -8,6 +8,7 @@ import SearchPage from './features/search/SearchPage';
 import StoreSnackbar from './features/snackbar/StoreSnackbar';
 import ResultsPage from './ResultsPage';
 import HomePage from './HomePage';
+import MainLayout from './layouts/MainLayout';
 
 const config = {
   loader: { load: ['[tex]/html'] },
@@ -60,7 +61,9 @@ export default function App() {
         <ThemeProvider theme={theme}>
           <MathJaxContext config={config}>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<HomePage />} />
+              </Route>
               <Route path="search" element={<SearchPage />} />
               <Route path="results" element={<ResultsPage />} />
             </Routes>
