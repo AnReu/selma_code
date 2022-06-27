@@ -14,10 +14,38 @@ import Container from '@mui/material/Container';
 import Tabs from '@mui/material/Tabs/Tabs';
 import Tab from '@mui/material/Tab/Tab';
 import Button from '@mui/material/Button/Button';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import useScrollTrigger from '@mui/material/useScrollTrigger/useScrollTrigger';
+import Slide from '@mui/material/Slide/Slide';
 import SearchResult from './features/search/SearchResult';
 import { ColorModeContext } from './ColorModeContext';
 import SettingsDialog from './features/navbar/SettingsDialog';
 import { ThemeSwitch } from './ThemeSwitch';
+
+interface Props {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * You won't need it on your project.
+   */
+  window?: () => Window;
+  children: React.ReactElement;
+}
+
+function HideOnScroll(props: Props) {
+  const { children, window } = props;
+  // Note that you normally won't need to set the window ref as useScrollTrigger
+  // will default to window.
+  // This is only being set here because the demo is in an iframe.
+  const trigger = useScrollTrigger({
+    target: window ? window() : undefined,
+  });
+
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -154,7 +182,7 @@ export default function ResultsPage() {
       bgcolor: 'background.paper',
     }}
     >
-
+      <HideOnScroll>
       <AppBar
         position="fixed"
         elevation={0}
@@ -239,6 +267,7 @@ export default function ResultsPage() {
         </Toolbar>
 
       </AppBar>
+      </HideOnScroll>
       <Container maxWidth="md">
         <main style={{
           maxWidth: 'sm',
