@@ -21,6 +21,7 @@ import SearchResult from './features/search/SearchResult';
 import { ColorModeContext } from './ColorModeContext';
 import SettingsDialog from './features/navbar/SettingsDialog';
 import { ThemeSwitch } from './ThemeSwitch';
+import { configsState } from './recoil/selectors';
 
 interface Props {
   /**
@@ -149,6 +150,11 @@ export default function ResultsPage() {
   const colorMode = React.useContext(ColorModeContext);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
+  const configs = useRecoilValue(configsState);
+  const {
+    default: defaultAllowed, separated: separatedAllowed, url: urlAllowed, file: fileAllowed,
+  } = configs.allowed_search_modes;
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -203,6 +209,8 @@ export default function ResultsPage() {
               />
             </Search>
           </TabPanel>
+
+            {separatedAllowed && (
           <TabPanel value={tabValue} index={1}>
             <Box sx={{ display: 'flex' }}>
               <Search sx={{ marginRight: 4 }}>
@@ -225,7 +233,9 @@ export default function ResultsPage() {
               </Search>
             </Box>
           </TabPanel>
+            )}
 
+            {urlAllowed && (
           <TabPanel value={tabValue} index={2}>
             <Box sx={{ display: 'flex' }}>
               <Search sx={{ marginRight: 4 }}>
@@ -239,6 +249,21 @@ export default function ResultsPage() {
               </Search>
             </Box>
           </TabPanel>
+            )}
+
+            {fileAllowed && (
+              <TabPanel value={tabValue} index={3}>
+                <Search sx={{ marginRight: 4 }}>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="File"
+                    inputProps={{ 'aria-label': 'search' }}
+                  />
+                </Search>
+              </TabPanel>
+            )}
 
           <Button variant="contained">Go</Button>
 
@@ -258,11 +283,11 @@ export default function ResultsPage() {
           </IconButton>
         </Toolbar>
         <Toolbar variant="dense">
-          <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
-            <Tab label="Default" />
-            <Tab label="Separated" />
-            <Tab label="ID or URL" />
-            <Tab disabled label="File" />
+            <Tabs value={tabValue} onChange={handleTabChange} style={{ height: '32px' }}>
+              <Tab disabled={!defaultAllowed} label="Default" />
+              <Tab disabled={!separatedAllowed} label="Separated" />
+              <Tab disabled={!urlAllowed} label="ID or URL" />
+              <Tab disabled={!fileAllowed} label="File" />
           </Tabs>
         </Toolbar>
 
