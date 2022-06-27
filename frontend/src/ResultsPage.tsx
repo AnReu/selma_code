@@ -22,6 +22,7 @@ import { ColorModeContext } from './ColorModeContext';
 import SettingsDialog from './features/navbar/SettingsDialog';
 import { ThemeSwitch } from './ThemeSwitch';
 import { configsState } from './recoil/selectors';
+import { QueryMode, queryParametersState } from './recoil/atoms';
 
 interface Props {
   /**
@@ -136,7 +137,7 @@ export interface Result {
 
 export default function ResultsPage() {
   const [searchParams] = useSearchParams();
-
+  const [query, setQuery] = useRecoilState(queryParametersState);
   const text = searchParams.get('text');
   const db = searchParams.get('db');
   const model = searchParams.get('model');
@@ -156,7 +157,15 @@ export default function ResultsPage() {
   } = configs.allowed_search_modes;
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const mapping: { [key: number]: QueryMode } = {
+      0: 'default',
+      1: 'separated',
+      2: 'url',
+      3: 'file',
+    };
+    const mode = mapping[newValue];
     setTabValue(newValue);
+    setQuery({ ...query, mode });
   };
 
   React.useEffect(() => {
