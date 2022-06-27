@@ -6,6 +6,8 @@ declare interface QueryParametersState {
   index: string,
   language: string,
   text: string,
+  code: string,
+  equation: string,
 }
 
 const defaultQueryParameters: QueryParametersState = {
@@ -14,6 +16,8 @@ const defaultQueryParameters: QueryParametersState = {
   index: '',
   language: '',
   text: '',
+  code: '',
+  equation: '',
 };
 
 export const queryParametersState = atom<QueryParametersState>({
