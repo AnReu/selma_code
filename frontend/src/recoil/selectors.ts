@@ -94,7 +94,7 @@ export const configsState = atom<Config>({
 
 export declare interface UpdateConfigsParams {
   db_path?: string,
-  db_table_name?: '',
+  db_table_name?: string,
   db_content_attribute_name?: string,
   index_path?: string,
   allowed_search_modes?: {
@@ -106,8 +106,13 @@ export function useConfigsMutations() {
   const [, setConfigs] = useRecoilState(configsState);
 
   const updateConfigs = async (updatedConfigs: UpdateConfigsParams) => {
+    console.log(updatedConfigs);
     await fetch(`${baseURL}/configs`,
-      { method: 'POST', body: JSON.stringify(updatedConfigs), mode: 'cors' });
+      {
+        method: 'POST',
+        body: JSON.stringify(updatedConfigs),
+        headers: { 'Content-Type': 'application/json' },
+      });
     setConfigs(emptyConfig);
   };
 
