@@ -12,7 +12,7 @@ import MainLayout from './layouts/MainLayout';
 import { ColorModeContext } from './ColorModeContext';
 import SeparatedSearchPage from './SeparatedSearchPage';
 
-const config = {
+const mathJaxConfig = {
   loader: { load: ['[tex]/html'] },
   tex: {
     packages: { '[+]': ['html'] },
@@ -134,9 +134,7 @@ export default function App() {
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
           <React.Suspense fallback={<div>Loading...</div>}>
-
-            <MathJaxContext config={config}>
-
+            <MathJaxContext config={mathJaxConfig}>
               <Routes>
                 <Route element={<MainLayout />}>
                   <Route path="/" element={<HomePage />} />
@@ -147,7 +145,6 @@ export default function App() {
               </Routes>
               <StoreSnackbar />
             </MathJaxContext>
-
           </React.Suspense>
         </ThemeProvider>
       </ColorModeContext.Provider>
