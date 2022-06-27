@@ -39,6 +39,7 @@ export default function SearchResult(props: SearchResultProps) {
     <>
       <ListItem
         alignItems="flex-start"
+        sx={{ color: 'text.primary' }}
       >
         <ListItemButton onClick={() => setOpen(true)}>
           <ListItemText
