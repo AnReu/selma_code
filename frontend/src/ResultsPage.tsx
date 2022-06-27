@@ -198,66 +198,64 @@ export default function ResultsPage() {
     }}
     >
       <HideOnScroll>
-      <AppBar
-        position="fixed"
-        elevation={0}
-        sx={{
-          borderBottomStyle: 'solid', borderBottomWidth: '1px', borderBottomColor: 'secondary.main',
-        }}
-      >
+        <AppBar
+          position="fixed"
+          elevation={0}
+          sx={{
+            borderBottomStyle: 'solid', borderBottomWidth: '1px', borderBottomColor: 'secondary.main',
+          }}
+        >
 
-        <Toolbar>
-          <TabPanel value={tabValue} index={0}>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
-          </TabPanel>
+          <Toolbar>
+            <TabPanel value={tabValue} index={0}>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </Search>
+            </TabPanel>
 
             {separatedAllowed && (
-          <TabPanel value={tabValue} index={1}>
-            <Box sx={{ display: 'flex' }}>
-              <Search sx={{ marginRight: 4 }}>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Code"
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
-              <Search sx={{ marginRight: 4 }}>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Equation"
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
-            </Box>
-          </TabPanel>
+              <TabPanel value={tabValue} index={1}>
+                <Box sx={{ display: 'flex', m: 0, p: 0 }}>
+                  <Search sx={{ marginRight: 4 }}>
+                    <SearchIconWrapper>
+                      <SearchIcon />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                      placeholder="Code"
+                      inputProps={{ 'aria-label': 'search' }}
+                    />
+                  </Search>
+                  <Search sx={{ marginRight: 4 }}>
+                    <SearchIconWrapper>
+                      <SearchIcon />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                      placeholder="Equation"
+                      inputProps={{ 'aria-label': 'search' }}
+                    />
+                  </Search>
+                </Box>
+              </TabPanel>
             )}
 
             {urlAllowed && (
-          <TabPanel value={tabValue} index={2}>
-            <Box sx={{ display: 'flex' }}>
-              <Search sx={{ marginRight: 4 }}>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="URL"
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
-            </Box>
-          </TabPanel>
+              <TabPanel value={tabValue} index={2}>
+                <Search sx={{ marginRight: 4 }}>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="URL"
+                    inputProps={{ 'aria-label': 'search' }}
+                  />
+                </Search>
+              </TabPanel>
             )}
 
             {fileAllowed && (
@@ -274,33 +272,33 @@ export default function ResultsPage() {
               </TabPanel>
             )}
 
-          <Button variant="contained">Go</Button>
+            <Button variant="contained">Go</Button>
 
-          <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }} />
 
-          <ThemeSwitch onClick={colorMode.toggleColorMode} />
+            <ThemeSwitch onClick={colorMode.toggleColorMode} />
 
-          <IconButton
-            size="large"
-            edge="end"
-            aria-haspopup="true"
-            color="inherit"
-            onClick={() => setIsDialogOpen(true)}
-            sx={{ ml: 2 }}
-          >
-            <SettingsIcon />
-          </IconButton>
-        </Toolbar>
-        <Toolbar variant="dense">
+            <IconButton
+              size="large"
+              edge="end"
+              aria-haspopup="true"
+              color="inherit"
+              onClick={() => setIsDialogOpen(true)}
+              sx={{ ml: 2 }}
+            >
+              <SettingsIcon />
+            </IconButton>
+          </Toolbar>
+          <Toolbar variant="dense">
             <Tabs value={tabValue} onChange={handleTabChange} style={{ height: '32px' }}>
               <Tab disabled={!defaultAllowed} label="Default" />
               <Tab disabled={!separatedAllowed} label="Separated" />
               <Tab disabled={!urlAllowed} label="ID or URL" />
               <Tab disabled={!fileAllowed} label="File" />
-          </Tabs>
-        </Toolbar>
+            </Tabs>
+          </Toolbar>
 
-      </AppBar>
+        </AppBar>
       </HideOnScroll>
       <Container maxWidth="md">
         <main style={{
