@@ -13,16 +13,18 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SearchIcon from '@mui/icons-material/Search';
 // Others
 import Hotkeys from 'react-hot-keys';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Link } from 'react-router-dom';
 import CreateTemplateDialog from '../templates/TemplateCreateDialog';
 import { queryParametersState } from '../../recoil/atoms';
+import { queryStringState } from '../../recoil/selectors';
 
 export default function DefaultSearchBar() {
   const inputDefaultSearchEl = React.useRef<HTMLInputElement>(null);
   // State
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = useRecoilState(queryParametersState);
+  const queryString = useRecoilValue(queryStringState);
 
   // Handlers
   const handleQueryTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +85,7 @@ export default function DefaultSearchBar() {
 
             <Link to={{
               pathname: 'results',
-              search: '?text=image&db=codeSearchNet_java&model=PyterrierModel&index=comment',
+              search: queryString,
             }}
             >
               <IconButton sx={{ p: '10px' }} onClick={handleSearch} aria-label="run search">
