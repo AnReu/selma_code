@@ -1,44 +1,54 @@
+import pyterrier as pt
+import faiss
+assert faiss.get_num_gpus() > 0
+import torch
+from pyterrier_colbert.indexing import ColBERTIndexer
+from pyterrier_colbert.ranking import ColBERTFactory
+
+
+
+
+"""
+ToDos for GUI:
+please note that this predictor only needs a query
+pls include the checkpoint path checkpointpath="/home/s7949670/retrievalsystem/data/PyTerrierModel/pyterrierColbert/colbert-10000.dnn"
+and the index path colbertindexpath = "/home/s7949670/retrievalsystem/data/PyTerrierModel/pyterrierColbert"
+"""
+
 class ColbertCodeSearchNet:
     """
     Attributes:
         index_path (str): path to index/data.properties
     """
 
-    def __init__(self, index_path):
+    def __init__(self, checkpointpath, colbertindexpath):
         if not pt.started():
             pt.init()
-        self.index = pt.IndexFactory.of(index_path)
-
+        self.pyterrier_colbert_factory = ColBERTFactory(checkpointpath, colbertindexpath, "colbert_java_index")
+        #this is the thing that needs a lot of time. i dont know at what time this gets initialised, but maybe we do
+        # this when starting the retrievalsystem at all
     def predict(self, query, N=5):
-        tf_idf = pt.BatchRetrieve(
-            self.index, wmodel="TF_IDF", properties={"tokeniser": "UTFTokeniser"}
-        )
-        result = tf_idf.search(query)
+        colbert_e2e = self.pyterrier_colbert_factory.end_to_end()
+        result = colbert_e2e.search(query)
         docnolist = result["docno"].values.tolist()
         thelist = docnolist[:N]
         return thelist
 
 
+
 class Predictor:
     """Predictor for most similar documents."""
 
-    def __init__(self, data_path):
+    def __init__(self, checkpointpath, colbertindexpath):
         print("initialisation of the PyTerrierModel.predictor")
         # path to the data.properties of the used index
-        self.model = ColbertCodeSearchNet(data_path)
+        self.model = ColbertCodeSearchNet(checkpointpath, colbertindexpath)
 
-    def predict(self, text, code, equations, n=5):
+    def predict(self, query, n=5):
         """Predicts the top N most similar document ids given text, code and equations (str)."""
-        print("predictor is used and this is the query:")
-        print(text)
-        if text:
-            print("This is the return of the predictor:")
-            print(self.model.predict(text, n))
-            return self.model.predict(text, n)
-        elif equations:
-            return self.eq_model.predict(equations, n)
-        else:
-            return list(range(n))
+        print("colbert_predictor is used and this is the query:")
+        print(query)
+        return  self.model.predict(query, n)
 
     """def predict_by_id(self, id, N=5):
         return self.eq_model.predict_by_id(id, N)"""
