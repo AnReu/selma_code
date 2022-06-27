@@ -9,7 +9,7 @@ export default function HomePage() {
   const [showTooltip, setShowTooltip] = React.useState(true);
   return (
     <Box sx={{ textAlign: 'center' }}>
-      <img style={{ maxWidth: '100px', margin: '16px' }} src={DDBGLogo} alt="Dresden DB Group" />
+      <img style={{ maxWidth: '160px', margin: '32px' }} src={DDBGLogo} alt="Dresden DB Group" />
 
       <DefaultSearchBar />
 
