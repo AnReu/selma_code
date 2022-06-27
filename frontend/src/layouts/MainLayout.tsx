@@ -7,10 +7,18 @@ import { Outlet } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsDialog from '../features/navbar/SettingsDialog';
+import { ColorModeContext } from '../ColorModeContext';
+import { ThemeSwitch } from '../ThemeSwitch';
 
-const pages = ['Home', 'Separated', 'ID or URL', 'File'];
+const pages = [
+  { name: 'Home', value: '/' },
+  { name: 'Separated', value: '/separated' },
+  { name: 'ID or URL', value: '/url' },
+  { name: 'File', value: '/file' },
+];
 
 export default function MainLayout() {
+  const colorMode = React.useContext(ColorModeContext);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
   return (
@@ -28,21 +36,26 @@ export default function MainLayout() {
         <Toolbar>
           <Box>
             {pages.map((page) => (
-              <Button key={page} href={`/${page}`} variant="text" sx={{ color: 'white' }}>
-                {page}
+              <Button key={page.name} href={`${page.value}`} variant="text" sx={{ color: 'white' }}>
+                {page.name}
               </Button>
             ))}
           </Box>
           <Box sx={{ flexGrow: 1 }} />
+
+          <ThemeSwitch onClick={colorMode.toggleColorMode} />
+
           <IconButton
             size="large"
             edge="end"
             aria-haspopup="true"
             color="inherit"
             onClick={() => setIsDialogOpen(true)}
+            sx={{ ml: 2 }}
           >
             <SettingsIcon />
           </IconButton>
+
         </Toolbar>
       </AppBar>
 
