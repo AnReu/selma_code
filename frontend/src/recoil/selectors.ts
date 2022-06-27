@@ -3,11 +3,13 @@ import { queryParametersState } from './atoms';
 
 const baseURL = 'http://127.0.0.1:5000/api/v1';
 
-export const searchParamsState = selector({
+export const queryStringState = selector({
   key: 'searchParameters',
   get: ({ get }) => {
-    const { db, language, model } = get(queryParametersState);
-    return `q?=language=${language}&model=${model}&db=${db}`;
+    const {
+      text, db, model, index, language,
+    } = get(queryParametersState);
+    return `?text=${text}&db=${db}&model=${model}&index=${index}&language=${language}`;
   },
 });
 
