@@ -17,7 +17,7 @@ const defaultQueryParameters: QueryParametersState = {
   db: '',
   model: '',
   index: '',
-  language: '',
+  language: 'english',
   text: '',
   code: '',
   equation: '',
