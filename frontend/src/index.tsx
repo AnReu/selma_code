@@ -2,14 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { Provider } from 'react-redux';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { setupStore } from './app/store';
 import * as serviceWorker from './serviceWorker';
-
-const defaultLight = createTheme();
-// const defaultDark = createTheme({ palette: { mode: 'dark' } });
 
 const store = setupStore();
 
@@ -21,13 +18,11 @@ if (process.env.NODE_ENV === 'test') {
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={defaultLight}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
-    </ThemeProvider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
