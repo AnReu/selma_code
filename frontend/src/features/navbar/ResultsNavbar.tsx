@@ -16,6 +16,7 @@ import { ColorModeContext } from '../../ColorModeContext';
 import { configsState } from '../../recoil/selectors';
 import { QueryMode, queryParametersState } from '../../recoil/atoms';
 import SettingsDialog from './SettingsDialog';
+import DDBGLogo from '../../assets/dresden_db_group_logo.svg';
 
 interface HideOnScrollProps {
   /**
@@ -105,6 +106,12 @@ export default function ResultsNavbar() {
         >
 
           <Toolbar>
+            <Box sx={{
+              display: 'block', height: '32px', width: '32px', paddingRight: '64px',
+            }}
+            >
+              <img src={DDBGLogo} alt="Dresden DB Group" />
+            </Box>
             <TabPanel value={tabValue} index={0}>
               <NavbarSearchInput placeholder="Default" />
             </TabPanel>
