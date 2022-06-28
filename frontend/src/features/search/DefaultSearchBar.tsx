@@ -16,14 +16,14 @@ import Hotkeys from 'react-hot-keys';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Link } from 'react-router-dom';
 import CreateTemplateDialog from '../templates/TemplateCreateDialog';
-import { queryParametersState } from '../../recoil/atoms';
+import { queryState } from '../../recoil/atoms';
 import { queryStringState } from '../../recoil/selectors';
 
 export default function DefaultSearchBar() {
   const inputDefaultSearchEl = React.useRef<HTMLInputElement>(null);
   // State
   const [open, setOpen] = React.useState(false);
-  const [query, setQuery] = useRecoilState(queryParametersState);
+  const [query, setQuery] = useRecoilState(queryState);
   const queryString = useRecoilValue(queryStringState);
 
   // Handlers

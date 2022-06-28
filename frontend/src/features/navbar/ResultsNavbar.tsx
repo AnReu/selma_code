@@ -14,7 +14,7 @@ import NavbarSearchInput from './NavbarSearchInput';
 import { ThemeSwitch } from '../../ThemeSwitch';
 import { ColorModeContext } from '../../ColorModeContext';
 import { configsState } from '../../recoil/selectors';
-import { QueryMode, queryParametersState } from '../../recoil/atoms';
+import { QueryMode, queryState } from '../../recoil/atoms';
 import SettingsDialog from './SettingsDialog';
 import DDBGLogo from '../../assets/dresden_db_group_logo.svg';
 
@@ -74,7 +74,7 @@ function TabPanel(props: TabPanelProps) {
 
 export default function ResultsNavbar() {
   const [tabValue, setTabValue] = React.useState<number>(0);
-  const [query, setQuery] = useRecoilState(queryParametersState);
+  const [query, setQuery] = useRecoilState(queryState);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
   const colorMode = React.useContext(ColorModeContext);
   const configs = useRecoilValue(configsState);

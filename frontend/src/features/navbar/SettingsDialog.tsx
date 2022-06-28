@@ -10,7 +10,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { queryParametersState } from '../../recoil/atoms';
+import { queryState } from '../../recoil/atoms';
 import {
   Config,
   dataStructureQueryState,
@@ -34,7 +34,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
   const models = useRecoilValue(filteredModelsState);
   const indexes = useRecoilValue(filteredIndexesState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
-  const [queryParameters, setQueryParameters] = useRecoilState(queryParametersState);
+  const [query, setQuery] = useRecoilState(queryState);
   const [configs, setConfigs] = useRecoilState(configsState);
   const [configsForm, setConfigsForm] = React.useState<Config>(configs);
   const { updateConfigs } = useConfigsMutations();
@@ -56,21 +56,19 @@ export default function SettingsDialog(props: SimpleDialogProps) {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    const newParameters = { ...queryParameters, [name]: value };
-    setQueryParameters(newParameters);
+    setQuery({ ...query, [name]: value });
   };
 
   const handleUpdateConfig = async () => {
     updateConfigs(configsForm);
-    console.log(configsForm);
     setConfigs(configsForm);
     onClose();
   };
 
   const isIndexSelectDisabled = () => {
-    const { model } = queryParameters;
+    const { model } = query;
     if (model === '') return true;
-    const { db } = queryParameters;
+    const { db } = query;
     // TODO: if model does not exist, this throws an error
     return dataStructure[db][model].length === 0;
   };
@@ -89,9 +87,9 @@ export default function SettingsDialog(props: SimpleDialogProps) {
           <TextField
             label="Database"
             name="db"
-            value={queryParameters.db}
+            value={query.db}
             onChange={handleChange}
-            defaultValue={queryParameters.db}
+            defaultValue={query.db}
             select
           >
             {dbs.map((database) => <MenuItem key={database} value={database}>{database}</MenuItem>)}
@@ -100,10 +98,10 @@ export default function SettingsDialog(props: SimpleDialogProps) {
           <TextField
             label="Model"
             name="model"
-            value={queryParameters.model}
+            value={query.model}
             onChange={handleChange}
-            defaultValue={queryParameters.model}
-            disabled={queryParameters.db === ''}
+            defaultValue={query.model}
+            disabled={query.db === ''}
             select
           >
             {models.map((model) => <MenuItem key={model} value={model}>{model}</MenuItem>)}
@@ -112,9 +110,9 @@ export default function SettingsDialog(props: SimpleDialogProps) {
           <TextField
             label="Index"
             name="index"
-            value={queryParameters.index}
+            value={query.index}
             onChange={handleChange}
-            defaultValue={queryParameters.index}
+            defaultValue={query.index}
             disabled={isIndexSelectDisabled()}
             select
           >
@@ -124,9 +122,9 @@ export default function SettingsDialog(props: SimpleDialogProps) {
           <TextField
             label="language"
             name="language"
-            value={queryParameters.language}
+            value={query.language}
             onChange={handleChange}
-            defaultValue={queryParameters.language}
+            defaultValue={query.language}
             disabled
             select
           >

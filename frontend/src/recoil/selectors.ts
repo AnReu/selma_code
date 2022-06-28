@@ -1,5 +1,5 @@
 import { atom, selector, useRecoilState } from 'recoil';
-import { queryParametersState } from './atoms';
+import { queryState } from './atoms';
 
 const baseURL = 'http://127.0.0.1:5000/api/v1';
 
@@ -32,7 +32,7 @@ export const dbsState = selector<string[]>({
 export const filteredModelsState = selector<string[]>({
   key: 'filteredModels',
   get: ({ get }) => {
-    const { db: selectedDb } = get(queryParametersState);
+    const { db: selectedDb } = get(queryState);
     const data = get(dataStructureQueryState);
     if (data[selectedDb]) {
       return Object.keys(data[selectedDb]);
@@ -45,7 +45,7 @@ export const filteredIndexesState = selector<string[]>({
   key: 'filteredIndexes',
   get: ({ get }) => {
     const data = get(dataStructureQueryState);
-    const { db, model } = get(queryParametersState);
+    const { db, model } = get(queryState);
     if (data[db] && data[db][model]) {
       return data[db][model];
     }

@@ -3,10 +3,10 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useRecoilState } from 'recoil';
-import { queryParametersState } from './recoil/atoms';
+import { queryState } from './recoil/atoms';
 
 export default function SeparatedSearchPage() {
-  const [query, setQuery] = useRecoilState(queryParametersState);
+  const [query, setQuery] = useRecoilState(queryState);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;

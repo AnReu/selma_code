@@ -2,7 +2,7 @@ import { atom } from 'recoil';
 
 export type QueryMode = 'default' | 'separated' | 'url' | 'file'
 
-declare interface QueryParametersState {
+declare interface QueryState {
   db: string;
   model: string;
   index: string;
@@ -11,9 +11,10 @@ declare interface QueryParametersState {
   code: string;
   equation: string;
   mode: QueryMode;
+  page: number;
 }
 
-const defaultQueryParameters: QueryParametersState = {
+const defaultQuery: QueryState = {
   db: '',
   model: '',
   index: '',
@@ -22,9 +23,10 @@ const defaultQueryParameters: QueryParametersState = {
   code: '',
   equation: '',
   mode: 'default',
+  page: 1,
 };
 
-export const queryParametersState = atom<QueryParametersState>({
+export const queryState = atom<QueryState>({
   key: 'queryParameters',
-  default: defaultQueryParameters,
+  default: defaultQuery,
 });
