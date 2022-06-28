@@ -7,9 +7,9 @@ export const queryStringState = selector({
   key: 'searchParameters',
   get: ({ get }) => {
     const {
-      text, db, model, index, language,
-    } = get(queryParametersState);
-    return `?text=${text}&db=${db}&model=${model}&index=${index}&language=${language}`;
+      text, db, model, index, language, page,
+    } = get(queryState);
+    return `?text=${text}&db=${db}&model=${model}&index=${index}&language=${language}&page=${page}`;
   },
 });
 
@@ -106,7 +106,6 @@ export function useConfigsMutations() {
   const [, setConfigs] = useRecoilState(configsState);
 
   const updateConfigs = async (updatedConfigs: UpdateConfigsParams) => {
-    console.log(updatedConfigs);
     await fetch(`${baseURL}/configs`,
       {
         method: 'POST',
