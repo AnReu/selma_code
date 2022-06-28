@@ -38,6 +38,12 @@ export default function SettingsDialog(props: SimpleDialogProps) {
   const [configs, setConfigs] = useRecoilState(configsState);
   const [configsForm, setConfigsForm] = React.useState<Config>(configs);
   const { updateConfigs } = useConfigsMutations();
+  const [isIndexSelectDisabled, setIsIndexSelectDisabled] = React.useState(true);
+
+  React.useEffect(() => {
+    const { db, model } = query;
+    setIsIndexSelectDisabled(!!dataStructure[db] && !!dataStructure[db][model]);
+  }, [dataStructure]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -63,14 +69,6 @@ export default function SettingsDialog(props: SimpleDialogProps) {
     updateConfigs(configsForm);
     setConfigs(configsForm);
     onClose();
-  };
-
-  const isIndexSelectDisabled = () => {
-    const { model } = query;
-    if (model === '') return true;
-    const { db } = query;
-    // TODO: if model does not exist, this throws an error
-    return dataStructure[db][model].length === 0;
   };
 
   return (
@@ -113,7 +111,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             value={query.index}
             onChange={handleChange}
             defaultValue={query.index}
-            disabled={isIndexSelectDisabled()}
+            disabled={isIndexSelectDisabled}
             select
           >
             {indexes.map((index) => <MenuItem key={index} value={index}>{index}</MenuItem>)}
