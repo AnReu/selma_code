@@ -305,7 +305,7 @@ export default function ResultsPage() {
           maxWidth: 'sm',
           display: 'flex',
           flexDirection: 'column',
-          marginTop: '64px',
+          marginTop: '135px',
           paddingTop: '12px',
         }}
         >
