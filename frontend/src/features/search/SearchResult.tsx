@@ -1,8 +1,10 @@
 import React from 'react';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+// import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActionArea from '@mui/material/CardActionArea';
+// import Typography from '@mui/material/Typography';
 import Markdown from '../Markdown';
 import CodeMarkdown from '../CodeMarkdown';
 import { Result } from '../../app/services/results';
@@ -19,37 +21,22 @@ export default function SearchResult(props: SearchResultProps) {
   } = result;
   const [open, setOpen] = React.useState(false);
 
-  if (language === 'java') {
-    return (
-      <>
-        <ListItem
-          alignItems="flex-start"
-        >
-          <ListItemButton onClick={() => setOpen(true)}>
-            <CodeMarkdown text={body} />
-          </ListItemButton>
-        </ListItem>
-        <Divider variant="middle" component="li" />
-        <SearchResultDialog result={result} open={open} onClose={() => setOpen(false)} />
-      </>
-    );
-  }
+  console.log(result);
+
+  const content = (language === 'java')
+    ? <CodeMarkdown text={body} />
+    : <Markdown text={body} />;
 
   return (
     <>
-      <ListItem
-        alignItems="flex-start"
-        sx={{ color: 'text.primary' }}
-      >
-        <ListItemButton onClick={() => setOpen(true)}>
-          <ListItemText
-            primary={title}
-          >
-            <Markdown text={body} />
-          </ListItemText>
-        </ListItemButton>
-      </ListItem>
-      <Divider variant="middle" component="li" />
+      <Card sx={{ mb: 4 }}>
+        <CardActionArea onClick={() => setOpen(true)}>
+          <CardHeader title={title} />
+          <CardContent>
+            {content}
+          </CardContent>
+        </CardActionArea>
+      </Card>
       <SearchResultDialog result={result} open={open} onClose={() => setOpen(false)} />
     </>
   );
