@@ -13,12 +13,12 @@ import { useRecoilState } from 'recoil';
 import NavbarSearchInput from './NavbarSearchInput';
 import { ThemeSwitch } from '../../ThemeSwitch';
 import { ColorModeContext } from '../../ColorModeContext';
-import { configsState } from '../../recoil/selectors';
 import { QueryMode, queryState } from '../../recoil/atoms';
 import SettingsDialog from './SettingsDialog';
 import DDBGLogo from '../../assets/dresden_db_group_logo.svg';
 
 interface HideOnScrollProps {
+  // TODO: remove this code
   /**
    * Injected by the documentation to work in an iframe.
    * You won't need it on your project.
@@ -71,16 +71,11 @@ function TabPanel(props: TabPanelProps) {
     </div>
   );
 }
-
 export default function ResultsNavbar() {
   const [tabValue, setTabValue] = React.useState<number>(0);
   const [query, setQuery] = useRecoilState(queryState);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
   const colorMode = React.useContext(ColorModeContext);
-  const configs = useRecoilValue(configsState);
-  const {
-    default: defaultAllowed, separated: separatedAllowed, url: urlAllowed, file: fileAllowed,
-  } = configs.allowed_search_modes;
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     const mapping: { [key: number]: QueryMode } = {
@@ -118,29 +113,8 @@ export default function ResultsNavbar() {
               <img src={DDBGLogo} alt="Dresden DB Group" />
             </Box>
             <TabPanel value={tabValue} index={0}>
-              <NavbarSearchInput placeholder="Default" />
+              <NavbarSearchInput onChange={handleChange} value={query.text} placeholder="Default" />
             </TabPanel>
-
-            {separatedAllowed && (
-              <TabPanel value={tabValue} index={1}>
-                <Box sx={{ display: 'flex', m: 0, p: 0 }}>
-                  <NavbarSearchInput placeholder="Code" />
-                  <NavbarSearchInput placeholder="Equation" />
-                </Box>
-              </TabPanel>
-            )}
-
-            {urlAllowed && (
-              <TabPanel value={tabValue} index={2}>
-                <NavbarSearchInput placeholder="URL" />
-              </TabPanel>
-            )}
-
-            {fileAllowed && (
-              <TabPanel value={tabValue} index={3}>
-                <NavbarSearchInput placeholder="File" />
-              </TabPanel>
-            )}
 
             <Button variant="contained">Go</Button>
 
@@ -161,10 +135,7 @@ export default function ResultsNavbar() {
           </Toolbar>
           <Toolbar variant="dense">
             <Tabs value={tabValue} onChange={handleTabChange} style={{ height: '32px' }}>
-              <Tab disabled={!defaultAllowed} label="Default" />
-              <Tab disabled={!separatedAllowed} label="Separated" />
-              <Tab disabled={!urlAllowed} label="ID or URL" />
-              <Tab disabled={!fileAllowed} label="File" />
+              <Tab label="Default" />
             </Tabs>
           </Toolbar>
 
