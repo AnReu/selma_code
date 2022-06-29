@@ -26,7 +26,8 @@ def search(
     exchange=None,
     model=None,
     model_language=None,
-    index=None
+    index=None,
+    page=1
 ):
     result_ids = []
     error = ""
@@ -49,7 +50,7 @@ def search(
 
     if id is None:
         try:
-            result_ids = predictor.predict(text, code, equation, n=100)
+            all_result_ids = predictor.predict(text, code, equation, n=100)
         except KeyError:
             result_ids = []
             error = "Key Error: word not in vocabulary"
@@ -69,9 +70,19 @@ def search(
             error = "ID not present"
             status = 404
         else:
-            result_ids = predictor.predict_by_id(id[0])
+            all_result_ids = predictor.predict_by_id(id[0])
 
-    data = db.get_results_by_id(db_table_name, result_ids)
+    # Start Pagination block
+    count = len(all_result_ids)
+    per_page = 10 # define how many results you want per page
+    pages = count // per_page # this is the number of pages
+    offset = (page-1)*per_page # offset for SQL query
+    limit = 20 if page == pages else per_page # limit for SQL query
+    
+    page_ids = all_result_ids[offset:offset+per_page]
+    # End Pagination block
+
+    data = db.get_results_by_id(db_table_name, page_ids)
     column_names = db.get_column_names(db_table_name)
 
     results = results_to_json(data, [description[0] for description in column_names])
