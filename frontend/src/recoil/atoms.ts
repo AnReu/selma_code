@@ -1,8 +1,7 @@
 import { atom } from 'recoil';
 
 export type QueryMode = 'default' | 'separated' | 'url' | 'file'
-
-declare interface QueryState {
+export interface QueryState {
   db: string;
   model: string;
   index: string;
@@ -14,10 +13,10 @@ declare interface QueryState {
   page: number;
 }
 
-const defaultQuery: QueryState = {
-  db: '',
-  model: '',
-  index: '',
+export const defaultQuery: QueryState = {
+  db: 'codeSearchNet_java',
+  model: 'PyterrierModel',
+  index: 'default',
   language: 'english',
   text: '',
   code: '',
@@ -26,7 +25,20 @@ const defaultQuery: QueryState = {
   page: 1,
 };
 
+// const queryChecker = object({
+//   db: string(),
+//   model: string(),
+//   index: string(),
+//   language: string(),
+//   text: string(),
+//   code: string(),
+//   equation: string(),
+//   mode: string(),
+//   page: number(),
+// });
+
 export const queryState = atom<QueryState>({
-  key: 'queryParameters',
+  key: 'query',
   default: defaultQuery,
+  // effects: [urlSyncEffect({ refine: queryChecker })],
 });
