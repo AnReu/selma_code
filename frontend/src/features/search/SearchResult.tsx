@@ -21,8 +21,6 @@ export default function SearchResult(props: SearchResultProps) {
   } = result;
   const [open, setOpen] = React.useState(false);
 
-  console.log(result);
-
   const content = (language === 'java')
     ? <CodeMarkdown text={body} />
     : <Markdown text={body} />;
@@ -31,8 +29,8 @@ export default function SearchResult(props: SearchResultProps) {
     <>
       <Card sx={{ mb: 4 }}>
         <CardActionArea onClick={() => setOpen(true)}>
-          <CardHeader title={title} />
-          <CardContent>
+          <CardHeader title={title} sx={{ pb: 0 }} />
+          <CardContent sx={{ py: 0 }}>
             {content}
           </CardContent>
         </CardActionArea>
