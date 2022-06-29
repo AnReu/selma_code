@@ -9,7 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import useScrollTrigger from '@mui/material/useScrollTrigger/useScrollTrigger';
 import Slide from '@mui/material/Slide/Slide';
 import Box from '@mui/material/Box/Box';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import NavbarSearchInput from './NavbarSearchInput';
 import { ThemeSwitch } from '../../ThemeSwitch';
 import { ColorModeContext } from '../../ColorModeContext';
@@ -92,6 +92,11 @@ export default function ResultsNavbar() {
     const mode = mapping[newValue];
     setTabValue(newValue);
     setQuery({ ...query, mode });
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setQuery({ ...query, text: value });
   };
 
   return (

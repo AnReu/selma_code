@@ -37,9 +37,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: '12ch',
+      width: '15ch',
       '&:focus': {
-        width: '20ch',
+        width: '40ch',
       },
     },
   },
@@ -47,10 +47,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface NavbarSearchInputProps {
   placeholder: string;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export default function NavbarSearchInput(props: NavbarSearchInputProps) {
-  const { placeholder } = props;
+  const { placeholder, value, onChange } = props;
   return (
     <Search>
       <SearchIconWrapper>
@@ -58,6 +60,8 @@ export default function NavbarSearchInput(props: NavbarSearchInputProps) {
       </SearchIconWrapper>
       <StyledInputBase
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         inputProps={{ 'aria-label': 'search' }}
       />
     </Search>
