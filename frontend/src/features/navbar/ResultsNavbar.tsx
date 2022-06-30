@@ -10,6 +10,7 @@ import useScrollTrigger from '@mui/material/useScrollTrigger/useScrollTrigger';
 import Slide from '@mui/material/Slide/Slide';
 import Box from '@mui/material/Box/Box';
 import { useRecoilState } from 'recoil';
+import { Link } from 'react-router-dom';
 import NavbarSearchInput from './NavbarSearchInput';
 import { ThemeSwitch } from '../../ThemeSwitch';
 import { ColorModeContext } from '../../ColorModeContext';
@@ -101,19 +102,33 @@ export default function ResultsNavbar() {
           position="fixed"
           elevation={0}
           sx={{
-            borderBottomStyle: 'solid', borderBottomWidth: '1px', borderBottomColor: 'secondary.main',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1px',
+            borderBottomColor: 'secondary.main',
           }}
         >
 
           <Toolbar>
             <Box sx={{
-              display: 'block', height: '32px', width: '32px', paddingRight: '64px',
+              display: 'block',
+              height: '32px',
+              width: '32px',
+              paddingRight: '64px',
             }}
             >
-              <img src={DDBGLogo} alt="Dresden DB Group" />
+              <Link to={{ pathname: '/' }}>
+                <img
+                  src={DDBGLogo}
+                  alt="Dresden DB Group"
+                />
+              </Link>
             </Box>
             <TabPanel value={tabValue} index={0}>
-              <NavbarSearchInput onChange={handleChange} value={query.text} placeholder="Default" />
+              <NavbarSearchInput
+                onChange={handleChange}
+                value={query.text}
+                placeholder="Default"
+              />
             </TabPanel>
 
             <Button variant="contained">Go</Button>
