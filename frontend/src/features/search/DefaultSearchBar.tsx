@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 // MUI Icons
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SearchIcon from '@mui/icons-material/Search';
+import TuneIcon from '@mui/icons-material/Tune';
 // Others
 import Hotkeys from 'react-hot-keys';
 import { useRecoilState } from 'recoil';
@@ -82,7 +83,7 @@ export default function DefaultSearchBar() {
 
             <IconButton
               sx={{ p: '10px' }}
-              aria-label="open advanced search"
+              aria-label="Open template dialog"
               onClick={() => setOpen(true)}
             >
               <AddCircleIcon />
@@ -96,7 +97,20 @@ export default function DefaultSearchBar() {
             <IconButton
               type="submit"
               sx={{ p: '10px' }}
-              aria-label="run search"
+              aria-label="Open search settings"
+            >
+              <TuneIcon />
+            </IconButton>
+
+            <Divider
+              sx={{ height: 28, m: 0.5 }}
+              orientation="vertical"
+            />
+
+            <IconButton
+              type="submit"
+              sx={{ p: '10px' }}
+              aria-label="Run search"
             >
               <SearchIcon />
             </IconButton>
