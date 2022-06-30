@@ -62,33 +62,28 @@ export default function ResultsPage() {
       setResults(data.results);
       setIsLoading(false);
     };
-
+    setIsLoading(true);
     getResults();
   }, [searchParams]);
 
-  if (isLoading) return <CircularProgress />;
+  let mainContent = <>TODO: Error</>;
 
-  return (
-    <Box sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      bgcolor: 'background.paper',
-    }}
-    >
-      <ResultsNavbar />
-      <Container maxWidth="md">
-        <main style={{
-          maxWidth: 'sm',
-          display: 'flex',
-          flexDirection: 'column',
-          marginTop: '135px',
-          paddingTop: '12px',
-        }}
-        >
-          {results!.slice(0, endIndex).map(
-            (result) => <SearchResult key={result.id} result={result} />,
-          )}
-        </main>
+  if (isLoading) {
+    mainContent = (
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  } else if (Array.isArray(results)) {
+    mainContent = (
+      <>
+        {results!.slice(0, endIndex).map(
+          (result) => <SearchResult key={result.id} result={result} />,
+        )}
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Pagination
             page={page}
@@ -103,7 +98,36 @@ export default function ResultsPage() {
             sx={{ mt: 4, mb: 8 }}
           />
         </Box>
-      </Container>
+      </>
+    );
+  }
+
+  return (
+    <Box sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      bgcolor: 'background.paper',
+      minHeight: '100%',
+    }}
+    >
+      <ResultsNavbar />
+      <main style={{
+        maxWidth: 'sm',
+        display: 'flex',
+        flexDirection: 'column',
+        marginTop: '135px',
+        paddingTop: '12px',
+      }}
+      >
+        <Container
+          maxWidth="md"
+          sx={{
+            display: 'flex', justifyContent: 'center', flexDirection: 'column', flexGrow: 1,
+          }}
+        >
+          {mainContent}
+        </Container>
+      </main>
     </Box>
   );
 }

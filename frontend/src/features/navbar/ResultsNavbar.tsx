@@ -72,6 +72,7 @@ function TabPanel(props: TabPanelProps) {
     </div>
   );
 }
+
 export default function ResultsNavbar() {
   const [tabValue, setTabValue] = React.useState<number>(0);
   const [query, setQuery] = useRecoilState(queryState);
