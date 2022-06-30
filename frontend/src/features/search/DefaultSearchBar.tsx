@@ -27,19 +27,8 @@ export default function DefaultSearchBar() {
   const queryString = useRecoilValue(queryStringState);
 
   // Handlers
-  const handleQueryTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery({ ...query, text: event.target.value });
-  };
-
-  const handleSearch = () => {
-
-  };
-
-  const handleEnter = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleSearch();
-    }
   };
 
   const onKeyCombo = (shortcut: string, event: KeyboardEvent) => {
@@ -73,22 +62,32 @@ export default function DefaultSearchBar() {
               placeholder="Search"
               inputProps={{ 'aria-label': 'search' }}
               value={query.text}
-              onChange={handleQueryTextChange}
-              onKeyDown={handleEnter}
+              onChange={handleChange}
             />
 
-            <IconButton sx={{ p: '10px' }} aria-label="open advanced search" onClick={() => setOpen(true)}>
+            <IconButton
+              sx={{ p: '10px' }}
+              aria-label="open advanced search"
+              onClick={() => setOpen(true)}
+            >
               <AddCircleIcon />
             </IconButton>
 
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            <Divider
+              sx={{ height: 28, m: 0.5 }}
+              orientation="vertical"
+            />
 
             <Link to={{
               pathname: 'results',
               search: queryString,
             }}
             >
-              <IconButton sx={{ p: '10px' }} onClick={handleSearch} aria-label="run search">
+              <IconButton
+                type="submit"
+                sx={{ p: '10px' }}
+                aria-label="run search"
+              >
                 <SearchIcon />
               </IconButton>
             </Link>
