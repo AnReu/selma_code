@@ -12,9 +12,9 @@ import { ThemeSwitch } from '../ThemeSwitch';
 
 const pages = [
   { name: 'Home', value: '/' },
-  { name: 'Separated', value: '/separated' },
-  { name: 'ID or URL', value: '/url' },
-  { name: 'File', value: '/file' },
+  // { name: 'Separated', value: '/separated' },
+  // { name: 'ID or URL', value: '/url' },
+  // { name: 'File', value: '/file' },
 ];
 
 export default function MainLayout() {

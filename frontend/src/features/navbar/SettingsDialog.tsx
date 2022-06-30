@@ -182,8 +182,9 @@ export default function SettingsDialog(props: SimpleDialogProps) {
               control={(
                 <Checkbox
                   onChange={handleCheckboxChange}
-                  checked={configsForm.allowed_search_modes.separated}
+                  checked={false}
                   name="separated"
+                  disabled
                 />
               )}
               label="Separated"
@@ -192,8 +193,9 @@ export default function SettingsDialog(props: SimpleDialogProps) {
               control={(
                 <Checkbox
                   onChange={handleCheckboxChange}
-                  checked={configsForm.allowed_search_modes.url}
+                  checked={false}
                   name="url"
+                  disabled
                 />
               )}
               label="ID/URL"
@@ -202,8 +204,9 @@ export default function SettingsDialog(props: SimpleDialogProps) {
               control={(
                 <Checkbox
                   onChange={handleCheckboxChange}
-                  checked={configsForm.allowed_search_modes.file}
+                  checked={false}
                   name="file"
+                  disabled
                 />
               )}
               label="File"
