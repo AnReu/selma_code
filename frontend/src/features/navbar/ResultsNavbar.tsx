@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FormEvent } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton/IconButton';
@@ -10,7 +10,7 @@ import useScrollTrigger from '@mui/material/useScrollTrigger/useScrollTrigger';
 import Slide from '@mui/material/Slide/Slide';
 import Box from '@mui/material/Box/Box';
 import { useRecoilState } from 'recoil';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import NavbarSearchInput from './NavbarSearchInput';
 import { ThemeSwitch } from '../../ThemeSwitch';
 import { ColorModeContext } from '../../ColorModeContext';
@@ -77,6 +77,8 @@ export default function ResultsNavbar() {
   const [query, setQuery] = useRecoilState(queryState);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
   const colorMode = React.useContext(ColorModeContext);
+  const [, setSearchParams] = useSearchParams();
+  const [text, setText] = React.useState(query.text);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     const mapping: { [key: number]: QueryMode } = {
@@ -92,7 +94,19 @@ export default function ResultsNavbar() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    setQuery({ ...query, text: value });
+    setText(value);
+  };
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    setSearchParams({
+      text,
+      db: query.db,
+      model: query.model,
+      index: query.index,
+      language: query.language,
+      page: '1',
+    });
   };
 
   return (
@@ -124,14 +138,21 @@ export default function ResultsNavbar() {
               </Link>
             </Box>
             <TabPanel value={tabValue} index={0}>
-              <NavbarSearchInput
-                onChange={handleChange}
-                value={query.text}
-                placeholder="Default"
-              />
-            </TabPanel>
 
-            <Button variant="contained">Go</Button>
+              <Box
+                onSubmit={handleSubmit}
+                component="form"
+                sx={{ display: 'flex', alignItems: 'center' }}
+              >
+                <NavbarSearchInput
+                  value={text}
+                  onChange={handleChange}
+                  placeholder="Search"
+                />
+                <Button type="submit" variant="contained">Go</Button>
+              </Box>
+
+            </TabPanel>
 
             <Box sx={{ flexGrow: 1 }} />
 
