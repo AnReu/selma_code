@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import React from 'react';
+import React, { FormEvent } from 'react';
 // MUI Components
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -13,22 +13,36 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SearchIcon from '@mui/icons-material/Search';
 // Others
 import Hotkeys from 'react-hot-keys';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { Link } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 import CreateTemplateDialog from '../templates/TemplateCreateDialog';
 import { queryState } from '../../recoil/atoms';
-import { queryStringState } from '../../recoil/selectors';
 
 export default function DefaultSearchBar() {
+  const navigate = useNavigate();
   const inputDefaultSearchEl = React.useRef<HTMLInputElement>(null);
   // State
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = useRecoilState(queryState);
-  const queryString = useRecoilValue(queryStringState);
 
   // Handlers
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery({ ...query, text: event.target.value });
+  };
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    navigate({
+      pathname: 'results',
+      search: createSearchParams({
+        text: query.text,
+        db: query.db,
+        model: query.model,
+        index: query.index,
+        language: query.language,
+        page: '1',
+      }).toString(),
+    });
   };
 
   const onKeyCombo = (shortcut: string, event: KeyboardEvent) => {
@@ -46,6 +60,7 @@ export default function DefaultSearchBar() {
         <Stack>
           <Paper
             component="form"
+            onSubmit={handleSubmit}
             sx={{
               p: '2px 4px',
               display: 'flex',
@@ -78,19 +93,13 @@ export default function DefaultSearchBar() {
               orientation="vertical"
             />
 
-            <Link to={{
-              pathname: 'results',
-              search: queryString,
-            }}
+            <IconButton
+              type="submit"
+              sx={{ p: '10px' }}
+              aria-label="run search"
             >
-              <IconButton
-                type="submit"
-                sx={{ p: '10px' }}
-                aria-label="run search"
-              >
-                <SearchIcon />
-              </IconButton>
-            </Link>
+              <SearchIcon />
+            </IconButton>
 
           </Paper>
 
