@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import Pagination from '@mui/material/Pagination/Pagination';
 import PaginationItem from '@mui/material/PaginationItem/PaginationItem';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Typography } from '@mui/material';
 import SearchResult from './features/search/SearchResult';
 import ResultsNavbar from './features/navbar/ResultsNavbar';
 import { queryStringState } from './recoil/selectors';
@@ -79,27 +80,31 @@ export default function ResultsPage() {
       </Box>
     );
   } else if (Array.isArray(results)) {
-    mainContent = (
-      <>
-        {results!.slice(0, endIndex).map(
-          (result) => <SearchResult key={result.id} result={result} />,
-        )}
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Pagination
-            page={page}
-            count={10}
-            renderItem={(item) => (
-              <PaginationItem
-                component={Link}
-                to={queryString}
-                {...item}
-              />
-            )}
-            sx={{ mt: 4, mb: 8 }}
-          />
-        </Box>
-      </>
-    );
+    if (results.length === 0) {
+      mainContent = <Typography variant="h1" color="text.primary">😭 0 Results</Typography>;
+    } else {
+      mainContent = (
+        <>
+          {results!.slice(0, endIndex).map(
+            (result) => <SearchResult key={result.id} result={result} />,
+          )}
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Pagination
+              page={page}
+              count={10}
+              renderItem={(item) => (
+                <PaginationItem
+                  component={Link}
+                  to={queryString}
+                  {...item}
+                />
+              )}
+              sx={{ mt: 4, mb: 8 }}
+            />
+          </Box>
+        </>
+      );
+    }
   }
 
   return (
