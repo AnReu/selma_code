@@ -2,21 +2,24 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import InputBase from '@mui/material/InputBase';
+import InputLabel from '@mui/material/InputLabel';
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
     marginTop: theme.spacing(3),
   },
   '& .MuiInputBase-input': {
-    borderRadius: 0,
     position: 'relative',
+    backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
     backgroundColor: theme.palette.background.paper,
-    border: 'none',
+    borderRadius: '0 4px 4px 0',
+    borderTop: '1px solid #ced4da',
+    borderRight: '1px solid #ced4da',
+    borderBottom: '1px solid #ced4da',
     fontSize: 16,
     padding: '10px 26px 10px 12px',
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
-      borderRadius: 0,
       borderColor: '#80bdff',
       boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
     },
@@ -26,6 +29,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 interface CustomTextFieldProps {
   value: string;
   name?: string;
+  label?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 
@@ -33,19 +37,19 @@ export default function CustomTextField(props: CustomTextFieldProps) {
   const {
     value,
     name,
+    label,
     onChange: handleChange,
   } = props;
 
   return (
-    <div>
-      <FormControl variant="standard">
-        <BootstrapInput
-          id="demo-customized-select-native"
-          name={name}
-          value={value}
-          onChange={handleChange}
-        />
-      </FormControl>
-    </div>
+    <FormControl variant="standard" sx={{ flexGrow: 1 }}>
+      <InputLabel shrink>{label}</InputLabel>
+      <BootstrapInput
+        id="demo-customized-select-native"
+        name={name}
+        value={value}
+        onChange={handleChange}
+      />
+    </FormControl>
   );
 }

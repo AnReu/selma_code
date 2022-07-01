@@ -24,47 +24,46 @@ export default function SearchForm() {
   };
 
   return (
-    <Box component="form" sx={{ display: 'flex' }} role="search">
-      <Box
-        sx={{
-          display: 'flex',
-          minWidth: '240px',
-          border: '1px solid #ced4da',
-          flexGrow: 1,
-        }}
+    <Box
+      component="form"
+      role="search"
+      sx={{
+        display: 'flex',
+        minWidth: '240px',
+        flexGrow: 1,
+      }}
+    >
+      <CustomSelect
+        label="Database"
+        value={db}
+        name="db"
+        onChange={handleChange}
       >
-        <CustomSelect
-          value={db}
-          name="db"
-          onChange={handleChange}
-        >
-          <option disabled value="" />
-          <option value="codeSearchNet">codeSearchNet</option>
-          <option value="postdb">postdb</option>
-        </CustomSelect>
-        <CustomSelect
-          value={model}
-          name="model"
-          onChange={handleChange}
-        >
-          <option disabled value="" />
-          <option value="codeSearchNet">PyterrierModel</option>
-          <option value="postdb">VectorModel</option>
-        </CustomSelect>
-        <CustomSelect
-          value={index}
-          name="index"
-          onChange={handleChange}
-        >
-          <option disabled value="" />
-          <option value="default">Default</option>
-          <option value="code">Code</option>
-        </CustomSelect>
-        <CustomTextField
-          value={text}
-          onChange={handleChange}
-        />
-      </Box>
+        <option value="codeSearchNet">codeSearchNet</option>
+        <option value="postdb">postdb</option>
+      </CustomSelect>
+      <CustomSelect
+        label="Model"
+        value={model}
+        name="model"
+        onChange={handleChange}
+      >
+        <option value="codeSearchNet">PyterrierModel</option>
+        <option value="postdb">VectorModel</option>
+      </CustomSelect>
+      <CustomSelect
+        label="Index"
+        value={index}
+        name="index"
+        onChange={handleChange}
+      >
+        <option value="default">Default</option>
+        <option value="code">Code</option>
+      </CustomSelect>
+      <CustomTextField
+        value={text}
+        onChange={handleChange}
+      />
     </Box>
   );
 }
