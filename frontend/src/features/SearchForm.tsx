@@ -1,11 +1,17 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React from 'react';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import TuneIcon from '@mui/icons-material/Tune';
 import CustomSelect from './CustomSelect';
 import CustomTextField from './CustomTextField';
 import AdvancedSearchDialog from './navbar/AdvancedSearchDialog';
 
 export default function SearchForm() {
+  // const dbs = useRecoilValue(dbsState);
+  // const models = useRecoilValue(filteredModelsState);
+  // const indexes = useRecoilValue(filteredIndexesState);
   const [db, setDb] = React.useState('');
   const [model, setModel] = React.useState('');
   const [index, setIndex] = React.useState('');
@@ -69,6 +75,17 @@ export default function SearchForm() {
         label="Query"
         value={text}
         onChange={handleChange}
+        endAdornment={(
+          <InputAdornment position="end">
+            <IconButton
+              onClick={() => setIsDialogOpen(true)}
+              sx={{ p: '10px' }}
+              aria-label="Open search settings"
+            >
+              <TuneIcon />
+            </IconButton>
+          </InputAdornment>
+        )}
       />
       <AdvancedSearchDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
     </Box>
