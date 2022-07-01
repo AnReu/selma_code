@@ -4,17 +4,48 @@ import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { useRecoilValue } from 'recoil';
+import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { examplesState, Example } from '../../recoil/selectors';
+import { QueryState, queryState } from '../../recoil/atoms';
 
 interface ExamplesListItemProps {
   example: Example;
   isLast: boolean;
+  onChooseExample: SetterOrUpdater<QueryState>;
 }
 
 function ExamplesListItem(props: ExamplesListItemProps) {
-  const { example: { id, name }, isLast } = props;
+  const {
+    example: {
+      id,
+      name,
+      text,
+      database: db,
+      model,
+      index,
+      code,
+      language,
+      equation,
+      mode,
+    }, isLast, onChooseExample: setQuery,
+  } = props;
+
+  const handleChooseTemplate = () => {
+    console.log(db);
+    setQuery({
+      text,
+      db,
+      model,
+      index,
+      code,
+      language,
+      equation,
+      mode,
+      page: 1,
+    });
+  };
+
   return (
     <>
       <ListItem
@@ -30,7 +61,7 @@ function ExamplesListItem(props: ExamplesListItemProps) {
         )}
         disablePadding
       >
-        <ListItemButton>
+        <ListItemButton onClick={handleChooseTemplate}>
           <ListItemText
             primary={name}
           />
@@ -43,6 +74,7 @@ function ExamplesListItem(props: ExamplesListItemProps) {
 
 export default function ExamplesList() {
   const examples = useRecoilValue(examplesState);
+  const [, setQuery] = useRecoilState(queryState);
 
   if (examples.length === 0) {
     return <h1>0 Results</h1>;
@@ -51,7 +83,12 @@ export default function ExamplesList() {
   return (
     <>
       {examples.map((example, index) => (
-        <ExamplesListItem example={example} isLast={index === examples.length - 1} />
+        <ExamplesListItem
+          key={example.id}
+          onChooseExample={setQuery}
+          example={example}
+          isLast={index === examples.length - 1}
+        />
       ))}
     </>
   );
