@@ -19,7 +19,7 @@ export default function ExamplesDialog() {
 
   return (
     <>
-      <Button sx={{ mr: 4 }} variant="outlined" onClick={handleClickOpen}>
+      <Button sx={{ mr: 2 }} variant="outlined" onClick={handleClickOpen}>
         Examples
       </Button>
       <Dialog

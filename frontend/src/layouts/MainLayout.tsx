@@ -3,15 +3,11 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import { Outlet } from 'react-router-dom';
-import IconButton from '@mui/material/IconButton/IconButton';
-import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsDialog from '../features/navbar/SettingsDialog';
-import { ColorModeContext } from '../ColorModeContext';
-import { ThemeSwitch } from '../ThemeSwitch';
 import ExamplesDialog from '../features/examples/ExamplesDialog';
+import SystemSettings from '../features/navbar/SystemSettings';
 
 export default function MainLayout() {
-  const colorMode = React.useContext(ColorModeContext);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
   return (
@@ -33,17 +29,7 @@ export default function MainLayout() {
 
           <ExamplesDialog />
 
-          <ThemeSwitch onClick={colorMode.toggleColorMode} />
-
-          <IconButton
-            size="large"
-            edge="end"
-            aria-haspopup="true"
-            onClick={() => setIsDialogOpen(true)}
-            sx={{ ml: 2 }}
-          >
-            <SettingsIcon />
-          </IconButton>
+          <SystemSettings />
 
         </Toolbar>
       </AppBar>
