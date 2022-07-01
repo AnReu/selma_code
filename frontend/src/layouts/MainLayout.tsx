@@ -8,7 +8,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsDialog from '../features/navbar/SettingsDialog';
 import { ColorModeContext } from '../ColorModeContext';
 import { ThemeSwitch } from '../ThemeSwitch';
-import ExamplesList from '../features/templates/TemplateListDialog';
+import ExamplesDialog from '../features/examples/ExamplesDialog';
 
 export default function MainLayout() {
   const colorMode = React.useContext(ColorModeContext);
@@ -31,7 +31,7 @@ export default function MainLayout() {
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />
 
-          <ExamplesList />
+          <ExamplesDialog />
 
           <ThemeSwitch onClick={colorMode.toggleColorMode} />
 
