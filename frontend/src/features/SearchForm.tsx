@@ -3,12 +3,14 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import CustomSelect from './CustomSelect';
 import CustomTextField from './CustomTextField';
+import AdvancedSearchDialog from './navbar/AdvancedSearchDialog';
 
 export default function SearchForm() {
   const [db, setDb] = React.useState('');
   const [model, setModel] = React.useState('');
   const [index, setIndex] = React.useState('');
   const [text, setText] = React.useState('');
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -68,6 +70,7 @@ export default function SearchForm() {
         value={text}
         onChange={handleChange}
       />
+      <AdvancedSearchDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
     </Box>
   );
 }
