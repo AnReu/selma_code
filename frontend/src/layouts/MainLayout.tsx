@@ -22,12 +22,13 @@ export default function MainLayout() {
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
   return (
-    <Box sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      height: '100vh',
-      bgcolor: 'background.paper',
-    }}
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        height: '100vh',
+        bgcolor: 'background.paper',
+      }}
     >
       <AppBar
         position="fixed"
@@ -59,12 +60,15 @@ export default function MainLayout() {
         </Toolbar>
       </AppBar>
 
-      <main style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        marginBottom: '64px',
-      }}
+      <main
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          marginBottom: '64px',
+          minWidth: '80%',
+          alignItems: 'center',
+        }}
       >
         <Outlet />
       </main>
