@@ -30,7 +30,7 @@ export default function ExamplesDialog() {
       >
         <DialogTitle>Query Examples</DialogTitle>
         <DialogContent>
-          <ExamplesList />
+          <ExamplesList onClose={() => setOpen(false)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

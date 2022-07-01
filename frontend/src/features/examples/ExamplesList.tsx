@@ -13,6 +13,7 @@ interface ExamplesListItemProps {
   example: Example;
   isLast: boolean;
   onChooseExample: SetterOrUpdater<QueryState>;
+  onClose: () => void;
 }
 
 function ExamplesListItem(props: ExamplesListItemProps) {
@@ -28,11 +29,13 @@ function ExamplesListItem(props: ExamplesListItemProps) {
       language,
       equation,
       mode,
-    }, isLast, onChooseExample: setQuery,
+    },
+    isLast,
+    onChooseExample: setQuery,
+    onClose: closeDialog,
   } = props;
 
   const handleChooseTemplate = () => {
-    console.log(db);
     setQuery({
       text,
       db,
@@ -44,6 +47,7 @@ function ExamplesListItem(props: ExamplesListItemProps) {
       mode,
       page: 1,
     });
+    closeDialog();
   };
 
   return (
@@ -72,7 +76,12 @@ function ExamplesListItem(props: ExamplesListItemProps) {
   );
 }
 
-export default function ExamplesList() {
+interface ExamplesListProps {
+  onClose: () => void;
+}
+
+export default function ExamplesList(props: ExamplesListProps) {
+  const { onClose } = props;
   const examples = useRecoilValue(examplesState);
   const [, setQuery] = useRecoilState(queryState);
 
@@ -84,6 +93,7 @@ export default function ExamplesList() {
     <>
       {examples.map((example, index) => (
         <ExamplesListItem
+          onClose={onClose}
           key={example.id}
           onChooseExample={setQuery}
           example={example}
