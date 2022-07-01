@@ -30,7 +30,8 @@ interface CustomTextFieldProps {
   value: string;
   name?: string;
   label?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  endAdornment: React.ReactNode;
 }
 
 export default function CustomTextField(props: CustomTextFieldProps) {
@@ -39,6 +40,7 @@ export default function CustomTextField(props: CustomTextFieldProps) {
     name,
     label,
     onChange: handleChange,
+    endAdornment,
   } = props;
 
   return (
@@ -49,6 +51,7 @@ export default function CustomTextField(props: CustomTextFieldProps) {
         name={name}
         value={value}
         onChange={handleChange}
+        endAdornment={endAdornment}
       />
     </FormControl>
   );
