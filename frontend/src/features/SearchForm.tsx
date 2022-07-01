@@ -39,6 +39,7 @@ export default function SearchForm() {
         name="db"
         onChange={handleChange}
       >
+        <option disabled value="">None</option>
         <option value="codeSearchNet">codeSearchNet</option>
         <option value="postdb">postdb</option>
       </CustomSelect>
@@ -48,6 +49,7 @@ export default function SearchForm() {
         name="model"
         onChange={handleChange}
       >
+        <option disabled value="">None</option>
         <option value="codeSearchNet">PyterrierModel</option>
         <option value="postdb">VectorModel</option>
       </CustomSelect>
@@ -57,10 +59,12 @@ export default function SearchForm() {
         name="index"
         onChange={handleChange}
       >
+        <option disabled value="">None</option>
         <option value="default">Default</option>
         <option value="code">Code</option>
       </CustomSelect>
       <CustomTextField
+        label="Query"
         value={text}
         onChange={handleChange}
       />

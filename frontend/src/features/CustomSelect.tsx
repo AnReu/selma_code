@@ -33,6 +33,7 @@ interface CustomSelectProps {
   label?: string;
   children: React.ReactNode;
   onChange?: React.ChangeEventHandler<HTMLSelectElement | HTMLInputElement>;
+  defaultValue?: string;
 }
 
 export default function CustomSelect(props: CustomSelectProps) {
@@ -43,6 +44,7 @@ export default function CustomSelect(props: CustomSelectProps) {
     children,
     label,
     id,
+    defaultValue,
   } = props;
 
   return (
@@ -54,6 +56,7 @@ export default function CustomSelect(props: CustomSelectProps) {
         value={value}
         onChange={handleChange}
         input={<CustomInput />}
+        defaultValue={defaultValue}
       >
         {children}
       </NativeSelect>
