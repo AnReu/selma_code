@@ -1,34 +1,21 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
 import React from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TuneIcon from '@mui/icons-material/Tune';
+import { useRecoilState } from 'recoil';
 import CustomSelect from './CustomSelect';
 import CustomTextField from './CustomTextField';
 import AdvancedSearchDialog from './navbar/AdvancedSearchDialog';
+import { queryState } from '../recoil/atoms';
 
 export default function SearchForm() {
-  // const dbs = useRecoilValue(dbsState);
-  // const models = useRecoilValue(filteredModelsState);
-  // const indexes = useRecoilValue(filteredIndexesState);
-  const [db, setDb] = React.useState('');
-  const [model, setModel] = React.useState('');
-  const [index, setIndex] = React.useState('');
-  const [text, setText] = React.useState('');
+  const [query, setQuery] = useRecoilState(queryState);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    if (name === 'db') {
-      setDb(value);
-    } else if (name === 'model') {
-      setModel(value);
-    } else if (name === 'index') {
-      setIndex(value);
-    } else {
-      setText(value);
-    }
+    setQuery({ ...query, [name]: value });
   };
 
   return (
@@ -43,7 +30,7 @@ export default function SearchForm() {
     >
       <CustomSelect
         label="Database"
-        value={db}
+        value={query.db}
         name="db"
         onChange={handleChange}
       >
@@ -53,7 +40,7 @@ export default function SearchForm() {
       </CustomSelect>
       <CustomSelect
         label="Model"
-        value={model}
+        value={query.model}
         name="model"
         onChange={handleChange}
       >
@@ -63,7 +50,7 @@ export default function SearchForm() {
       </CustomSelect>
       <CustomSelect
         label="Index"
-        value={index}
+        value={query.index}
         name="index"
         onChange={handleChange}
       >
@@ -73,7 +60,7 @@ export default function SearchForm() {
       </CustomSelect>
       <CustomTextField
         label="Query"
-        value={text}
+        value={query.text}
         onChange={handleChange}
         endAdornment={(
           <InputAdornment position="end">
