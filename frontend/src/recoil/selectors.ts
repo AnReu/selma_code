@@ -81,6 +81,31 @@ export const emptyConfig: Config = {
   },
 };
 
+export interface Example {
+  id?: number;
+  name: string;
+  model: string;
+  mode: string;
+  language: string;
+  text: string;
+  code: string;
+  equation: string;
+  url: string;
+  user: string;
+  database: string;
+}
+
+export const examplesState = atom<Example[]>({
+  key: 'examples',
+  default: selector<Example[]>({
+    key: 'examplesLoader',
+    get: async () => {
+      const response = await fetch(`${baseURL}/query-templates`, { mode: 'cors' });
+      return response.json();
+    },
+  }),
+});
+
 export const configsState = atom<Config>({
   key: 'configs',
   default: selector<Config>({
