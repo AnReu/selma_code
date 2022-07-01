@@ -28,7 +28,6 @@ class QueryTemplate(db.Model):
             "name",
             "text",
             "index",
-            "user",
             "code",
             "equation",
             "mode",
@@ -45,7 +44,6 @@ class QueryTemplate(db.Model):
             "name": self.name,
             "text": self.text,
             "index": self.index,
-            "user": self.user,
             "code": self.code,
             "equation": self.equation,
             "mode": self.mode,
@@ -84,6 +82,5 @@ class QueryTemplateSchema(CamelCaseSchema):
     index = ma.auto_field()
     code = ma.auto_field()
     equation = ma.auto_field()
-    user = ma.auto_field()
     url = ma.auto_field()
     database = ma.auto_field()
