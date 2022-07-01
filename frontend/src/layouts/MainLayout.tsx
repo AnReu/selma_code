@@ -9,6 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsDialog from '../features/navbar/SettingsDialog';
 import { ColorModeContext } from '../ColorModeContext';
 import { ThemeSwitch } from '../ThemeSwitch';
+import TemplateListDialog from '../features/templates/TemplateListDialog';
 
 const pages = [
   { name: 'Home', value: '/' },
@@ -43,6 +44,8 @@ export default function MainLayout() {
             ))}
           </Box>
           <Box sx={{ flexGrow: 1 }} />
+
+          <TemplateListDialog />
 
           <ThemeSwitch onClick={colorMode.toggleColorMode} />
 
