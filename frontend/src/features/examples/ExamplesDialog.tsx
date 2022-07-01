@@ -28,7 +28,7 @@ export default function ExamplesDialog() {
         open={open}
         onClose={handleClose}
       >
-        <DialogTitle>Available Query Templates</DialogTitle>
+        <DialogTitle>Query Examples</DialogTitle>
         <DialogContent>
           <ExamplesList />
         </DialogContent>
