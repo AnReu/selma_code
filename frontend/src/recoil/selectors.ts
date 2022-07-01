@@ -1,5 +1,5 @@
 import { atom, selector, useRecoilState } from 'recoil';
-import { queryState } from './atoms';
+import { QueryMode, queryState } from './atoms';
 
 const baseURL = 'http://127.0.0.1:5000/api/v1';
 
@@ -85,14 +85,14 @@ export interface Example {
   id?: number;
   name: string;
   model: string;
-  mode: string;
+  mode: QueryMode;
   language: string;
   text: string;
   code: string;
   equation: string;
   url: string;
-  user: string;
   database: string;
+  index: string;
 }
 
 export const examplesState = atom<Example[]>({
