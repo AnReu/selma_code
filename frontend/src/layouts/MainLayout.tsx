@@ -2,21 +2,13 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
 import { Outlet } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsDialog from '../features/navbar/SettingsDialog';
 import { ColorModeContext } from '../ColorModeContext';
 import { ThemeSwitch } from '../ThemeSwitch';
-import TemplateListDialog from '../features/templates/TemplateListDialog';
-
-const pages = [
-  { name: 'Home', value: '/' },
-  // { name: 'Separated', value: '/separated' },
-  // { name: 'ID or URL', value: '/url' },
-  // { name: 'File', value: '/file' },
-];
+import ExamplesList from '../features/templates/TemplateListDialog';
 
 export default function MainLayout() {
   const colorMode = React.useContext(ColorModeContext);
@@ -34,18 +26,12 @@ export default function MainLayout() {
       <AppBar
         position="fixed"
         elevation={0}
+        sx={{ bgcolor: 'background.paper' }}
       >
         <Toolbar>
-          <Box>
-            {pages.map((page) => (
-              <Button key={page.name} href={`${page.value}`} variant="text" sx={{ color: 'white' }}>
-                {page.name}
-              </Button>
-            ))}
-          </Box>
           <Box sx={{ flexGrow: 1 }} />
 
-          <TemplateListDialog />
+          <ExamplesList />
 
           <ThemeSwitch onClick={colorMode.toggleColorMode} />
 
@@ -53,7 +39,6 @@ export default function MainLayout() {
             size="large"
             edge="end"
             aria-haspopup="true"
-            color="inherit"
             onClick={() => setIsDialogOpen(true)}
             sx={{ ml: 2 }}
           >
