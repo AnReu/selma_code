@@ -2,6 +2,7 @@ import { atom, selector, useRecoilState } from 'recoil';
 import { QueryMode, queryState } from './atoms';
 
 const baseURL = 'http://127.0.0.1:5000/api/v1';
+const headers = { 'Content-Type': 'application/json' };
 
 export const queryStringState = selector({
   key: 'searchParameters',
@@ -148,7 +149,7 @@ export function useConfigsMutations() {
       {
         method: 'POST',
         body: JSON.stringify(updatedConfigs),
-        headers: { 'Content-Type': 'application/json' },
+        headers,
       });
     setConfigs(emptyConfig);
   };
