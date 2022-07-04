@@ -141,6 +141,22 @@ export declare interface UpdateConfigsParams {
   },
 }
 
+export function useExamplesMutations() {
+  const [, setExamples] = useRecoilState(examplesState);
+
+  const createExample = async (example: Example) => {
+    await fetch(`${baseURL}/query-templates`,
+      {
+        method: 'POST',
+        body: JSON.stringify(example),
+        headers,
+      });
+    setExamples((oldExamples) => [...oldExamples, example]);
+  };
+
+  return { createExample };
+}
+
 export function useConfigsMutations() {
   const [, setConfigs] = useRecoilState(configsState);
 
