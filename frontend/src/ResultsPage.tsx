@@ -1,15 +1,13 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { useSearchParams, Link } from 'react-router-dom';
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Pagination from '@mui/material/Pagination/Pagination';
-import PaginationItem from '@mui/material/PaginationItem/PaginationItem';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Typography } from '@mui/material';
 import SearchResult from './features/search/SearchResult';
 import ResultsNavbar from './features/navbar/ResultsNavbar';
-import { queryStringState } from './recoil/selectors';
 import { queryState } from './recoil/atoms';
 
 export interface Result {
@@ -32,13 +30,13 @@ export default function ResultsPage() {
   const [results, setResults] = React.useState<Result[] | undefined>(undefined);
   const [isLoading, setIsLoading] = React.useState(true);
   const [endIndex] = React.useState(10);
-  const queryString = useRecoilValue(queryStringState);
   const [query, setQuery] = useRecoilState(queryState);
   const page = Number(searchParams.get('page')) as number;
   const text = searchParams.get('text') as string;
   const database = searchParams.get('database') as string;
   const model = searchParams.get('model') as string;
   const index = searchParams.get('index') as string;
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     setQuery({
@@ -67,6 +65,19 @@ export default function ResultsPage() {
     getResults();
   }, [searchParams]);
 
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    navigate({
+      search: createSearchParams({
+        text, // TODO: review non-null assertion operator (aka !)
+        database,
+        model,
+        index,
+        language: 'english',
+        page: `${value}`,
+      }).toString(),
+    });
+  };
+
   let mainContent = <>TODO: Error</>;
 
   if (isLoading) {
@@ -92,13 +103,7 @@ export default function ResultsPage() {
             <Pagination
               page={page}
               count={10}
-              renderItem={(item) => (
-                <PaginationItem
-                  component={Link}
-                  to={queryString}
-                  {...item}
-                />
-              )}
+              onChange={handlePageChange}
               sx={{ mt: 4, mb: 8 }}
             />
           </Box>
