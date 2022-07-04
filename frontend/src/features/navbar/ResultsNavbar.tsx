@@ -1,11 +1,9 @@
 import React, { FormEvent } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton/IconButton';
 import Tabs from '@mui/material/Tabs/Tabs';
 import Tab from '@mui/material/Tab/Tab';
 import Button from '@mui/material/Button/Button';
-import SettingsIcon from '@mui/icons-material/Settings';
 import useScrollTrigger from '@mui/material/useScrollTrigger/useScrollTrigger';
 import Slide from '@mui/material/Slide/Slide';
 import Box from '@mui/material/Box/Box';
@@ -13,8 +11,8 @@ import { useRecoilState } from 'recoil';
 import { Link, useSearchParams } from 'react-router-dom';
 import NavbarSearchInput from './NavbarSearchInput';
 import { QueryMode, queryState } from '../../recoil/atoms';
-import SettingsDialog from './SettingsDialog';
 import DDBGLogo from '../../assets/dresden_db_group_logo.svg';
+import SystemSettings from './SystemSettings';
 
 interface HideOnScrollProps {
   // TODO: remove this code
@@ -74,7 +72,6 @@ function TabPanel(props: TabPanelProps) {
 export default function ResultsNavbar() {
   const [tabValue, setTabValue] = React.useState<number>(0);
   const [query, setQuery] = useRecoilState(queryState);
-  const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
   const [, setSearchParams] = useSearchParams();
   // TODO: review non-null assertion operator (aka !)
   const [text, setText] = React.useState(query.text!);
@@ -155,17 +152,9 @@ export default function ResultsNavbar() {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <IconButton
-              size="large"
-              edge="end"
-              aria-haspopup="true"
-              color="inherit"
-              onClick={() => setIsDialogOpen(true)}
-              sx={{ ml: 2 }}
-            >
-              <SettingsIcon />
-            </IconButton>
+            <SystemSettings />
           </Toolbar>
+
           <Toolbar variant="dense">
             <Tabs value={tabValue} onChange={handleTabChange} style={{ height: '32px' }}>
               <Tab label="Default" />
@@ -174,7 +163,6 @@ export default function ResultsNavbar() {
 
         </AppBar>
       </HideOnScroll>
-      <SettingsDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
     </>
   );
 }
