@@ -26,7 +26,7 @@ export default function SearchForm() {
     navigate({
       pathname: 'results',
       search: createSearchParams({
-        text: query.text,
+        text: query.text!, // TODO: review non-null assertion operator (aka !)
         database: query.database,
         model: query.model,
         index: query.index,
@@ -79,7 +79,7 @@ export default function SearchForm() {
       </CustomSelect>
       <CustomTextField
         label="Query"
-        value={query.text}
+        value={query.text!} // TODO: review non-null assertion operator (aka !)
         name="text"
         onChange={handleChange}
         endAdornment={(

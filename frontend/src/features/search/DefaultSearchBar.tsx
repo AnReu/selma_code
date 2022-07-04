@@ -36,7 +36,7 @@ export default function DefaultSearchBar() {
     navigate({
       pathname: 'results',
       search: createSearchParams({
-        text: query.text,
+        text: query.text!, // TODO: review non-null assertion operator (aka !)
         database: query.database,
         model: query.model,
         index: query.index,

@@ -6,9 +6,9 @@ export interface QueryState {
   model: string;
   index: string;
   language: string;
-  text: string;
-  code: string;
-  equation: string;
+  text?: string;
+  code?: string;
+  equation?: string;
   mode: QueryMode;
   page: number;
 }

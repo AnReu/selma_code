@@ -100,10 +100,10 @@ export interface Example {
   model: string;
   mode: QueryMode;
   language: string;
-  text: string;
-  code: string;
-  equation: string;
-  url: string;
+  text?: string;
+  code?: string;
+  equation?: string;
+  url?: string;
   database: string;
   index: string;
 }

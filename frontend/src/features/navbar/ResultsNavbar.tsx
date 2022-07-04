@@ -79,7 +79,8 @@ export default function ResultsNavbar() {
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
   const colorMode = React.useContext(ColorModeContext);
   const [, setSearchParams] = useSearchParams();
-  const [text, setText] = React.useState(query.text);
+  // TODO: review non-null assertion operator (aka !)
+  const [text, setText] = React.useState(query.text!);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     const mapping: { [key: number]: QueryMode } = {
@@ -146,7 +147,7 @@ export default function ResultsNavbar() {
                 sx={{ display: 'flex', alignItems: 'center' }}
               >
                 <NavbarSearchInput
-                  value={text}
+                  value={text!} // TODO: review non-null assertion operator (aka !)
                   onChange={handleChange}
                   placeholder="Search"
                 />
