@@ -7,6 +7,7 @@ export interface QueryState {
   index: string;
   language: string;
   text?: string;
+  url?: string;
   code?: string;
   equation?: string;
   mode: QueryMode;
@@ -19,6 +20,7 @@ export const defaultQuery: QueryState = {
   index: 'default',
   language: 'english',
   text: '',
+  url: '',
   code: '',
   equation: '',
   mode: 'default',
