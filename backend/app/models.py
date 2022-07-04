@@ -14,7 +14,7 @@ class QueryTemplate(db.Model):
     text = db.Column(db.String(120), nullable=True)
     code = db.Column(db.String(120), nullable=True)
     equation = db.Column(db.String(120), nullable=True)
-    url = db.Column(db.String(120), nullable=False)
+    url = db.Column(db.String(120), nullable=True)
 
 
 
