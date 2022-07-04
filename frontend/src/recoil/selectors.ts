@@ -145,13 +145,15 @@ export function useExamplesMutations() {
   const [, setExamples] = useRecoilState(examplesState);
 
   const createExample = async (example: Example) => {
-    await fetch(`${baseURL}/query-templates`,
+    const response = await fetch(`${baseURL}/query-templates`,
       {
         method: 'POST',
         body: JSON.stringify(example),
         headers,
       });
-    setExamples((oldExamples) => [...oldExamples, example]);
+    const data = await response.json();
+    const newExample = data.queryTemplate;
+    setExamples((oldExamples) => [...oldExamples, newExample]);
   };
 
   const deleteExample = async (exampleId: number) => {
@@ -160,7 +162,7 @@ export function useExamplesMutations() {
         method: 'DELETE',
         headers,
       });
-    setExamples((oldExamples) => oldExamples.filter((example) => example.id === exampleId));
+    setExamples((oldExamples) => oldExamples.filter((example) => example.id !== exampleId));
   };
 
   return { createExample, deleteExample };
