@@ -1,20 +1,42 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { FormEvent } from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TuneIcon from '@mui/icons-material/Tune';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import SearchIcon from '@mui/icons-material/Search';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 import CustomSelect from './CustomSelect';
 import CustomTextField from './CustomTextField';
 import AdvancedSearchDialog from './navbar/AdvancedSearchDialog';
 import { queryState } from '../recoil/atoms';
+import { dataStructureQueryState, dbsState } from '../recoil/selectors';
 
 export default function SearchForm() {
   const navigate = useNavigate();
   const [query, setQuery] = useRecoilState(queryState);
+  const databases = useRecoilValue(dbsState);
+  const dataStructure = useRecoilValue(dataStructureQueryState);
+  const [models, setModels] = React.useState<string[]>([]);
+  const [indexes, setIndexes] = React.useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    // filter models
+    if (query.database && dataStructure[query.database]) {
+      setModels(Object.keys(dataStructure[query.database]));
+    } else {
+      setModels([]);
+    }
+
+    // filter indexes
+    if (dataStructure[query.database] && dataStructure[query.database][query.model]) {
+      setIndexes(dataStructure[query.database][query.model]);
+    } else {
+      setIndexes([]);
+    }
+  }, [query]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -53,9 +75,8 @@ export default function SearchForm() {
         name="database"
         onChange={handleChange}
       >
-        <option disabled value="">None</option>
-        <option value="codeSearchNet">codeSearchNet</option>
-        <option value="postdb">postdb</option>
+        <option value="" />
+        {databases.map((db) => <option key={db} value={db}>{db}</option>)}
       </CustomSelect>
       <CustomSelect
         label="Model"
@@ -63,9 +84,8 @@ export default function SearchForm() {
         name="model"
         onChange={handleChange}
       >
-        <option disabled value="">None</option>
-        <option value="codeSearchNet">PyterrierModel</option>
-        <option value="postdb">VectorModel</option>
+        <option value="" />
+        {models.map((model) => <option key={model} value={model}>{model}</option>)}
       </CustomSelect>
       <CustomSelect
         label="Index"
@@ -73,9 +93,8 @@ export default function SearchForm() {
         name="index"
         onChange={handleChange}
       >
-        <option disabled value="">None</option>
-        <option value="default">Default</option>
-        <option value="code">Code</option>
+        <option value="" />
+        {indexes.map((idx) => <option key={idx} value={idx}>{idx}</option>)}
       </CustomSelect>
       <CustomTextField
         label="Query"
