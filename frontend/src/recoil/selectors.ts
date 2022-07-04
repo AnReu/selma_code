@@ -154,7 +154,16 @@ export function useExamplesMutations() {
     setExamples((oldExamples) => [...oldExamples, example]);
   };
 
-  return { createExample };
+  const deleteExample = async (exampleId: number) => {
+    await fetch(`${baseURL}/query-templates/${exampleId}`,
+      {
+        method: 'DELETE',
+        headers,
+      });
+    setExamples((oldExamples) => oldExamples.filter((example) => example.id === exampleId));
+  };
+
+  return { createExample, deleteExample };
 }
 
 export function useConfigsMutations() {
