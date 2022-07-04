@@ -9,9 +9,10 @@ import Slide from '@mui/material/Slide/Slide';
 import Box from '@mui/material/Box/Box';
 import { useRecoilState } from 'recoil';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 import NavbarSearchInput from './NavbarSearchInput';
 import { QueryMode, queryState } from '../../recoil/atoms';
-import DDBGLogo from '../../assets/dresden_db_group_logo.svg';
+import SelmaLogo from '../../assets/SELMA-Logo_code.svg';
 import SystemSettings from './SystemSettings';
 
 interface HideOnScrollProps {
@@ -70,11 +71,14 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export default function ResultsNavbar() {
+  const theme = useTheme();
   const [tabValue, setTabValue] = React.useState<number>(0);
   const [query, setQuery] = useRecoilState(queryState);
   const [, setSearchParams] = useSearchParams();
   // TODO: review non-null assertion operator (aka !)
   const [text, setText] = React.useState(query.text!);
+
+  const logoClass = theme.palette.mode === 'light' ? 'dark-logo' : 'light-logo';
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     const mapping: { [key: number]: QueryMode } = {
@@ -128,8 +132,9 @@ export default function ResultsNavbar() {
             >
               <Link to={{ pathname: '/' }}>
                 <img
-                  src={DDBGLogo}
-                  alt="Dresden DB Group"
+                  className={logoClass}
+                  src={SelmaLogo}
+                  alt="Selma retrieval system"
                 />
               </Link>
             </Box>
