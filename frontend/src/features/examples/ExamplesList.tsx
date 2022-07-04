@@ -37,15 +37,27 @@ function ExamplesListItem(props: ExamplesListItemProps) {
   } = props;
 
   const handleChooseTemplate = () => {
+    const newQuery: QueryState = {
       database,
       model,
       index,
-      code,
       language,
-      equation,
       mode,
       page: 1,
-    });
+    };
+
+    if (mode === 'default') {
+      newQuery.text = text;
+    } else if (mode === 'separated') {
+      newQuery.code = code;
+      newQuery.equation = equation;
+    } else if (mode === 'url') {
+      newQuery.url = url;
+    } else {
+      console.error('TODO');
+    }
+
+    setQuery(newQuery);
     closeDialog();
   };
 
