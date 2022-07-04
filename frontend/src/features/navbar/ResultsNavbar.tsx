@@ -12,8 +12,6 @@ import Box from '@mui/material/Box/Box';
 import { useRecoilState } from 'recoil';
 import { Link, useSearchParams } from 'react-router-dom';
 import NavbarSearchInput from './NavbarSearchInput';
-import { ThemeSwitch } from '../../ThemeSwitch';
-import { ColorModeContext } from '../../ColorModeContext';
 import { QueryMode, queryState } from '../../recoil/atoms';
 import SettingsDialog from './SettingsDialog';
 import DDBGLogo from '../../assets/dresden_db_group_logo.svg';
@@ -77,7 +75,6 @@ export default function ResultsNavbar() {
   const [tabValue, setTabValue] = React.useState<number>(0);
   const [query, setQuery] = useRecoilState(queryState);
   const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
-  const colorMode = React.useContext(ColorModeContext);
   const [, setSearchParams] = useSearchParams();
   // TODO: review non-null assertion operator (aka !)
   const [text, setText] = React.useState(query.text!);
@@ -157,8 +154,6 @@ export default function ResultsNavbar() {
             </TabPanel>
 
             <Box sx={{ flexGrow: 1 }} />
-
-            <ThemeSwitch onClick={colorMode.toggleColorMode} />
 
             <IconButton
               size="large"
