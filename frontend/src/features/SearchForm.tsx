@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { FormEvent } from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TuneIcon from '@mui/icons-material/Tune';
 import { useRecoilState } from 'recoil';
+import SearchIcon from '@mui/icons-material/Search';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 import CustomSelect from './CustomSelect';
 import CustomTextField from './CustomTextField';
 import AdvancedSearchDialog from './navbar/AdvancedSearchDialog';
 import { queryState } from '../recoil/atoms';
 
 export default function SearchForm() {
+  const navigate = useNavigate();
   const [query, setQuery] = useRecoilState(queryState);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
@@ -18,9 +21,25 @@ export default function SearchForm() {
     setQuery({ ...query, [name]: value });
   };
 
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    navigate({
+      pathname: 'results',
+      search: createSearchParams({
+        text: query.text,
+        db: query.db,
+        model: query.model,
+        index: query.index,
+        language: query.language,
+        page: '1',
+      }).toString(),
+    });
+  };
+
   return (
     <Box
       component="form"
+      onSubmit={handleSubmit}
       role="search"
       sx={{
         display: 'flex',
@@ -61,6 +80,7 @@ export default function SearchForm() {
       <CustomTextField
         label="Query"
         value={query.text}
+        name="text"
         onChange={handleChange}
         endAdornment={(
           <InputAdornment position="end">
@@ -70,6 +90,13 @@ export default function SearchForm() {
               aria-label="Open search settings"
             >
               <TuneIcon />
+            </IconButton>
+            <IconButton
+              type="submit"
+              sx={{ p: '10px' }}
+              aria-label="Run search"
+            >
+              <SearchIcon />
             </IconButton>
           </InputAdornment>
         )}
