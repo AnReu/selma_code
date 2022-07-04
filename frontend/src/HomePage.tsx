@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 // import DefaultSearchBar from './features/search/DefaultSearchBar';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import DDBGLogo from './assets/SELMA-Logo_code.svg';
+import SelmaLogo from './assets/SELMA-Logo_code.svg';
 import SearchForm from './features/SearchForm';
 
 export default function HomePage() {
@@ -19,8 +19,8 @@ export default function HomePage() {
     >
       <img
         className={logoClass}
-        src={DDBGLogo}
-        alt="Dresden DB Group"
+        src={SelmaLogo}
+        alt="Selma retrieval system"
       />
       <Typography
         variant="h3"
