@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -19,7 +20,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import {
   dataStructureQueryState,
-  dbsState, emptyExample, Example, filteredModelsState,
+  dbsState, emptyExample, Example, useExamplesMutations,
 } from '../../recoil/selectors';
 import ExamplesList from './ExamplesList';
 
@@ -30,9 +31,10 @@ interface ExamplesDialogProps {
 
 function ExamplesCreateDialog(props: ExamplesDialogProps) {
   const { isOpen, onClose: handleClose } = props;
+  const [form, setForm] = React.useState<Example>(emptyExample);
+  const { createExample } = useExamplesMutations();
   const dbs = useRecoilValue(dbsState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
-  const [form, setForm] = React.useState<Example>(emptyExample);
   const [models, setModels] = React.useState<string[]>([]);
   const [indexes, setIndexes] = React.useState<string[]>([]);
 
@@ -53,8 +55,17 @@ function ExamplesCreateDialog(props: ExamplesDialogProps) {
   }, [form]);
 
   const handleCreate = () => {
-    console.error('TODO');
-    console.log(form);
+    const example: Example = {
+      name: form.name,
+      text: form.text, // TODO: choose text or code & equation or url according to mode
+      database: form.database,
+      model: form.model,
+      index: form.index,
+      language: form.language,
+      mode: form.mode,
+    };
+    createExample(example);
+    handleClose();
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +81,7 @@ function ExamplesCreateDialog(props: ExamplesDialogProps) {
       onClose={handleClose}
     >
       <DialogTitle>Create Example</DialogTitle>
+
       <DialogContent>
         <Stack component="form" spacing={2}>
           <TextField
@@ -92,7 +104,6 @@ function ExamplesCreateDialog(props: ExamplesDialogProps) {
             }}
             value={form.database}
             onChange={handleChange}
-
           >
             <option value="" />
             {dbs.map((db) => <option key={db} value={db}>{db}</option>)}
@@ -146,12 +157,25 @@ function ExamplesCreateDialog(props: ExamplesDialogProps) {
             </RadioGroup>
           </FormControl>
 
+          {form.mode === 'default'
+            && (
+              <TextField
+                label="Text"
+                name="text"
+                variant="filled"
+                fullWidth
+                value={form.text}
+                onChange={handleChange}
+              />
+            )}
+
         </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleCreate}>Create</Button>
       </DialogActions>
+
     </Dialog>
   );
 }
@@ -192,8 +216,6 @@ export default function ExamplesDialog() {
   };
 
   const handleClose = () => {
-    // const { name } = event.target;
-    // console.log(event);
     setIsOpen(false);
   };
 
