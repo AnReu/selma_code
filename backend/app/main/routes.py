@@ -30,7 +30,7 @@ def search_route():
     exchange = exchange.split(",")
     model = request.args.get("model")
     model_language = request.args.get("model-language")
-    db_name = request.args.get("db")
+    db_name = request.args.get("database")
     index = request.args.get("index")
     page = request.args.get("page", 1, type=int)
 
