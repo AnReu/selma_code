@@ -32,10 +32,10 @@ export const dbsState = selector<string[]>({
 export const filteredModelsState = selector<string[]>({
   key: 'filteredModels',
   get: ({ get }) => {
-    const { db: selectedDb } = get(queryState);
+    const { db } = get(queryState);
     const data = get(dataStructureQueryState);
-    if (data[selectedDb]) {
-      return Object.keys(data[selectedDb]);
+    if (data[db]) {
+      return Object.keys(data[db]);
     }
     return [];
   },
@@ -81,6 +81,19 @@ export const emptyConfig: Config = {
   },
 };
 
+export const emptyExample: Example = {
+  name: '',
+  model: '',
+  mode: 'default',
+  language: '',
+  text: '',
+  code: '',
+  equation: '',
+  url: '',
+  db: '',
+  index: '',
+};
+
 export interface Example {
   id?: number;
   name: string;
@@ -91,7 +104,7 @@ export interface Example {
   code: string;
   equation: string;
   url: string;
-  database: string;
+  db: string;
   index: string;
 }
 
