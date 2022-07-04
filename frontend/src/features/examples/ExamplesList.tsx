@@ -22,7 +22,7 @@ function ExamplesListItem(props: ExamplesListItemProps) {
       id,
       name,
       text,
-      database: db,
+      db,
       model,
       index,
       code,
