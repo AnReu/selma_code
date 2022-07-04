@@ -27,12 +27,10 @@ code {
 
 .light-logo {
   max-width: 160px;
-  margin: 32px 32px 16px 32px;
   filter: invert(100%) sepia(64%) saturate(0%) hue-rotate(223deg) brightness(107%) contrast(107%);
 }
 
 .dark-logo {
   max-width: 160px;
-  margin: 32px 32px 16px 32px;
   filter: invert(0%) sepia(24%) saturate(391%) hue-rotate(326deg) brightness(107%) contrast(86%);
 }
