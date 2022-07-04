@@ -6,7 +6,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { examplesState, Example } from '../../recoil/selectors';
+import { examplesState, Example, useExamplesMutations } from '../../recoil/selectors';
 import { QueryState, queryState } from '../../recoil/atoms';
 
 interface ExamplesListItemProps {
@@ -35,6 +35,7 @@ function ExamplesListItem(props: ExamplesListItemProps) {
     onChooseExample: setQuery,
     onClose: closeDialog,
   } = props;
+  const { deleteExample } = useExamplesMutations();
 
   const handleChooseTemplate = () => {
     const newQuery: QueryState = {
@@ -61,6 +62,13 @@ function ExamplesListItem(props: ExamplesListItemProps) {
     closeDialog();
   };
 
+  const handleDelete = () => {
+    // TODO: review non-null assertion operator (aka !)
+    deleteExample(id!);
+    // TODO: Implement error handling in case example cannot be deleted
+    closeDialog();
+  };
+
   return (
     <>
       <ListItem
@@ -70,6 +78,7 @@ function ExamplesListItem(props: ExamplesListItemProps) {
           <IconButton
             edge="end"
             aria-label="delete"
+            onClick={handleDelete}
           >
             <DeleteIcon />
           </IconButton>
