@@ -3,13 +3,10 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import { Outlet } from 'react-router-dom';
-import SettingsDialog from '../features/navbar/SettingsDialog';
 import ExamplesDialog from '../features/examples/ExamplesDialog';
 import SystemSettings from '../features/navbar/SystemSettings';
 
 export default function MainLayout() {
-  const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
-
   return (
     <Box
       sx={{
@@ -46,7 +43,6 @@ export default function MainLayout() {
       >
         <Outlet />
       </main>
-      <SettingsDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
     </Box>
   );
 }
