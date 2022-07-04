@@ -101,6 +101,7 @@ export default function ResultsPage() {
           )}
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Pagination
+              color="secondary"
               page={page}
               count={10}
               onChange={handlePageChange}
