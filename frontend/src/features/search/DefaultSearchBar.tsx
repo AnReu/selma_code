@@ -37,7 +37,7 @@ export default function DefaultSearchBar() {
       pathname: 'results',
       search: createSearchParams({
         text: query.text,
-        db: query.db,
+        database: query.database,
         model: query.model,
         index: query.index,
         language: query.language,

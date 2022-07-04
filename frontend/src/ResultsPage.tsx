@@ -36,7 +36,7 @@ export default function ResultsPage() {
   const [query, setQuery] = useRecoilState(queryState);
   const page = Number(searchParams.get('page')) as number;
   const text = searchParams.get('text') as string;
-  const db = searchParams.get('db') as string;
+  const database = searchParams.get('database') as string;
   const model = searchParams.get('model') as string;
   const index = searchParams.get('index') as string;
 
@@ -44,14 +44,14 @@ export default function ResultsPage() {
     setQuery({
       ...query,
       ...{
-        text, db, model, index, page,
+        text, database, model, index, page,
       },
     });
 
     const getResults = async () => {
       const URL = 'http://127.0.0.1:5000/api/v1/search?'
         + `text=${text}&`
-        + `db=${db}&`
+        + `database=${database}&`
         + `model=${model}&`
         + `index=${index}&`
         + `page=${page}&`

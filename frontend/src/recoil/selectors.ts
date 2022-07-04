@@ -7,9 +7,9 @@ export const queryStringState = selector({
   key: 'searchParameters',
   get: ({ get }) => {
     const {
-      text, db, model, index, language, page,
+      text, database, model, index, language, page,
     } = get(queryState);
-    return `?text=${text}&db=${db}&model=${model}&index=${index}&language=${language}&page=${page}`;
+    return `?text=${text}&database=${database}&model=${model}&index=${index}&language=${language}&page=${page}`;
   },
 });
 
@@ -32,10 +32,10 @@ export const dbsState = selector<string[]>({
 export const filteredModelsState = selector<string[]>({
   key: 'filteredModels',
   get: ({ get }) => {
-    const { db } = get(queryState);
+    const { database } = get(queryState);
     const data = get(dataStructureQueryState);
-    if (data[db]) {
-      return Object.keys(data[db]);
+    if (data[database]) {
+      return Object.keys(data[database]);
     }
     return [];
   },
@@ -45,9 +45,9 @@ export const filteredIndexesState = selector<string[]>({
   key: 'filteredIndexes',
   get: ({ get }) => {
     const data = get(dataStructureQueryState);
-    const { db, model } = get(queryState);
-    if (data[db] && data[db][model]) {
-      return data[db][model];
+    const { database, model } = get(queryState);
+    if (data[database] && data[database][model]) {
+      return data[database][model];
     }
     return [];
   },
@@ -90,7 +90,7 @@ export const emptyExample: Example = {
   code: '',
   equation: '',
   url: '',
-  db: '',
+  database: '',
   index: '',
 };
 
@@ -104,7 +104,7 @@ export interface Example {
   code: string;
   equation: string;
   url: string;
-  db: string;
+  database: string;
   index: string;
 }
 

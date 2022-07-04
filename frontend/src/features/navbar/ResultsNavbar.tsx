@@ -102,7 +102,7 @@ export default function ResultsNavbar() {
     event.preventDefault();
     setSearchParams({
       text,
-      db: query.db,
+      database: query.database,
       model: query.model,
       index: query.index,
       language: query.language,

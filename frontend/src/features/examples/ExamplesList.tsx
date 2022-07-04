@@ -22,7 +22,7 @@ function ExamplesListItem(props: ExamplesListItemProps) {
       id,
       name,
       text,
-      db,
+      database,
       model,
       index,
       code,
@@ -36,9 +36,7 @@ function ExamplesListItem(props: ExamplesListItemProps) {
   } = props;
 
   const handleChooseTemplate = () => {
-    setQuery({
-      text,
-      db,
+      database,
       model,
       index,
       code,

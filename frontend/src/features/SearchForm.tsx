@@ -27,7 +27,7 @@ export default function SearchForm() {
       pathname: 'results',
       search: createSearchParams({
         text: query.text,
-        db: query.db,
+        database: query.database,
         model: query.model,
         index: query.index,
         language: query.language,
@@ -49,8 +49,8 @@ export default function SearchForm() {
     >
       <CustomSelect
         label="Database"
-        value={query.db}
-        name="db"
+        value={query.database}
+        name="database"
         onChange={handleChange}
       >
         <option disabled value="">None</option>

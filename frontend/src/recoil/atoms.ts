@@ -2,7 +2,7 @@ import { atom } from 'recoil';
 
 export type QueryMode = 'default' | 'separated' | 'url' | 'file'
 export interface QueryState {
-  db: string;
+  database: string;
   model: string;
   index: string;
   language: string;
@@ -14,7 +14,7 @@ export interface QueryState {
 }
 
 export const defaultQuery: QueryState = {
-  db: 'codeSearchNet_java',
+  database: 'codeSearchNet_java',
   model: 'PyterrierModel',
   index: 'default',
   language: 'english',

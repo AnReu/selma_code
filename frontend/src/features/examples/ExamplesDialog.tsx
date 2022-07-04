@@ -38,15 +38,15 @@ function ExamplesCreateDialog(props: ExamplesDialogProps) {
 
   React.useEffect(() => {
     // filter models
-    if (form.db && dataStructure[form.db]) {
-      setModels(Object.keys(dataStructure[form.db]));
+    if (form.database && dataStructure[form.database]) {
+      setModels(Object.keys(dataStructure[form.database]));
     } else {
       setModels([]);
     }
 
     // filter indexes
-    if (dataStructure[form.db] && dataStructure[form.db][form.model]) {
-      setIndexes(dataStructure[form.db][form.model]);
+    if (dataStructure[form.database] && dataStructure[form.database][form.model]) {
+      setIndexes(dataStructure[form.database][form.model]);
     } else {
       setIndexes([]);
     }
@@ -83,14 +83,14 @@ function ExamplesCreateDialog(props: ExamplesDialogProps) {
 
           <TextField
             label="Database"
-            name="db"
+            name="database"
             variant="filled"
             fullWidth
             select
             SelectProps={{
               native: true,
             }}
-            value={form.db}
+            value={form.database}
             onChange={handleChange}
 
           >

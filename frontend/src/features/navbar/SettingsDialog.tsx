@@ -41,8 +41,8 @@ export default function SettingsDialog(props: SimpleDialogProps) {
   const [isIndexSelectDisabled, setIsIndexSelectDisabled] = React.useState(true);
 
   React.useEffect(() => {
-    const { db, model } = query;
-    setIsIndexSelectDisabled(!!dataStructure[db] && !!dataStructure[db][model]);
+    const { database, model } = query;
+    setIsIndexSelectDisabled(!!dataStructure[database] && !!dataStructure[database][model]);
   }, [dataStructure]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,10 +84,10 @@ export default function SettingsDialog(props: SimpleDialogProps) {
         <Stack sx={{ pt: 2 }} spacing={2}>
           <TextField
             label="Database"
-            name="db"
-            value={query.db}
+            name="database"
+            value={query.database}
             onChange={handleChange}
-            defaultValue={query.db}
+            defaultValue={query.database}
             select
           >
             {dbs.map((database) => <MenuItem key={database} value={database}>{database}</MenuItem>)}
@@ -99,7 +99,7 @@ export default function SettingsDialog(props: SimpleDialogProps) {
             value={query.model}
             onChange={handleChange}
             defaultValue={query.model}
-            disabled={query.db === ''}
+            disabled={query.database === ''}
             select
           >
             {models.map((model) => <MenuItem key={model} value={model}>{model}</MenuItem>)}
