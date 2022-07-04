@@ -15,9 +15,9 @@ export interface QueryState {
 }
 
 export const defaultQuery: QueryState = {
-  database: 'codeSearchNet_java',
-  model: 'PyterrierModel',
-  index: 'default',
+  database: '',
+  model: '',
+  index: '',
   language: 'english',
   text: '',
   url: '',
