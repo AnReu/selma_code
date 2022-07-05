@@ -6,12 +6,6 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-if (process.env.NODE_ENV === 'test') {
-  // eslint-disable-next-line global-require
-  const { worker } = require('./mocks/browser');
-  worker.start();
-}
-
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
