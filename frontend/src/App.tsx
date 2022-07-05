@@ -4,8 +4,6 @@ import { RecoilRoot } from 'recoil';
 import RecoilizeDebugger from 'recoilize';
 import { Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import SearchPage from './features/search/SearchPage';
-import StoreSnackbar from './features/snackbar/StoreSnackbar';
 import ResultsPage from './ResultsPage';
 import HomePage from './HomePage';
 import MainLayout from './layouts/MainLayout';
@@ -140,10 +138,8 @@ export default function App() {
                   <Route path="/" element={<HomePage />} />
                   <Route path="separated" element={<SeparatedSearchPage />} />
                 </Route>
-                <Route path="search" element={<SearchPage />} />
                 <Route path="results" element={<ResultsPage />} />
               </Routes>
-              <StoreSnackbar />
             </MathJaxContext>
           </React.Suspense>
         </ThemeProvider>

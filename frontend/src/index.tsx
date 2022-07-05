@@ -1,14 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { Provider } from 'react-redux';
 
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import { setupStore } from './app/store';
 import * as serviceWorker from './serviceWorker';
-
-const store = setupStore();
 
 if (process.env.NODE_ENV === 'test') {
   // eslint-disable-next-line global-require
@@ -18,11 +14,9 @@ if (process.env.NODE_ENV === 'test') {
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),
 );
