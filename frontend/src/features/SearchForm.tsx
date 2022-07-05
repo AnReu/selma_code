@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { FormEvent } from 'react';
 import Box from '@mui/material/Box';
@@ -11,15 +13,13 @@ import CustomSelect from './CustomSelect';
 import CustomTextField from './CustomTextField';
 import AdvancedSearchDialog from './navbar/AdvancedSearchDialog';
 import { queryState } from '../recoil/atoms';
-import { dataStructureQueryState, dbsState } from '../recoil/selectors';
+import { dataStructureQueryState } from '../recoil/selectors';
 
 export default function SearchForm() {
   const navigate = useNavigate();
   const [query, setQuery] = useRecoilState(queryState);
-  const databases = useRecoilValue(dbsState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
   const [models, setModels] = React.useState<string[]>([]);
-  const [indexes, setIndexes] = React.useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -28,13 +28,6 @@ export default function SearchForm() {
       setModels(Object.keys(dataStructure[query.database]));
     } else {
       setModels([]);
-    }
-
-    // filter indexes
-    if (dataStructure[query.database] && dataStructure[query.database][query.model]) {
-      setIndexes(dataStructure[query.database][query.model]);
-    } else {
-      setIndexes([]);
     }
   }, [query]);
 
@@ -70,15 +63,6 @@ export default function SearchForm() {
       }}
     >
       <CustomSelect
-        label="Database"
-        value={query.database}
-        name="database"
-        onChange={handleChange}
-      >
-        <option value="" />
-        {databases.map((db) => <option key={db} value={db}>{db}</option>)}
-      </CustomSelect>
-      <CustomSelect
         label="Model"
         value={query.model}
         name="model"
@@ -87,15 +71,7 @@ export default function SearchForm() {
         <option value="" />
         {models.map((model) => <option key={model} value={model}>{model}</option>)}
       </CustomSelect>
-      <CustomSelect
-        label="Index"
-        value={query.index}
-        name="index"
-        onChange={handleChange}
-      >
-        <option value="" />
-        {indexes.map((idx) => <option key={idx} value={idx}>{idx}</option>)}
-      </CustomSelect>
+
       <CustomTextField
         label="Query"
         value={query.text!} // TODO: review non-null assertion operator (aka !)
@@ -120,7 +96,11 @@ export default function SearchForm() {
           </InputAdornment>
         )}
       />
-      <AdvancedSearchDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
+      <AdvancedSearchDialog
+        dataStructure={dataStructure}
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </Box>
   );
 }

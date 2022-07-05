@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -13,20 +15,42 @@ import {
   languagesState,
   configsState,
   useConfigsMutations,
+  dbsState,
 } from '../../recoil/selectors';
 
 export interface SimpleDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  dataStructure: any;
 }
 
 export default function AdvancedSearchDialog(props: SimpleDialogProps) {
-  const { onClose, isOpen } = props;
+  const {
+    onClose, isOpen, dataStructure,
+  } = props;
   const languages = useRecoilValue(languagesState);
-  const [query, setQuery] = useRecoilState(queryState);
   const [configs, setConfigs] = useRecoilState(configsState);
   const [configsForm, setConfigsForm] = React.useState<Config>(configs);
   const { updateConfigs } = useConfigsMutations();
+  const [indexes, setIndexes] = React.useState<string[]>([]);
+  const [models, setModels] = React.useState<string[]>([]);
+  const [query, setQuery] = useRecoilState(queryState);
+  const databases = useRecoilValue(dbsState);
+
+  React.useEffect(() => {
+    // filter models
+    if (query.database && dataStructure[query.database]) {
+      setModels(Object.keys(dataStructure[query.database]));
+    } else {
+      setModels([]);
+    }
+    // filter indexes
+    if (dataStructure[query.database] && dataStructure[query.database][query.model]) {
+      setIndexes(dataStructure[query.database][query.model]);
+    } else {
+      setIndexes([]);
+    }
+  }, [query]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -56,14 +80,57 @@ export default function AdvancedSearchDialog(props: SimpleDialogProps) {
 
         <Stack sx={{ pt: 2 }} spacing={2}>
           <TextField
-            label="language"
+            label="Database"
+            name="database"
+            value={query.database}
+            onChange={handleChange}
+            select
+            SelectProps={{
+              native: true,
+            }}
+          >
+            <option value="" />
+            {databases.map((db) => <option key={db} value={db}>{db}</option>)}
+          </TextField>
+          <TextField
+            label="Model"
+            name="model"
+            value={query.model}
+            onChange={handleChange}
+            select
+            SelectProps={{
+              native: true,
+            }}
+          >
+            <option value="" />
+            {models.map((model) => <option key={model} value={model}>{model}</option>)}
+          </TextField>
+          <TextField
+            label="Index"
+            name="index"
+            value={query.index}
+            onChange={handleChange}
+            select
+            SelectProps={{
+              native: true,
+            }}
+          >
+            <option value="" />
+            {indexes.map((idx) => <option key={idx} value={idx}>{idx}</option>)}
+          </TextField>
+          <TextField
+            label="Language"
             name="language"
             value={query.language}
             onChange={handleChange}
             disabled
             select
+            SelectProps={{
+              native: true,
+            }}
           >
-            {languages.map((lang) => <MenuItem key={lang} value={lang}>{lang}</MenuItem>)}
+            <option value="" />
+            {languages.map((lang) => <option key={lang} value={lang}>{lang}</option>)}
           </TextField>
 
           <TextField
