@@ -173,9 +173,9 @@ def update_config_vars():
     else:
         Config.INDEX_PATH = None
 
-    if "database_path" in json_data:
-        Config.DATABASE_PATH = json_data["database_path"]
-        modified_fields.append("database_path")
+    if "db_path" in json_data:
+        Config.DATABASE_PATH = json_data["db_path"]
+        modified_fields.append("db_path")
     else:
         Config.DATABASE_PATH = None
 
@@ -202,4 +202,4 @@ def update_config_vars():
             "file": True,
         }
 
-    return make_response(jsonify(modified_fields), 204)
+    return make_response(jsonify(modified_fields), 201)
