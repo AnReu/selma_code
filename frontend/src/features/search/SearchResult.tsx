@@ -7,8 +7,21 @@ import CardActionArea from '@mui/material/CardActionArea';
 // import Typography from '@mui/material/Typography';
 import Markdown from '../Markdown';
 import CodeMarkdown from '../CodeMarkdown';
-import { Result } from '../../app/services/results';
-import SearchResultDialog from './SearchResultDialog';
+
+export interface Result {
+  acceptedAnswerId?: number | null;
+  body: string;
+  id: number;
+  parentId?: number;
+  postTypeId?: number;
+  title: string;
+  tags: string | null;
+  cut: boolean;
+  relevantSentence: string;
+  language?: string;
+  comment?: string;
+  url?: string;
+}
 
 interface SearchResultProps {
   result: Result;
@@ -19,7 +32,6 @@ export default function SearchResult(props: SearchResultProps) {
   const {
     title, body, language,
   } = result;
-  const [open, setOpen] = React.useState(false);
 
   const content = (language === 'java')
     ? <CodeMarkdown text={body} />
@@ -28,14 +40,13 @@ export default function SearchResult(props: SearchResultProps) {
   return (
     <>
       <Card sx={{ mb: 4 }}>
-        <CardActionArea onClick={() => setOpen(true)}>
+        <CardActionArea>
           <CardHeader title={title} sx={{ pb: 0 }} />
           <CardContent sx={{ py: 0 }}>
             {content}
           </CardContent>
         </CardActionArea>
       </Card>
-      <SearchResultDialog result={result} open={open} onClose={() => setOpen(false)} />
     </>
   );
 }
