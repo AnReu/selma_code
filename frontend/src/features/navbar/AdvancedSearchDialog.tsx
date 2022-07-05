@@ -60,7 +60,6 @@ export default function AdvancedSearchDialog(props: SimpleDialogProps) {
             name="language"
             value={query.language}
             onChange={handleChange}
-            defaultValue={query.language}
             disabled
             select
           >
@@ -72,7 +71,6 @@ export default function AdvancedSearchDialog(props: SimpleDialogProps) {
             label="DATABASE_PATH"
             variant="filled"
             name="db_path"
-            id="database_path"
             value={configsForm.db_path}
           />
 
@@ -81,7 +79,6 @@ export default function AdvancedSearchDialog(props: SimpleDialogProps) {
             label="DB_TABLE_NAME"
             variant="filled"
             name="db_table_name"
-            id="db_table_name"
             value={configsForm.db_table_name}
           />
 
@@ -90,7 +87,6 @@ export default function AdvancedSearchDialog(props: SimpleDialogProps) {
             label="DB_CONTENT_ATTRIBUTE_NAME"
             variant="filled"
             name="db_content_attribute_name"
-            id="db_content_attribute_name"
             value={configsForm.db_content_attribute_name}
           />
 
@@ -99,7 +95,6 @@ export default function AdvancedSearchDialog(props: SimpleDialogProps) {
             label="INDEX_PATH"
             variant="filled"
             name="index_path"
-            id="index_path"
             value={configsForm.index_path}
           />
 
