@@ -88,7 +88,11 @@ export default function App() {
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        setMode((prevMode) => {
+          const newMode = prevMode === 'light' ? 'dark' : 'light';
+          localStorage.setItem('darkState', newMode);
+          return newMode;
+        });
       },
     }),
     [],
@@ -125,6 +129,16 @@ export default function App() {
     }),
     [mode],
   );
+
+  React.useEffect(() => {
+    const existingPreference = localStorage.getItem('darkState');
+    if (existingPreference && existingPreference === 'light') {
+      colorMode.toggleColorMode();
+      localStorage.setItem('darkState', 'light');
+    } else {
+      localStorage.setItem('darkState', 'dark');
+    }
+  }, []);
 
   return (
     <RecoilRoot>
