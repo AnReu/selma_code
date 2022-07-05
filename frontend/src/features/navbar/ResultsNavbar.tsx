@@ -10,6 +10,8 @@ import Box from '@mui/material/Box/Box';
 import { useRecoilState } from 'recoil';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import NavbarSearchInput from './NavbarSearchInput';
 import { QueryMode, queryState } from '../../recoil/atoms';
 import SelmaLogo from '../../assets/SELMA-Logo_code.svg';
@@ -130,12 +132,16 @@ export default function ResultsNavbar() {
               paddingRight: '64px',
             }}
             >
-              <Link to={{ pathname: '/' }}>
-                <img
-                  className={logoClass}
-                  src={SelmaLogo}
-                  alt="Selma retrieval system"
-                />
+              <Link to={{ pathname: '/' }} style={{ textDecoration: 'none', color: '#ffffff' }}>
+                <Stack direction="row">
+                  <img
+                    className={logoClass}
+                    src={SelmaLogo}
+                    alt="Selma retrieval system"
+
+                  />
+                  <Typography variant="h6" sx={{ ml: 2 }}>SELMA</Typography>
+                </Stack>
               </Link>
             </Box>
             <TabPanel value={tabValue} index={0}>
