@@ -15,7 +15,7 @@ export interface QueryState {
 }
 
 export const defaultQuery: QueryState = {
-  database: '',
+  database: 'codeSearchNet_java',
   model: '',
   index: '',
   language: 'english',
@@ -27,20 +27,13 @@ export const defaultQuery: QueryState = {
   page: 1,
 };
 
-// const queryChecker = object({
-//   db: string(),
-//   model: string(),
-//   index: string(),
-//   language: string(),
-//   text: string(),
-//   code: string(),
-//   equation: string(),
-//   mode: string(),
-//   page: number(),
-// });
-
 export const queryState = atom<QueryState>({
   key: 'query',
   default: defaultQuery,
-  // effects: [urlSyncEffect({ refine: queryChecker })],
 });
+
+export interface QueryErrors {
+  text?: string;
+  database?: string;
+  model?: string;
+}

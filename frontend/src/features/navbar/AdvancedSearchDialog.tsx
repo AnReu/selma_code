@@ -9,7 +9,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { queryState } from '../../recoil/atoms';
+import { QueryErrors, queryState } from '../../recoil/atoms';
 import {
   Config,
   languagesState,
@@ -22,6 +22,7 @@ export interface SimpleDialogProps {
   isOpen: boolean;
   onClose: () => void;
   dataStructure: any;
+  errors: QueryErrors;
 }
 
 export default function AdvancedSearchDialog(props: SimpleDialogProps) {

@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import InputBase from '@mui/material/InputBase';
 import InputLabel from '@mui/material/InputLabel';
+import FormHelperText from '@mui/material/FormHelperText';
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
@@ -32,6 +33,8 @@ interface CustomTextFieldProps {
   label?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   endAdornment: React.ReactNode;
+  error: boolean;
+  helperText: string;
 }
 
 export default function CustomTextField(props: CustomTextFieldProps) {
@@ -41,6 +44,8 @@ export default function CustomTextField(props: CustomTextFieldProps) {
     label,
     onChange: handleChange,
     endAdornment,
+    error,
+    helperText,
   } = props;
 
   return (
@@ -52,7 +57,9 @@ export default function CustomTextField(props: CustomTextFieldProps) {
         value={value}
         onChange={handleChange}
         endAdornment={endAdornment}
+        error={error}
       />
+      <FormHelperText>{helperText}</FormHelperText>
     </FormControl>
   );
 }
