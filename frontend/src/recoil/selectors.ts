@@ -116,20 +116,11 @@ export const configsState = atom<Config>({
     key: 'configsLoader',
     get: async () => {
       const response = await fetch(`${baseURL}/configs`, { mode: 'cors' });
-      return response.json();
+      const data = await response.json();
+      return data;
     },
   }),
 });
-
-export declare interface UpdateConfigsParams {
-  db_path?: string,
-  db_table_name?: string,
-  db_content_attribute_name?: string,
-  index_path?: string,
-  allowed_search_modes?: {
-    default?: boolean, separated?: boolean, url?: boolean, file?: boolean,
-  },
-}
 
 export function useExamplesMutations() {
   const [, setExamples] = useRecoilState(examplesState);
@@ -161,14 +152,15 @@ export function useExamplesMutations() {
 export function useConfigsMutations() {
   const [, setConfigs] = useRecoilState(configsState);
 
-  const updateConfigs = async (updatedConfigs: UpdateConfigsParams) => {
-    await fetch(`${baseURL}/configs`,
+  const updateConfigs = async (configs: Config) => {
+    const response = await fetch(`${baseURL}/configs`,
       {
         method: 'POST',
-        body: JSON.stringify(updatedConfigs),
+        body: JSON.stringify(configs),
         headers,
       });
-    setConfigs(emptyConfig);
+    const data = await response.json();
+    setConfigs(data);
   };
 
   return { updateConfigs };

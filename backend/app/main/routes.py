@@ -153,7 +153,7 @@ def get_config_vars():
         "file": True,
     }
     config_vars = {
-        "database_path": Config.DATABASE_PATH if Config.DATABASE_PATH else "",
+        "db_path": Config.DATABASE_PATH if Config.DATABASE_PATH else "",
         "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
         "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME if Config.DB_CONTENT_ATTRIBUTE_NAME else "",
         "index_path": Config.INDEX_PATH if Config.INDEX_PATH else "",
