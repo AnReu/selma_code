@@ -71,7 +71,7 @@ export default function AdvancedSearchDialog(props: SimpleDialogProps) {
             onChange={handleTextChange}
             label="DATABASE_PATH"
             variant="filled"
-            name="database_path"
+            name="db_path"
             id="database_path"
             value={configsForm.db_path}
           />
