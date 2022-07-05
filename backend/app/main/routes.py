@@ -153,7 +153,7 @@ def get_config_vars():
         "file": True,
     }
     config_vars = {
-        "db_path": Config.DATABASE_PATH if Config.DATABASE_PATH else "",
+        "db_path": Config.DB_PATH if Config.DB_PATH else "",
         "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
         "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME if Config.DB_CONTENT_ATTRIBUTE_NAME else "",
         "index_path": Config.INDEX_PATH if Config.INDEX_PATH else "",
@@ -167,33 +167,28 @@ def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
         
-    if "index_path" in json_data:
+    if json_data["index_path"] != '':
         Config.INDEX_PATH = json_data["index_path"]
-        modified_fields.append("index_path")
     else:
         Config.INDEX_PATH = None
 
-    if "db_path" in json_data:
-        Config.DATABASE_PATH = json_data["db_path"]
-        modified_fields.append("db_path")
+    if json_data["db_path"] != '':
+        Config.DB_PATH = json_data["db_path"]
     else:
-        Config.DATABASE_PATH = None
+        Config.DB_PATH = None
 
-    if "db_table_name" in json_data:
+    if json_data["db_table_name"] != '':
         Config.DB_TABLE_NAME = json_data["db_table_name"]
-        modified_fields.append("db_table_name")
     else:
         Config.DB_TABLE_NAME = None
 
-    if "db_content_attribute_name" in json_data:
+    if json_data["db_content_attribute_name"] != '':
         Config.DB_CONTENT_ATTRIBUTE_NAME = json_data["db_content_attribute_name"]
-        modified_fields.append("db_content_attribute_name")
     else:
         Config.DB_CONTENT_ATTRIBUTE_NAME = None
 
     if "allowed_search_modes" in json_data:
         Config.ALLOWED_SEARCH_MODES = json_data["allowed_search_modes"]
-        modified_fields.append("allowed_search_modes")
     else:
         Config.ALLOWED_SEARCH_MODES = {
             "default": True,
@@ -201,5 +196,5 @@ def update_config_vars():
             "url": True,
             "file": True,
         }
-
-    return make_response(jsonify(modified_fields), 201)
+        
+    return make_response(jsonify(Config.to_dict()), 201)

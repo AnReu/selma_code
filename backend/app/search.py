@@ -33,7 +33,7 @@ def search(
     error = ""
     status = 200
 
-    db = DB(Config.get_database_path(db_name))
+    db = DB(Config.get_db_path(db_name))
     content_attribute_name = Config.get_db_content_attribute_name()  # TODO rename var
     db_table_name = Config.get_db_table_name()
     index_path = Config.get_index_path(db=db_name, model=model, index=index)

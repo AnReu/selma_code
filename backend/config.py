@@ -18,12 +18,28 @@ class Config(object):
     # the application every time a change is about to be made in the database.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    DATABASE_PATH = None  # TODO rename var
+    DB_PATH = None  # TODO rename var
     INDEX_PATH = None
     DB_TABLE_NAME = None
     DB_CONTENT_ATTRIBUTE_NAME = None  # TODO rename
     ALLOWED_SEARCH_MODES = None
     DATA_PATH = None
+    
+    @staticmethod
+    def to_dict():
+        return {
+            'db_path': Config.DB_PATH,
+            'index_path': Config.INDEX_PATH,
+            'db_table_name': Config.DB_TABLE_NAME,
+            'db_content_attribute_name': Config.DB_CONTENT_ATTRIBUTE_NAME,
+            'data_path': Config.DATA_PATH,
+            'allowed_search_modes': {
+                'default': Config.ALLOWED_SEARCH_MODES['default'],
+                'separated': Config.ALLOWED_SEARCH_MODES['separated'],
+                'url': Config.ALLOWED_SEARCH_MODES['url'],
+                'file': Config.ALLOWED_SEARCH_MODES['file'],
+                },
+        }
     
     @staticmethod
     def get_data_path():
@@ -33,9 +49,9 @@ class Config(object):
         raise Exception("DATA_PATH is not defined in .rsenv file")
 
     @staticmethod
-    def get_database_path(db_name):  # TODO rename method
-        if Config.DATABASE_PATH:
-            return Config.DATABASE_PATH
+    def get_db_path(db_name):  # TODO rename method
+        if Config.DB_PATH:
+            return Config.DB_PATH
         
         return os.path.join(Config.get_data_path(), db_name, f"{db_name}.db")
 
