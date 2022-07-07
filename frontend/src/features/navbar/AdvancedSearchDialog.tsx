@@ -71,6 +71,8 @@ export default function AdvancedSearchDialog(props: SimpleDialogProps) {
 
   return (
     <Dialog
+      maxWidth="sm"
+      fullWidth
       open={isOpen}
       onClose={() => onClose()}
     >
