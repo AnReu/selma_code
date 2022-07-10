@@ -118,9 +118,7 @@ export default function SystemSettings() {
             </FormGroup>
             <Typography variant="subtitle1">Theme:</Typography>
             <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
-              <Typography>Dark</Typography>
               <ThemeSwitch onClick={colorMode.toggleColorMode} />
-              <Typography>Light</Typography>
             </Stack>
           </Stack>
         </DialogContent>
