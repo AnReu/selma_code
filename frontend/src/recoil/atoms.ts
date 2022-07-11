@@ -36,4 +36,5 @@ export interface QueryErrors {
   text?: string;
   database?: string;
   model?: string;
+  index?: string;
 }
