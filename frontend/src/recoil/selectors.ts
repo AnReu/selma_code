@@ -1,7 +1,7 @@
 import { atom, selector, useRecoilState } from 'recoil';
 import { QueryMode, queryState } from './atoms';
 
-const baseURL = 'http://127.0.0.1:5000/api/v1';
+const baseURL = 'http://localhost:5000/api/v1';
 const headers = { 'Content-Type': 'application/json' };
 
 export const dataStructureQueryState = selector({
