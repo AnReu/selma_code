@@ -27,7 +27,7 @@ class ColbertCodeSearchNet:
         self.pyterrier_colbert_factory = ColBERTFactory(checkpointpath, colbertindexpath, "colbert_java_index")
         #this is the thing that needs a lot of time. i dont know at what time this gets initialised, but maybe we do
         # this when starting the retrievalsystem at all
-    def predict(self, query, N=5):
+    def predict(self, query, n=5):
         colbert_e2e = self.pyterrier_colbert_factory.end_to_end()
         result = colbert_e2e.search(query)
         docnolist = result["docno"].values.tolist()
@@ -50,5 +50,5 @@ class Predictor:
         print(query)
         return  self.model.predict(query, n)
 
-    """def predict_by_id(self, id, N=5):
+    """def predict_by_id(self, id, n=5):
         return self.eq_model.predict_by_id(id, N)"""
