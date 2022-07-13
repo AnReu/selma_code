@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from backend.models.VectorModel import predictor as vector_predictor
 from backend.models.PyterrierModel import predictor as pyterrier_predictor
+from backend.models.PyterrierColbert import predictor as pyterrier_colbert_predictor
 from backend.config import Config
 from backend.app.db_connection import DB
 
@@ -43,6 +44,9 @@ def search(
             predictor = vector_predictor.Predictor(index_path)
         elif model == "PyterrierModel":
             predictor = pyterrier_predictor.Predictor(index_path)
+        elif model == "PyterrierColbert":
+            ckpt_path = os.path.join(index_path, 'colbert-10000.dnn')
+            predictor = pyterrier_colbert_predictor.Predictor(checkpointpath=ckpt_path, colbertindexpath=index_path)
     except Exception as error:
         print(f'Predictor could not be found for the given model ({model})')
         print(error)

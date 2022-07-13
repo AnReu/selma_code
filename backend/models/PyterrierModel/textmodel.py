@@ -12,7 +12,7 @@ class TF_IDFModel:
             pt.init()
         self.index = pt.IndexFactory.of(index_path)
 
-    def predict(self, query, N=5):
+    def predict(self, query, n=5):
         tf_idf = pt.BatchRetrieve(
             self.index, wmodel="TF_IDF", properties={"tokeniser": "UTFTokeniser"}
         )

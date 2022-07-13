@@ -32,14 +32,14 @@ class VectorModel:
                 mean.append(self.model.wv[word])
         return matutils.unitvec(np.array(mean).mean(axis=0)).astype(np.float32)
 
-    def predict(self, query, N=5):
+    def predict(self, query, n=5):
         query = self.tokenizer.tokenize(query)
         dists_query = np.dot(
             self.get_vector_from_tokenized(query), self.document_vecs.T
         )
         return np.argsort(dists_query)[-1 : -(1 + N) : -1]  # get last N vectors
 
-    def predict_by_id(self, id, N=5):
+    def predict_by_id(self, id, n=5):
         query_vec = self.document_vecs[id]
         dists_query = np.dot(query_vec, self.document_vecs.T)
         return np.argsort(dists_query)[-1 : -(1 + N) : -1]  # get last N vectors
