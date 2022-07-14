@@ -104,7 +104,7 @@ export const examplesState = atom<Example[]>({
   default: selector<Example[]>({
     key: 'examplesLoader',
     get: async () => {
-      const response = await fetch(`${baseURL}/query-templates`);
+      const response = await fetch(`${baseURL}/query-templates`, { mode: 'no-cors' });
       return response.json();
     },
   }),
@@ -115,7 +115,7 @@ export const configsState = atom<Config>({
   default: selector<Config>({
     key: 'configsLoader',
     get: async () => {
-      const response = await fetch(`${baseURL}/configs`);
+      const response = await fetch(`${baseURL}/configs`, { mode: 'no-cors' });
       const data = await response.json();
       return data;
     },
