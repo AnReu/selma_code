@@ -47,7 +47,7 @@ export default function ResultsPage() {
     });
 
     const getResults = async () => {
-      const URL = 'http://127.0.0.1:5000/api/v1/search?'
+      const URL = 'http://localhost:5000/api/v1/search?'
         + `text=${text}&`
         + `database=${database}&`
         + `model=${model}&`
