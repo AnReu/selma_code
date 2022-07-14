@@ -7,7 +7,7 @@ const headers = { 'Content-Type': 'application/json' };
 export const dataStructureQueryState = selector({
   key: 'dataStructure',
   get: async () => {
-    const response = await fetch(`${baseURL}/data-structure`);
+    const response = await fetch(`${baseURL}/data-structure`, { mode: 'cors' });
     return response.json();
   },
 });
