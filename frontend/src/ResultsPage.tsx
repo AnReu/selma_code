@@ -55,7 +55,7 @@ export default function ResultsPage() {
         + `page=${page}&`
         + 'model-language=english';
 
-      const response = await fetch(URL, { mode: 'no-cors' });
+      const response = await fetch(URL, { mode: 'cors' });
       const data = await response.json();
 
       setResults(data.results);
