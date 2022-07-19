@@ -47,7 +47,7 @@ export default function ResultsPage() {
     });
 
     const getResults = async () => {
-      const URL = 'http://localhost:5000/api/v1/search?'
+      const URL = '/api/v1/search?'
         + `text=${text}&`
         + `database=${database}&`
         + `model=${model}&`
@@ -55,7 +55,7 @@ export default function ResultsPage() {
         + `page=${page}&`
         + 'model-language=english';
 
-      const response = await fetch(URL, { mode: 'cors' });
+      const response = await fetch(URL);
       const data = await response.json();
 
       setResults(data.results);

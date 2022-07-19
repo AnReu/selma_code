@@ -1,13 +1,13 @@
 import { atom, selector, useRecoilState } from 'recoil';
 import { QueryMode, queryState } from './atoms';
 
-const baseURL = 'http://localhost:5000/api/v1';
+const baseURL = '/api/v1';
 const headers = { 'Content-Type': 'application/json' };
 
 export const dataStructureQueryState = selector({
   key: 'dataStructure',
   get: async () => {
-    const response = await fetch(`${baseURL}/data-structure`, { mode: 'cors' });
+    const response = await fetch(`${baseURL}/data-structure`);
     return response.json();
   },
 });
@@ -104,7 +104,7 @@ export const examplesState = atom<Example[]>({
   default: selector<Example[]>({
     key: 'examplesLoader',
     get: async () => {
-      const response = await fetch(`${baseURL}/query-templates`, { mode: 'cors' });
+      const response = await fetch(`${baseURL}/query-templates`);
       return response.json();
     },
   }),
@@ -115,7 +115,7 @@ export const configsState = atom<Config>({
   default: selector<Config>({
     key: 'configsLoader',
     get: async () => {
-      const response = await fetch(`${baseURL}/configs`, { mode: 'cors' });
+      const response = await fetch(`${baseURL}/configs`);
       const data = await response.json();
       return data;
     },
