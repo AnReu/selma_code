@@ -28,7 +28,7 @@ class ColbertCodeSearchNet:
         colbert_e2e = self.pyterrier_colbert_factory.end_to_end()
         result = colbert_e2e.search(query)
         docnolist = result["docno"].values.tolist()
-        thelist = docnolist[:N]
+        thelist = docnolist[:n]
         return thelist
 
 
