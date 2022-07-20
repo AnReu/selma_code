@@ -18,5 +18,5 @@ class TF_IDFModel:
         )
         result = tf_idf.search(query)
         docnolist = result["docno"].values.tolist()
-        thelist = docnolist[:N]
+        thelist = docnolist[:n]
         return thelist
