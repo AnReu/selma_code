@@ -56,11 +56,7 @@ export default function ResultsPage() {
         + 'model-language=english';
 
       const response = await fetch(URL);
-      console.log('response = ');
-      console.log(response);
       const data = await response.json();
-      console.log('data = ');
-      console.log(data);
 
       setResults(data.results);
       setIsLoading(false);
