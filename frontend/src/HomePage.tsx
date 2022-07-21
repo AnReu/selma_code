@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-// import DefaultSearchBar from './features/search/DefaultSearchBar';
+import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import SelmaLogo from './assets/SELMA-Logo_code.svg';
@@ -17,22 +17,30 @@ export default function HomePage() {
       minWidth: '80%',
     }}
     >
-      <img
-        className={logoClass}
-        src={SelmaLogo}
-        alt="Selma retrieval system"
-      />
-      <Typography
-        variant="h3"
+      <Stack
+        direction="row"
         sx={{
-          color: 'text.primary',
-          fontWeight: 800,
-          mb: 2,
+          justifyContent: 'center',
+          alignItems: 'center',
+          mb: 6,
         }}
       >
-        SELMA
-      </Typography>
-      {/* <DefaultSearchBar /> */}
+        <img
+          className={logoClass}
+          src={SelmaLogo}
+          alt="Selma retrieval system"
+        />
+        <Typography
+          variant="h2"
+          sx={{
+            color: 'text.primary',
+            fontWeight: 800,
+          }}
+        >
+          SELMA
+        </Typography>
+      </Stack>
+
       <SearchForm />
     </Box>
   );
