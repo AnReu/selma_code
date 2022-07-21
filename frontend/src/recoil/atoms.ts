@@ -15,7 +15,7 @@ export interface QueryState {
 }
 
 export const defaultQuery: QueryState = {
-  database: 'codeSearchNet_java',
+  database: '',
   model: '',
   index: '',
   language: 'english',
