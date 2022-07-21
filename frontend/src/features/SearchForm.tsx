@@ -120,9 +120,7 @@ export default function SearchForm() {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <IconButton type="submit">
-                <SearchIcon />
-              </IconButton>
+              <SearchIcon />
             </InputAdornment>
           ),
           endAdornment: (
