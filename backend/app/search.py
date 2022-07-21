@@ -95,7 +95,16 @@ def search(
         result[content_attribute_name], result["cut"] = trim_html(result[content_attribute_name])
         result["relevant_sentence"] = get_relevant_sentence(result)
 
-    return {"results": results, "error": error}, status
+    print("results = ")
+    print(results)
+
+    response = {"results": results, "error": error}, status
+
+    print("response = ")
+    print(response)
+    print("=================================================================================================================================")
+
+    return response
 
 
 def results_to_json(results, column_names):
@@ -103,7 +112,9 @@ def results_to_json(results, column_names):
     for result in results:
         element = {}
         for title in column_names:
-            element[title] = result[column_names.index(title)]
+            index = column_names.index(title)
+            element[title] = result[index]
+
         return_value.append(element)
     return return_value
 
