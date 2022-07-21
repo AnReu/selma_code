@@ -19,8 +19,8 @@ class ColbertCodeSearchNet:
     def __init__(self, checkpointpath, colbertindexpath):
         if not pt.started():
             pt.init()
-            from pyterrier_colbert.indexing import ColBERTIndexer
-            from pyterrier_colbert.ranking import ColBERTFactory
+        from pyterrier_colbert.indexing import ColBERTIndexer
+        from pyterrier_colbert.ranking import ColBERTFactory
         self.pyterrier_colbert_factory = ColBERTFactory(checkpointpath, colbertindexpath, "colbert_java_index")
         #this is the thing that needs a lot of time. i dont know at what time this gets initialised, but maybe we do
         # this when starting the retrievalsystem at all
