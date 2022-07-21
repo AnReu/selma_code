@@ -38,6 +38,7 @@ export default function MainLayout() {
               sx={{
                 color: 'text.primary',
               }}
+              href={mode}
             >
               {mode}
             </Button>
