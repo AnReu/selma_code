@@ -1,4 +1,6 @@
 import React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
@@ -106,7 +108,13 @@ export default function ExamplesList(props: ExamplesListProps) {
   const [, setQuery] = useRecoilState(queryState);
 
   if (examples.length === 0) {
-    return <h1>0 Results</h1>;
+    return (
+      <Box textAlign="center">
+        <Typography variant="subtitle1">
+          There are no query examples available, please create one.
+        </Typography>
+      </Box>
+    );
   }
 
   return (
