@@ -4,8 +4,8 @@ import re
 import sys
 from pathlib import Path
 from backend.models.VectorModel import predictor as vector_predictor
-from backend.models.PyterrierModel import predictor as pyterrier_predictor
-from backend.models.PyterrierColbert import predictor as pyterrier_colbert_predictor
+import backend.models.PyterrierModel as PyterrierModel
+import backend.models.PyterrierColbert as PyterrierColbert
 from backend.config import Config
 from backend.app.db_connection import DB
 
@@ -28,7 +28,7 @@ def search(
     model=None,
     model_language=None,
     index=None,
-    page=1
+    page=1,
 ):
     result_ids = []
     error = ""
@@ -43,12 +43,14 @@ def search(
         if model == "VectorModel":
             predictor = vector_predictor.Predictor(index_path)
         elif model == "PyterrierModel":
-            predictor = pyterrier_predictor.Predictor(index_path)
+            PyterrierModel.update_model(index_path)
+            predictor = PyterrierModel
         elif model == "PyterrierColbert":
-            ckpt_path = os.path.join(index_path, 'colbert-10000.dnn')
-            predictor = pyterrier_colbert_predictor.Predictor(checkpointpath=ckpt_path, colbertindexpath=index_path)
+            ckpt_path = os.path.join(index_path, "colbert-10000.dnn")
+            PyterrierColbert.update_model(index_path, ckpt_path)
+            predictor = PyterrierColbert
     except Exception as error:
-        print(f'Predictor could not be found for the given model ({model})')
+        print(f"Predictor could not be found for the given model ({model})")
         print(error)
         raise
 
@@ -78,12 +80,12 @@ def search(
 
     # Start Pagination block
     count = len(all_result_ids)
-    per_page = 10 # define how many results you want per page
-    pages = count // per_page # this is the number of pages
-    offset = (page-1)*per_page # offset for SQL query
-    limit = 20 if page == pages else per_page # limit for SQL query
-    
-    page_ids = all_result_ids[offset:offset+per_page]
+    per_page = 10  # define how many results you want per page
+    pages = count // per_page  # this is the number of pages
+    offset = (page - 1) * per_page  # offset for SQL query
+    limit = 20 if page == pages else per_page  # limit for SQL query
+
+    page_ids = all_result_ids[offset : offset + per_page]
     # End Pagination block
 
     data = db.get_results_by_id(db_table_name, page_ids)
@@ -92,7 +94,9 @@ def search(
     results = results_to_json(data, [description[0] for description in column_names])
 
     for result in results:
-        result[content_attribute_name], result["cut"] = trim_html(result[content_attribute_name])
+        result[content_attribute_name], result["cut"] = trim_html(
+            result[content_attribute_name]
+        )
         result["relevant_sentence"] = get_relevant_sentence(result)
 
     print("results = ")
@@ -102,7 +106,9 @@ def search(
 
     print("response = ")
     print(response)
-    print("=================================================================================================================================")
+    print(
+        "================================================================================================================================="
+    )
 
     return response
 
