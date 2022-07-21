@@ -11,6 +11,7 @@ import HomePage from './HomePage';
 import MainLayout from './layouts/MainLayout';
 import { ColorModeContext } from './ColorModeContext';
 import SeparatedSearchPage from './SeparatedSearchPage';
+import URLSearchPage from './URLSearchPage';
 
 const mathJaxConfig = {
   loader: { load: ['[tex]/html'] },
@@ -179,7 +180,9 @@ export default function App() {
               <Routes>
                 <Route element={<MainLayout />}>
                   <Route path="/" element={<HomePage />} />
+                  <Route path="default" element={<HomePage />} />
                   <Route path="separated" element={<SeparatedSearchPage />} />
+                  <Route path="url" element={<URLSearchPage />} />
                 </Route>
                 <Route path="results" element={<ResultsPage />} />
               </Routes>
