@@ -4,6 +4,8 @@ import { RecoilRoot } from 'recoil';
 import RecoilizeDebugger from 'recoilize';
 import { Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import ResultsPage from './ResultsPage';
 import HomePage from './HomePage';
 import MainLayout from './layouts/MainLayout';
@@ -82,6 +84,33 @@ const mathJaxConfig = {
 //   },
 // });
 
+function Fallback() {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        height: '100vh',
+        bgcolor: 'background.paper',
+      }}
+    >
+
+      <main
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          marginBottom: '64px',
+          minWidth: '80%',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </main>
+    </Box>
+  );
+}
+
 export default function App() {
   const [mode, setMode] = React.useState<'light' | 'dark'>('dark');
 
@@ -145,7 +174,7 @@ export default function App() {
       <RecoilizeDebugger />
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
-          <React.Suspense fallback={<div>Loading...</div>}>
+          <React.Suspense fallback={<Fallback />}>
             <MathJaxContext config={mathJaxConfig}>
               <Routes>
                 <Route element={<MainLayout />}>
