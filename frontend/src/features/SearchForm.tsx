@@ -21,6 +21,19 @@ export default function SearchForm() {
   const [queryErrors, setQueryErrors] = React.useState<QueryErrors>({});
 
   React.useEffect(() => {
+    const database = Object.keys(dataStructure)[0];
+    const model = Object.keys(dataStructure[database])[0];
+    const index = dataStructure[database][model][0];
+
+    setQuery((oldQuery) => ({
+      ...oldQuery,
+      database,
+      model,
+      index,
+    }));
+  }, []);
+
+  React.useEffect(() => {
     // filter models
     if (query.database && dataStructure[query.database]) {
       setModels(Object.keys(dataStructure[query.database]));
