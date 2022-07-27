@@ -92,7 +92,7 @@ export default function ResultsPage() {
     );
   } else if (Array.isArray(results)) {
     if (results.length === 0) {
-      mainContent = <Typography variant="h1" color="text.primary">😭 0 Results</Typography>;
+      mainContent = <Typography variant="h2" color="text.primary">😭 0 Results</Typography>;
     } else {
       mainContent = (
         <>

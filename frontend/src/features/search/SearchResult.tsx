@@ -1,10 +1,7 @@
 import React from 'react';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-// import CardMedia from '@mui/material/CardMedia';
+import Link from '@mui/material/Link';
 import CardContent from '@mui/material/CardContent';
-import CardActionArea from '@mui/material/CardActionArea';
-// import Typography from '@mui/material/Typography';
 import Markdown from '../Markdown';
 import CodeMarkdown from '../CodeMarkdown';
 
@@ -40,12 +37,16 @@ export default function SearchResult(props: SearchResultProps) {
   return (
     <>
       <Card sx={{ mb: 4 }}>
-        <CardActionArea>
-          <CardHeader title={title} sx={{ pb: 0 }} />
-          <CardContent sx={{ py: 0 }}>
-            {content}
-          </CardContent>
-        </CardActionArea>
+        <CardContent>
+          <Link
+            variant="h6"
+            underline="hover"
+            href="#todo"
+          >
+            {title}
+          </Link>
+          {content}
+        </CardContent>
       </Card>
     </>
   );
