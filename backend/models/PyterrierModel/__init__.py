@@ -13,7 +13,7 @@ def update_model(new_index_path):
         index_path = new_index_path
         index = pt.IndexFactory.of(new_index_path)
         model = pt.BatchRetrieve(
-            index, wmodel="TF_IDF", properties={"tokeniser": "UTFTokeniser"}
+            index, wmodel="BM25", properties={"tokeniser": "UTFTokeniser"}
         )
 
 
