@@ -1,9 +1,11 @@
 # import os
 from flask import Flask
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from backend.config import Config
 from flask_marshmallow import Marshmallow
+import pyterrier as pt
 
 # from .db_connection import DB
 
@@ -11,9 +13,14 @@ db = SQLAlchemy()
 migrate = Migrate()
 ma = Marshmallow()
 
+if not pt.started():
+    print("PyTerrier is being initialized")
+    pt.init()
+
 
 def create_app(config_class=Config):
     app = Flask(__name__, static_folder="../../frontend/build", static_url_path="/")
+    CORS(app)
     app.config.from_object(config_class)
 
     db.init_app(app)

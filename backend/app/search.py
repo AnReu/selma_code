@@ -4,7 +4,8 @@ import re
 import sys
 from pathlib import Path
 from backend.models.VectorModel import predictor as vector_predictor
-from backend.models.PyterrierModel import predictor as pyterrier_predictor
+import backend.models.PyterrierModel as PyterrierModel
+import backend.models.PyterrierColbert as PyterrierColbert
 from backend.config import Config
 from backend.app.db_connection import DB
 
@@ -26,37 +27,36 @@ def search(
     exchange=None,
     model=None,
     model_language=None,
+    index=None,
+    page=1,
 ):
     result_ids = []
     error = ""
     status = 200
 
-    db = DB(Config.get_database_path(db_name))
-
-    # Name of the column of the DB, where the content of each document is stored
-    content_attribute_name = Config.get_db_content_attribute_name()
+    db = DB(Config.get_db_path(db_name))
+    content_attribute_name = Config.get_db_content_attribute_name()  # TODO rename var
     db_table_name = Config.get_db_table_name()
-
-    try:
-        index_path = Config.get_index_path(db_name)
-    except Exception as error:
-        print(f'Index path could not be found for the given db_name ({db_name})')
-        print(error)
-        raise
+    index_path = Config.get_index_path(db=db_name, model=model, index=index)
 
     try:
         if model == "VectorModel":
             predictor = vector_predictor.Predictor(index_path)
         elif model == "PyterrierModel":
-            predictor = pyterrier_predictor.Predictor(index_path)
+            PyterrierModel.update_model(index_path)
+            predictor = PyterrierModel
+        elif model == "PyterrierColbert":
+            ckpt_path = os.path.join(index_path, "colbert-10000.dnn")
+            PyterrierColbert.update_model(index_path, ckpt_path)
+            predictor = PyterrierColbert
     except Exception as error:
-        print(f'Predictor could not be found for the given model ({model})')
+        print(f"Predictor could not be found for the given model ({model})")
         print(error)
         raise
 
     if id is None:
         try:
-            result_ids = predictor.predict(text, code, equation, n=100)
+            all_result_ids = predictor.predict(text, code, equation, n=100)
         except KeyError:
             result_ids = []
             error = "Key Error: word not in vocabulary"
@@ -76,18 +76,41 @@ def search(
             error = "ID not present"
             status = 404
         else:
-            result_ids = predictor.predict_by_id(id[0])
+            all_result_ids = predictor.predict_by_id(id[0])
 
-    data = db.get_results_by_id(db_table_name, result_ids)
+    # Start Pagination block
+    count = len(all_result_ids)
+    per_page = 10  # define how many results you want per page
+    pages = count // per_page  # this is the number of pages
+    offset = (page - 1) * per_page  # offset for SQL query
+    limit = 20 if page == pages else per_page  # limit for SQL query
+
+    page_ids = all_result_ids[offset : offset + per_page]
+    # End Pagination block
+
+    data = db.get_results_by_id(db_table_name, page_ids)
     column_names = db.get_column_names(db_table_name)
 
     results = results_to_json(data, [description[0] for description in column_names])
 
     for result in results:
-        result[content_attribute_name], result["cut"] = trim_html(result[content_attribute_name])
+        result[content_attribute_name], result["cut"] = trim_html(
+            result[content_attribute_name]
+        )
         result["relevant_sentence"] = get_relevant_sentence(result)
 
-    return {"results": results, "error": error}, status
+    print("results = ")
+    print(results)
+
+    response = {"results": results, "error": error}, status
+
+    print("response = ")
+    print(response)
+    print(
+        "================================================================================================================================="
+    )
+
+    return response
 
 
 def results_to_json(results, column_names):
@@ -95,7 +118,9 @@ def results_to_json(results, column_names):
     for result in results:
         element = {}
         for title in column_names:
-            element[title] = result[column_names.index(title)]
+            index = column_names.index(title)
+            element[title] = result[index]
+
         return_value.append(element)
     return return_value
 

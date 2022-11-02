@@ -1,9 +1,9 @@
+import React from 'react';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ThumbUp from '@mui/icons-material/ThumbUp';
 import ThumbDown from '@mui/icons-material/ThumbDown';
-import * as React from 'react';
 
 export default function RelevanceFeedback() {
   const handleIsRelevant = () => {

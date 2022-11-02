@@ -18,47 +18,42 @@ class Config(object):
     # the application every time a change is about to be made in the database.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    DATABASES_DIR_PATH = None
-    DATABASE_PATH = None
-    INDEXES_DIR_PATH = None
+    DB_PATH = None  # TODO rename var
     INDEX_PATH = None
     DB_TABLE_NAME = None
-    DB_CONTENT_ATTRIBUTE_NAME = None
+    DB_CONTENT_ATTRIBUTE_NAME = None  # TODO rename
     ALLOWED_SEARCH_MODES = None
+    DATA_PATH = None
+    
+    @staticmethod
+    def to_dict():
+        return {
+            'db_path': Config.DB_PATH,
+            'index_path': Config.INDEX_PATH,
+            'db_table_name': Config.DB_TABLE_NAME,
+            'db_content_attribute_name': Config.DB_CONTENT_ATTRIBUTE_NAME,
+            'data_path': Config.DATA_PATH,
+            'allowed_search_modes': {
+                'default': Config.ALLOWED_SEARCH_MODES['default'],
+                'separated': Config.ALLOWED_SEARCH_MODES['separated'],
+                'url': Config.ALLOWED_SEARCH_MODES['url'],
+                'file': Config.ALLOWED_SEARCH_MODES['file'],
+                },
+        }
+    
+    @staticmethod
+    def get_data_path():
+        if os.environ.get("DATA_PATH"):
+            return os.environ.get("DATA_PATH")
+
+        raise Exception("DATA_PATH is not defined in .rsenv file")
 
     @staticmethod
-    def get_database_path(db_name):
-        if Config.DATABASE_PATH:
-            return Config.DATABASE_PATH
-
-        custom_database_path = os.environ.get("DATABASE_PATH")
-        if custom_database_path is not None:
-            return os.environ.get("DATABASE_PATH")
-
-        return os.path.join(Config.get_databases_dir_path(), db_name)
-
-    @staticmethod
-    def get_databases_dir_path():
-        if Config.DATABASES_DIR_PATH:
-            return Config.DATABASES_DIR_PATH
+    def get_db_path(db_name):  # TODO rename method
+        if Config.DB_PATH:
+            return Config.DB_PATH
         
-        custom_databases_dir_path = os.environ.get("DATABASES_DIR_PATH")
-        if custom_databases_dir_path is not None:
-            return os.environ.get("DATABASES_DIR_PATH")
-
-        return os.path.join(os.getcwd(), 'databases')
-
-
-    @staticmethod
-    def get_indexes_dir_path():
-        if Config.INDEXES_DIR_PATH:
-            return Config.INDEXES_DIR_PATH
-
-        custom_indexes_dir_path = os.environ.get("INDEXES_DIR_PATH")
-        if custom_indexes_dir_path is not None:
-            return os.environ.get("INDEXES_DIR_PATH")
-
-        return os.path.join(os.getcwd(), 'indexes')
+        return os.path.join(Config.get_data_path(), db_name, f"{db_name}.db")
 
     @staticmethod
     def get_db_content_attribute_name():
@@ -68,19 +63,19 @@ class Config(object):
         custom_db_content_attribute_name = os.environ.get("DB_CONTENT_ATTRIBUTE_NAME")
         if custom_db_content_attribute_name is not None:
             return os.environ.get("DB_CONTENT_ATTRIBUTE_NAME")
-
-        return 'body'
+        else:
+            raise Exception("DB_CONTENT_ATTRIBUTE_NAME is not defined in .rsenv file")
 
     @staticmethod
     def get_db_table_name():
         if Config.DB_TABLE_NAME:
             return Config.DB_TABLE_NAME
-        
+
         custom_db_table_name = os.environ.get("DB_TABLE_NAME")
         if custom_db_table_name is not None:
             return os.environ.get("DB_TABLE_NAME")
-
-        return 'documents'
+        else:
+            raise Exception("DB_TABLE_NAME is not defined in .rsenv file")
 
     @staticmethod
     def get_allowed_search_modes():
@@ -92,14 +87,10 @@ class Config(object):
             return os.environ.get("ALLOWED_SEARCH_MODES")
 
         return True
-    
+
     @staticmethod
-    def get_index_path(db_name):
+    def get_index_path(db, model, index):
         if Config.INDEX_PATH:
             return Config.INDEX_PATH
-
-        custom_index_path = os.environ.get("INDEX_PATH")
-        if custom_index_path is not None:
-            return os.environ.get("INDEX_PATH")
-
-        return os.path.join(Config.get_indexes_dir_path(), db_name[:-3])
+        
+        return os.path.join(Config.get_data_path(), db, model, index)

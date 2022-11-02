@@ -5,15 +5,18 @@ from backend.app import ma
 class QueryTemplate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
+    database = db.Column(db.String(120), nullable=False)
     model = db.Column(db.String(80), nullable=False)
-    mode = db.Column(db.String(80), nullable=False)
+    index = db.Column(db.String(120), nullable=True)
     language = db.Column(db.String(120), nullable=False)
+    mode = db.Column(db.String(80), nullable=False)
+
     text = db.Column(db.String(120), nullable=True)
     code = db.Column(db.String(120), nullable=True)
     equation = db.Column(db.String(120), nullable=True)
-    user = db.Column(db.String(120), nullable=False)
-    url = db.Column(db.String(120), nullable=False)
-    database = db.Column(db.String(120), nullable=False)
+    url = db.Column(db.String(120), nullable=True)
+
+
 
     def __repr__(self):
         return "<QueryTemplate %r>" % self.name
@@ -24,7 +27,7 @@ class QueryTemplate(db.Model):
             "language",
             "name",
             "text",
-            "user",
+            "index",
             "code",
             "equation",
             "mode",
@@ -40,7 +43,7 @@ class QueryTemplate(db.Model):
             "language": self.language,
             "name": self.name,
             "text": self.text,
-            "user": self.user,
+            "index": self.index,
             "code": self.code,
             "equation": self.equation,
             "mode": self.mode,
@@ -76,8 +79,8 @@ class QueryTemplateSchema(CamelCaseSchema):
     model = ma.auto_field()
     language = ma.auto_field()
     text = ma.auto_field()
+    index = ma.auto_field()
     code = ma.auto_field()
     equation = ma.auto_field()
-    user = ma.auto_field()
     url = ma.auto_field()
     database = ma.auto_field()

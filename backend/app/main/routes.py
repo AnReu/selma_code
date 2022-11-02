@@ -12,13 +12,15 @@ from marshmallow import ValidationError
 from backend.config import Config
 from backend.app.main import bp
 
+URL_PREFIX = "/api/v1"
+
 
 @bp.route("/")
 def index():
     return current_app.send_static_file("index.html")
 
 
-@bp.route("/api/v1/search")
+@bp.route(f"{URL_PREFIX}/search")
 def search_route():
     text = request.args.get("text")
     code = request.args.get("code")
@@ -28,12 +30,14 @@ def search_route():
     exchange = exchange.split(",")
     model = request.args.get("model")
     model_language = request.args.get("model-language")
-    db_name = request.args.get("db")
+    db_name = request.args.get("database")
+    index = request.args.get("index")
+    page = request.args.get("page", 1, type=int)
 
-    return search(db_name, text, code, equation, _id, exchange, model, model_language)
+    return search(db_name, text, code, equation, _id, exchange, model, model_language, index, page)
 
 
-@bp.route("/api/v1/relevance", methods=["POST"])
+@bp.route(f"{URL_PREFIX}/relevance", methods=["POST"])
 def relevance():
     data = json.loads(request.data)
 
@@ -48,7 +52,7 @@ def relevance():
     return "", 204
 
 
-@bp.route("/api/v1/document")
+@bp.route(f"{URL_PREFIX}/document")
 def get_document():
     id = request.args.get("id")
     table_name = Config.get_db_table_name()
@@ -61,7 +65,7 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in allowed_extensions
 
 
-@bp.route("/api/v1/file", methods=["POST"])
+@bp.route(f"{URL_PREFIX}/file", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
         return "No file present", 400
@@ -84,28 +88,27 @@ def upload_file():
         return "Only PDFs are allowed file types", 403
 
 
-@bp.route("/api/v1/models")
-def get_names_of_models():
-    import backend.models
+@bp.route(f"{URL_PREFIX}/data-structure")
+def get_data_structure():
+    data_path = Config.get_data_path()
+    tree = {}
+    for db in os.listdir(data_path):
+        db_path = os.path.join(data_path,db)
+        if os.path.isdir(db_path):
+            tree[db] = {}
+            for model in os.listdir(db_path):
+                model_path = os.path.join(db_path,model)
+                if os.path.isdir(model_path):
+                    tree[db][model] = []
+                    for index in os.listdir(model_path):
+                        index_path = os.path.join(model_path, index)
+                        if os.path.isdir(index_path):
+                            tree[db][model].append(index)
+    
+    return jsonify(tree)
 
-    return jsonify(backend.models.__all__)
 
-
-@bp.route("/api/v1/languages")
-def get_languages():
-    return jsonify(["english", "german"])
-
-
-@bp.route("/api/v1/dbs")
-def get_dbs():
-    dbs = []
-    for file in os.listdir(Config.get_databases_dir_path()):
-        if file.endswith(".db"):
-            dbs.append(file)
-    return jsonify(dbs)
-
-
-@bp.route("/api/v1/query-templates")
+@bp.route(f"{URL_PREFIX}/query-templates")
 def get_all_query_templates():
     all_templates = QueryTemplate.query.all()
     schema = QueryTemplateSchema(many=True)
@@ -113,7 +116,7 @@ def get_all_query_templates():
     return jsonify(results)
 
 
-@bp.route("/api/v1/query-templates/<id>", methods=["DELETE"])
+@bp.route(f"{URL_PREFIX}/query-templates/<id>", methods=["DELETE"])
 def delete_query_template_by_id(id):
     query_template = QueryTemplate.query.get(id)
     db.session.delete(query_template)
@@ -121,7 +124,7 @@ def delete_query_template_by_id(id):
     return jsonify(query_template.as_dict())
 
 
-@bp.route("/api/v1/query-templates", methods=["POST"])
+@bp.route(f"{URL_PREFIX}/query-templates", methods=["POST"])
 def create_query_template():
     schema = QueryTemplateSchema()
     json_data = request.get_json()
@@ -141,7 +144,7 @@ def create_query_template():
     return {"message": "Created new Query Template.", "queryTemplate": result}
 
 
-@bp.route("/api/v1/configs", methods=["GET"])
+@bp.route(f"{URL_PREFIX}/configs", methods=["GET"])
 def get_config_vars():
     default_allowed_search_modes = {
         "default": True,
@@ -150,58 +153,42 @@ def get_config_vars():
         "file": True,
     }
     config_vars = {
-        "databases_dir_path": Config.DATABASES_DIR_PATH if Config.DATABASES_DIR_PATH else "",
-        "database_path": Config.DATABASE_PATH if Config.DATABASE_PATH else "",
+        "db_path": Config.DB_PATH if Config.DB_PATH else "",
         "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
         "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME if Config.DB_CONTENT_ATTRIBUTE_NAME else "",
-        "indexes_dir_path": Config.INDEXES_DIR_PATH if Config.INDEXES_DIR_PATH else "",
         "index_path": Config.INDEX_PATH if Config.INDEX_PATH else "",
         "allowed_search_modes": Config.ALLOWED_SEARCH_MODES if Config.ALLOWED_SEARCH_MODES else default_allowed_search_modes,
     }
     return make_response(jsonify(config_vars), 200)
 
 
-@bp.route("/api/v1/configs", methods=["POST"])
+@bp.route(f"{URL_PREFIX}/configs", methods=["POST"])
 def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
-    if "indexes_dir_path" in json_data:
-        Config.INDEXES_DIR_PATH = json_data["indexes_dir_path"]
-        modified_fields.append("indexes_dir_path")
+        
+    if json_data["index_path"] != '':
+        Config.INDEX_PATH = json_data["index_path"]
     else:
         Config.INDEX_PATH = None
-    if "index_path" in json_data:
-        Config.INDEX_PATH = json_data["index_path"]
-        modified_fields.append("index_path")
-    else:
-        Config.DATABASES_DIR_PATH = None
-    if "databases_dir_path" in json_data:
-        Config.DATABASES_DIR_PATH = json_data["databases_dir_path"]
-        modified_fields.append("databases_dir_path")
-    else:
-        Config.DATABASES_DIR_PATH = None
 
-    if "database_path" in json_data:
-        Config.DATABASE_PATH = json_data["database_path"]
-        modified_fields.append("database_path")
+    if json_data["db_path"] != '':
+        Config.DB_PATH = json_data["db_path"]
     else:
-        Config.DATABASE_PATH = None
+        Config.DB_PATH = None
 
-    if "db_table_name" in json_data:
+    if json_data["db_table_name"] != '':
         Config.DB_TABLE_NAME = json_data["db_table_name"]
-        modified_fields.append("db_table_name")
     else:
         Config.DB_TABLE_NAME = None
 
-    if "db_content_attribute_name" in json_data:
+    if json_data["db_content_attribute_name"] != '':
         Config.DB_CONTENT_ATTRIBUTE_NAME = json_data["db_content_attribute_name"]
-        modified_fields.append("db_content_attribute_name")
     else:
         Config.DB_CONTENT_ATTRIBUTE_NAME = None
 
     if "allowed_search_modes" in json_data:
         Config.ALLOWED_SEARCH_MODES = json_data["allowed_search_modes"]
-        modified_fields.append("allowed_search_modes")
     else:
         Config.ALLOWED_SEARCH_MODES = {
             "default": True,
@@ -209,5 +196,5 @@ def update_config_vars():
             "url": True,
             "file": True,
         }
-
-    return make_response(jsonify(modified_fields), 204)
+        
+    return make_response(jsonify(Config.to_dict()), 201)

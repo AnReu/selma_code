@@ -1,32 +1,16 @@
-/* eslint-disable no-unused-vars */
-// TODO: remove the line above
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { Provider } from 'react-redux';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import { setupStore } from './app/store';
 import * as serviceWorker from './serviceWorker';
-
-const defaultLight = createTheme();
-const defaultDark = createTheme({ palette: { mode: 'dark' } });
-
-const store = setupStore();
-
-if (process.env.NODE_ENV === 'test') {
-  // eslint-disable-next-line global-require
-  const { worker } = require('./mocks/browser');
-  worker.start();
-}
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={defaultLight}>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),
 );
