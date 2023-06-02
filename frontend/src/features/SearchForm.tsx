@@ -1,16 +1,16 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { FormEvent } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
+import TuneIcon from '@mui/icons-material/Tune';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import TuneIcon from '@mui/icons-material/Tune';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import SearchIcon from '@mui/icons-material/Search';
-import { createSearchParams, useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import AdvancedSearchDialog from './navbar/AdvancedSearchDialog';
+import React, { FormEvent } from 'react';
+import { createSearchParams, useNavigate } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { QueryErrors, queryState } from '../recoil/atoms';
 import { dataStructureQueryState } from '../recoil/selectors';
+import AdvancedSearchDialog from './navbar/AdvancedSearchDialog';
 
 export default function SearchForm() {
   const navigate = useNavigate();
