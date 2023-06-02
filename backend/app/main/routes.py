@@ -11,6 +11,9 @@ from backend.parser import tex_parser
 from marshmallow import ValidationError
 from backend.config import Config
 from backend.app.main import bp
+from git import Repo
+from pathlib import Path
+from tree_sitter import Language, Parser
 
 URL_PREFIX = "/api/v1"
 
@@ -34,7 +37,9 @@ def search_route():
     index = request.args.get("index")
     page = request.args.get("page", 1, type=int)
 
-    return search(db_name, text, code, equation, _id, exchange, model, model_language, index, page)
+    return search(
+        db_name, text, code, equation, _id, exchange, model, model_language, index, page
+    )
 
 
 @bp.route(f"{URL_PREFIX}/relevance", methods=["POST"])
@@ -93,18 +98,18 @@ def get_data_structure():
     data_path = Config.get_data_path()
     tree = {}
     for db in os.listdir(data_path):
-        db_path = os.path.join(data_path,db)
+        db_path = os.path.join(data_path, db)
         if os.path.isdir(db_path):
             tree[db] = {}
             for model in os.listdir(db_path):
-                model_path = os.path.join(db_path,model)
+                model_path = os.path.join(db_path, model)
                 if os.path.isdir(model_path):
                     tree[db][model] = []
                     for index in os.listdir(model_path):
                         index_path = os.path.join(model_path, index)
                         if os.path.isdir(index_path):
                             tree[db][model].append(index)
-    
+
     return jsonify(tree)
 
 
@@ -155,9 +160,13 @@ def get_config_vars():
     config_vars = {
         "db_path": Config.DB_PATH if Config.DB_PATH else "",
         "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
-        "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME if Config.DB_CONTENT_ATTRIBUTE_NAME else "",
+        "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME
+        if Config.DB_CONTENT_ATTRIBUTE_NAME
+        else "",
         "index_path": Config.INDEX_PATH if Config.INDEX_PATH else "",
-        "allowed_search_modes": Config.ALLOWED_SEARCH_MODES if Config.ALLOWED_SEARCH_MODES else default_allowed_search_modes,
+        "allowed_search_modes": Config.ALLOWED_SEARCH_MODES
+        if Config.ALLOWED_SEARCH_MODES
+        else default_allowed_search_modes,
     }
     return make_response(jsonify(config_vars), 200)
 
@@ -166,7 +175,7 @@ def get_config_vars():
 def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
-        
+
     if json_data["index_path"] != '':
         Config.INDEX_PATH = json_data["index_path"]
     else:
@@ -196,5 +205,48 @@ def update_config_vars():
             "url": True,
             "file": True,
         }
-        
+
     return make_response(jsonify(Config.to_dict()), 201)
+
+
+@bp.route(f"{URL_PREFIX}/index", methods=["POST"])
+def selfindex_route():
+    json_data = request.get_json()
+    url = json_data['url']
+
+    temp_dir = Path(os.environ.get("DATA_PATH")) / 'temp'
+    if not temp_dir.exists():
+        temp_dir.mkdir(parents=True, exist_ok=True)
+
+    # Clone repo
+    os.chdir(temp_dir)
+    os.system(f'git clone {url}')
+
+    files = list(Path(".").rglob("*.java"))
+
+    JAVA_LANGUAGE = Language(
+        Path(current_app.root_path, 'tree_sitter_languages/languages.so'), 'java'
+    )
+    parser = Parser()
+    parser.set_language(JAVA_LANGUAGE)
+
+    methods = []
+
+    # Captures all java methods in the git repo
+    for file_path in files:
+        with open(file_path, 'r') as f:
+            file_content = f.read()
+            f.close()
+            tree = parser.parse(bytes(file_content, encoding='utf8'))
+            print(file_content)
+            query = JAVA_LANGUAGE.query("(method_declaration) @definition.method")
+            captures = query.captures(tree.root_node)
+
+            for capture in captures:
+                method = capture[0].text.decode("utf-8")
+                methods.append(method)
+
+    print(methods)
+
+    response = {'num_methods_indexed': len(methods), 'num_files_indexed': len(files)}
+    return make_response(jsonify(response), 201)
