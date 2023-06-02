@@ -17,6 +17,7 @@ Markdown
 python-dotenv
 python-terrier
 tika
+tree_sitter
 
 
 
