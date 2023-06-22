@@ -62,10 +62,10 @@ export default function SelfIndexingDialog() {
   const databases = useRecoilValue(dbsState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
   const steps = [
-    'Git repo URL',
+    'Git URL',
     'Choose Collection',
     'Choose Model',
-    'Indexing Strategies',
+    'Indexing Options',
     'Confirmation',
   ];
 
@@ -364,10 +364,14 @@ export default function SelfIndexingDialog() {
       </Button>
 
       <Dialog
-        fullWidth
-        maxWidth="sm"
         open={isOpen}
         onClose={handleClose}
+        PaperProps={{
+          sx: {
+            width: '50%',
+            height: 400,
+          },
+        }}
       >
         <DialogTitle>Add Code Base</DialogTitle>
 
