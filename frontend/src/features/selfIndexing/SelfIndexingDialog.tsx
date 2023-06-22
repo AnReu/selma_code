@@ -1,31 +1,82 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-unreachable */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import AddIcon from '@mui/icons-material/Add';
+
 import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormLabel from '@mui/material/FormLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Stepper from '@mui/material/Stepper';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
-import { IndexRequest, emptyIndexRequest, useIndexRequestMutations } from '../../recoil/selectors';
+import { useRecoilValue } from 'recoil';
+import { baseURL, dataStructureQueryState, dbsState } from '../../recoil/selectors';
+
+type IndexingMode = 'CREATE'|'UPDATE';
+type ExpansionMethod = | 'PLBART' | 'COLBERT' | 'KEYWORDS' | 'NONE';
+type NeuralIndexingMethod = 'PLLIED' | 'TRAINED';
+
+export interface IndexRequest {
+  url: string;
+  model: string;
+  database: string;
+  index: string;
+  codeTrans: boolean;
+  plbart: boolean;
+  expansionMethod: ExpansionMethod | null;
+  neuralIndexingMethod: NeuralIndexingMethod | null;
+  createNew: IndexingMode | null;
+}
+
+const COLBERT_NAME = 'PyterrierColbert';
+const BM25_NAME = 'PyterrierModel';
+
+export const emptyIndexRequest: IndexRequest = {
+  url: 'https://github.com/jabedhasan21/java-hello-world-with-maven.git',
+  model: '',
+  database: '',
+  index: '',
+  codeTrans: false,
+  plbart: false,
+  expansionMethod: null,
+  neuralIndexingMethod: null,
+  createNew: null,
+};
 
 export default function SelfIndexingDialog() {
-  const { sendRequest } = useIndexRequestMutations();
+  const [activeStep, setActiveStep] = React.useState<number>(0);
   const [isOpen, setIsOpen] = React.useState(false);
   const [form, setForm] = React.useState<IndexRequest>(emptyIndexRequest);
+  const [models, setModels] = React.useState<string[]>([]);
+  const databases = useRecoilValue(dbsState);
+  const dataStructure = useRecoilValue(dataStructureQueryState);
+  const steps = [
+    'Git repo URL',
+    'Choose Collection',
+    'Choose Model',
+    'Indexing Strategies',
+    'Confirmation',
+  ];
+
+  React.useEffect(() => {
+    // filter models
+    if (form.database && dataStructure[form.database]) {
+      setModels(Object.keys(dataStructure[form.database]));
+    } else {
+      setModels([]);
+    }
+  }, [form]);
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -35,25 +86,271 @@ export default function SelfIndexingDialog() {
     setIsOpen(false);
   };
 
-  const handleReset = () => {
-    setForm(emptyIndexRequest);
-  };
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setForm((oldForm) => ({ ...oldForm, [name]: value }));
   };
 
-  const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
-    setForm((oldForm) => ({ ...oldForm, [name]: checked }));
+  const handleReset = () => {
+    setForm(emptyIndexRequest);
+    setActiveStep(0);
   };
 
-  const handleApply = () => {
-    // setOpen(false);
-    sendRequest(form);
-    // setConfigs(configsForm);
-    handleClose();
+  const handleFinish = () => {
+    fetch(`${baseURL}/index`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: form.url,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const totalSteps = () => steps.length;
+
+  const isLastStep = () => activeStep === totalSteps() - 1;
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleNext = () => {
+    if (!isLastStep()) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    } else {
+      handleFinish();
+    }
+  };
+
+  const isNextDisabled = () => {
+    switch (activeStep) {
+      case 0: {
+        const gitRepoRegex = /^(https?:\/\/)?(www\.)?(github\.com|gitlab\.com|bitbucket\.org)\/[\w-]+\/[\w-]+(\.git)?$/i;
+        const isValid = gitRepoRegex.test(form.url);
+        return !isValid;
+      }
+      case 1: {
+        return form.createNew === null || form.database === '';
+      }
+      case 2: {
+        return form.model === '';
+      }
+      case 3: {
+        if (form.expansionMethod === null) return true;
+        if (form.model === COLBERT_NAME && form.neuralIndexingMethod === null) return true;
+        return false;
+      }
+      case 4: {
+        return false;
+      }
+      default: {
+        return true;
+      }
+    }
+  };
+
+  const FormStep = (step: number) => {
+    switch (step) {
+      case 0: {
+        return (
+          <TextField
+            label="Git Repository Url"
+            name="url"
+            variant="filled"
+            fullWidth
+            value={form.url}
+            onChange={handleChange}
+          />
+        );
+      }
+      case 1: {
+        return (
+          <>
+            <FormControl>
+              <FormLabel id="indexing-strategy-radio-buttons-label">
+                Would you like to create a new collection or update an existing one?
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="indexing-strategy-radio-buttons-label"
+                name="createNew"
+                value={form.createNew}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="CREATE"
+                  control={<Radio />}
+                  label="Create new collection"
+                />
+                <FormControlLabel
+                  value="UPDATE"
+                  control={<Radio />}
+                  label="Update existing collection"
+                />
+              </RadioGroup>
+            </FormControl>
+
+            {form.createNew === 'CREATE' && (
+            <TextField
+              label="Name"
+              name="database"
+              variant="filled"
+              fullWidth
+              value={form.database}
+              onChange={handleChange}
+              helperText="Name of new collection"
+            />
+            )}
+
+            {form.createNew === 'UPDATE' && (
+            <TextField
+              label="Database"
+              name="database"
+              value={form.database}
+              onChange={handleChange}
+              select
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option value="" />
+              {databases.map((db) => <option key={db} value={db}>{db}</option>)}
+            </TextField>
+            )}
+
+          </>
+        );
+      }
+      case 2: {
+        if (form.createNew === 'CREATE') {
+          return (
+            <TextField
+              label="Model"
+              name="model"
+              value={form.model}
+              onChange={handleChange}
+              select
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option value="" />
+              <option value={BM25_NAME}>BM25</option>
+              <option value={COLBERT_NAME}>ColBERT</option>
+            </TextField>
+          );
+        }
+        return (
+          <TextField
+            label="Model"
+            name="model"
+            value={form.model}
+            onChange={handleChange}
+            select
+            SelectProps={{
+              native: true,
+            }}
+          >
+            <option value="" disabled />
+            {models.map((idx) => <option key={idx} value={idx}>{idx}</option>)}
+          </TextField>
+        );
+      }
+      case 3: {
+        return (
+          <>
+            <FormControl>
+              <FormLabel id="expansion-method-radio-buttons-label">
+                How would you like to expand your documents?
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="expansion-method-radio-buttons-label"
+                name="expansionMethod"
+                value={form.expansionMethod}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="PLBART"
+                  control={<Radio />}
+                  label="PLBART"
+                />
+                <FormControlLabel
+                  value="CODETRANS"
+                  control={<Radio />}
+                  label="CodeTrans"
+                />
+                <FormControlLabel
+                  value="KEYWORDS"
+                  control={<Radio />}
+                  label="Keywords"
+                />
+                <FormControlLabel
+                  value="NONE"
+                  control={<Radio />}
+                  label="No expansion"
+                />
+              </RadioGroup>
+            </FormControl>
+
+            {
+            form.model === COLBERT_NAME && (
+            <FormControl>
+              <FormLabel id="indexing-strategy-radio-buttons-label">
+                How would you like to index this?
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="indexing-strategy-radio-buttons-label"
+                name="neuralIndexingMethod"
+                value={form.neuralIndexingMethod}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="APPLIED"
+                  control={<Radio />}
+                  label="Applied"
+                />
+                <FormControlLabel
+                  value="TRAINED"
+                  control={<Radio />}
+                  label="Trained"
+                />
+              </RadioGroup>
+            </FormControl>
+            )
+          }
+          </>
+        );
+      }
+      case 4: {
+        return (
+          <>
+            <p>{form.createNew === 'CREATE' ? `Create new collection: ${form.database}` : `Update collection: ${form.database}`}</p>
+            <p>
+              {`From git repo: ${form.url}`}
+            </p>
+            <p>
+              {`Using the model: ${form.model}`}
+            </p>
+            <p>
+              {`Expanding documents using: ${form.expansionMethod}`}
+            </p>
+            {form.model === 'PyTerrierColbert' && <p>form.neuralIndexingMethod</p>}
+          </>
+        );
+      }
+      default: {
+        throw new Error('invalid step');
+      }
+    }
   };
 
   return (
@@ -76,53 +373,34 @@ export default function SelfIndexingDialog() {
 
         <DialogContent>
           <Stack component="form" spacing={2}>
-            <TextField
-              label="Git Repository Url"
-              name="url"
-              variant="filled"
-              fullWidth
-              value={form.url}
-              onChange={handleChange}
-            />
-
-            <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
-              <FormLabel component="legend">Code Expansion Settings</FormLabel>
-              <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox checked={form.codeTrans} onChange={handleChecked} name="codeTrans" />}
-                  label="CodeTrans"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={form.plbart} onChange={handleChecked} name="plbart" />}
-                  label="PLBART"
-                />
-              </FormGroup>
-            </FormControl>
-
-            <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
-              <FormLabel component="legend">Selected Configurations</FormLabel>
-              <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox checked={form.stringBased} onChange={handleChecked} name="stringBased" />}
-                  label="String-based Indexing"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={form.neuralApplied} onChange={handleChecked} name="neuralApplied" />}
-                  label="Neural Index (Applied)"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={form.neuralTrained} onChange={handleChecked} name="neuralTrained" />}
-                  label="Neural Index (Trained)"
-                />
-              </FormGroup>
-            </FormControl>
-
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            {FormStep(activeStep)}
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleReset}>Reset</Button>
-          <Button onClick={handleApply}>Apply</Button>
+          {activeStep === steps.length ? (
+            <Button onClick={handleReset}>Reset</Button>
+          ) : (
+            <>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
+                Back
+              </Button>
+              <Button onClick={handleNext} disabled={isNextDisabled()}>
+                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+              </Button>
+            </>
+          )}
         </DialogActions>
 
       </Dialog>
