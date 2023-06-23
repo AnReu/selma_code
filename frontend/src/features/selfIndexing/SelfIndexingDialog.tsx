@@ -24,19 +24,17 @@ import { useRecoilValue } from 'recoil';
 import { baseURL, dataStructureQueryState, dbsState } from '../../recoil/selectors';
 
 type IndexingMode = 'CREATE'|'UPDATE';
-type ExpansionMethod = | 'PLBART' | 'COLBERT' | 'KEYWORDS' | 'NONE';
-type NeuralIndexingMethod = 'PLLIED' | 'TRAINED';
+type ExpansionMethod = | 'PLBART' | 'CODETRANS' | 'KEYWORDS' | 'NONE';
+type NeuralIndexingMethod = 'APLLIED' | 'TRAINED';
 
 export interface IndexRequest {
   url: string;
   model: string;
   database: string;
   index: string;
-  codeTrans: boolean;
-  plbart: boolean;
   expansionMethod: ExpansionMethod | null;
   neuralIndexingMethod: NeuralIndexingMethod | null;
-  createNew: IndexingMode | null;
+  indexingMode: IndexingMode | null;
 }
 
 const COLBERT_NAME = 'PyterrierColbert';
@@ -44,14 +42,12 @@ const BM25_NAME = 'PyterrierModel';
 
 export const emptyIndexRequest: IndexRequest = {
   url: 'https://github.com/jabedhasan21/java-hello-world-with-maven.git',
-  model: '',
-  database: '',
+  model: BM25_NAME,
+  database: 'new_database',
   index: '',
-  codeTrans: false,
-  plbart: false,
-  expansionMethod: null,
+  expansionMethod: 'CODETRANS',
   neuralIndexingMethod: null,
-  createNew: null,
+  indexingMode: 'CREATE',
 };
 
 export default function SelfIndexingDialog() {
@@ -102,9 +98,7 @@ export default function SelfIndexingDialog() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        url: form.url,
-      }),
+      body: JSON.stringify(form),
     })
       .then((response) => response.json())
       .then((json) => {
@@ -137,7 +131,7 @@ export default function SelfIndexingDialog() {
         return !isValid;
       }
       case 1: {
-        return form.createNew === null || form.database === '';
+        return form.indexingMode === null || form.database === '';
       }
       case 2: {
         return form.model === '';
@@ -181,7 +175,7 @@ export default function SelfIndexingDialog() {
                 row
                 aria-labelledby="indexing-strategy-radio-buttons-label"
                 name="createNew"
-                value={form.createNew}
+                value={form.indexingMode}
                 onChange={handleChange}
               >
                 <FormControlLabel
@@ -197,7 +191,7 @@ export default function SelfIndexingDialog() {
               </RadioGroup>
             </FormControl>
 
-            {form.createNew === 'CREATE' && (
+            {form.indexingMode === 'CREATE' && (
             <TextField
               label="Name"
               name="database"
@@ -209,7 +203,7 @@ export default function SelfIndexingDialog() {
             />
             )}
 
-            {form.createNew === 'UPDATE' && (
+            {form.indexingMode === 'UPDATE' && (
             <TextField
               label="Database"
               name="database"
@@ -229,7 +223,7 @@ export default function SelfIndexingDialog() {
         );
       }
       case 2: {
-        if (form.createNew === 'CREATE') {
+        if (form.indexingMode === 'CREATE') {
           return (
             <TextField
               label="Model"
@@ -333,7 +327,7 @@ export default function SelfIndexingDialog() {
       case 4: {
         return (
           <>
-            <p>{form.createNew === 'CREATE' ? `Create new collection: ${form.database}` : `Update collection: ${form.database}`}</p>
+            <p>{form.indexingMode === 'CREATE' ? `Create new collection: ${form.database}` : `Update collection: ${form.database}`}</p>
             <p>
               {`From git repo: ${form.url}`}
             </p>

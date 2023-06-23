@@ -1,6 +1,10 @@
 import json
 import re
 import os
+import tempfile
+import shutil
+from sqlite3 import connect
+import pyterrier as pt
 from flask import jsonify, request, make_response, current_app
 from backend.app import db
 from backend.app.models import QueryTemplate, QueryTemplateSchema
@@ -11,9 +15,8 @@ from backend.parser import tex_parser
 from marshmallow import ValidationError
 from backend.config import Config
 from backend.app.main import bp
-from git import Repo
 from pathlib import Path
-from tree_sitter import Language, Parser
+from .utils import get_methods_from_git_repo, create_index_from_methods
 
 URL_PREFIX = "/api/v1"
 
@@ -213,40 +216,77 @@ def update_config_vars():
 def selfindex_route():
     json_data = request.get_json()
     url = json_data['url']
+    index = json_data['index']
+    database = json_data['database']
+    model = json_data['model']
+    indexing_mode = json_data['indexingMode']
 
-    temp_dir = Path(os.environ.get("DATA_PATH")) / 'temp'
-    if not temp_dir.exists():
-        temp_dir.mkdir(parents=True, exist_ok=True)
+    # TODO: for now, we only supoprt java
+    methods = get_methods_from_git_repo(url, 'java')
 
-    # Clone repo
-    os.chdir(temp_dir)
-    os.system(f'git clone {url}')
+    # Decide which database to use
+    if indexing_mode == 'CREATE':
+        database_dir = Path(Config.get_data_path()) / database
+        if database_dir.exists():
+            raise Exception(
+                'Invalid database name. A database with this name already exists.'
+            )
+        else:
+            database_dir.mkdir()
 
-    files = list(Path(".").rglob("*.java"))
+        con = connect(database_dir / f'{database}.db')
+        cur = con.cursor()
+        cur.execute(
+            "CREATE TABLE IF NOT EXISTS documents ("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "title TEXT,"
+            "language TEXT NOT NULL,"
+            "url TEXT,"
+            "body TEXT"
+            ");"
+        )
+    elif indexing_mode == 'UPDATE':
+        database_path = Path(Config.get_data_path()) / database / f'{database}.db'
+        if not database_path.exists():
+            raise Exception(
+                'Error when updating existing database. The database path does not exist.'
+            )
+        con = connect(database_path)
+        cur = con.cursor()
+    else:
+        raise Exception('Invalid indexing mode')
 
-    JAVA_LANGUAGE = Language(
-        Path(current_app.root_path, 'tree_sitter_languages/languages.so'), 'java'
-    )
-    parser = Parser()
-    parser.set_language(JAVA_LANGUAGE)
+    # Add methods to database
+    for m in methods:
+        cur.execute(
+            '''
+        INSERT INTO documents(title, language, url, body)
+        VALUES(?,?,?,?)''',
+            (m['identifier'], m['language'], m['url'], m['function']),
+        )
+    # Apply database changes
+    con.commit()
 
-    methods = []
+    # Create index for new methods
+    tmp_dir = tempfile.TemporaryDirectory()
+    indexref = create_index_from_methods(methods, tmp_dir)
+    new_index = pt.IndexFactory.of(indexref)
 
-    # Captures all java methods in the git repo
-    for file_path in files:
-        with open(file_path, 'r') as f:
-            file_content = f.read()
-            f.close()
-            tree = parser.parse(bytes(file_content, encoding='utf8'))
-            print(file_content)
-            query = JAVA_LANGUAGE.query("(method_declaration) @definition.method")
-            captures = query.captures(tree.root_node)
+    if indexing_mode == 'CREATE':
+        print('TODO: save new_index')
+        src_path = Path(tmp_dir.name)
+        target_path = Path(Config.get_data_path()) / database / model / 'myIndex'
+        destination = shutil.copytree(src_path, target_path)
+        print(destination)
 
-            for capture in captures:
-                method = capture[0].text.decode("utf-8")
-                methods.append(method)
-
-    print(methods)
+    elif indexing_mode == 'UPDATE':
+        print('TODO: Merge new index into old')
+        # index1 = pt.IndexFactory.of("./index1")
+        # index2 = pt.IndexFactory.of("./index2")
+        # comb_index = index1 + index2
+        # br = pt.BatchRetrieve(comb_index)
+    else:
+        raise Exception('Invalid indexing mode.')
 
     response = {'num_methods_indexed': len(methods), 'num_files_indexed': len(files)}
     return make_response(jsonify(response), 201)
