@@ -16,7 +16,7 @@ from marshmallow import ValidationError
 from backend.config import Config
 from backend.app.main import bp
 from pathlib import Path
-from .utils import get_methods_from_git_repo, create_index_from_methods
+from .utils import get_methods_from_git_repo, create_index_from_methods, update_index
 
 URL_PREFIX = "/api/v1"
 
@@ -271,24 +271,33 @@ def selfindex_route():
 
     # Create index for new methods
     tmp_dir = tempfile.TemporaryDirectory()
-    indexref = create_index_from_methods(methods, tmp_dir)
-    new_index = pt.IndexFactory.of(indexref)
+    new_indexref = create_index_from_methods(methods, expansion_method, tmp_dir)
+    new_index = pt.IndexFactory.of(new_indexref)
 
     if indexing_mode == "CREATE":
-        print('TODO: save new_index')
+        # Copy temporary files to final location
         src_path = Path(tmp_dir.name)
-        target_path = Path(Config.get_data_path()) / database / model / 'myIndex'
-        destination = shutil.copytree(src_path, target_path)
-        print(destination)
+        target_path = (
+            Path(Config.get_data_path()) / database / model / expansion_method.lower()
+        )
+        try:
+            shutil.copytree(src_path, target_path)
+        except:
+            raise Exception(
+                "Something went wrong when copying temporary files to final location."
+            )
 
-    elif indexing_mode == 'UPDATE':
-        print('TODO: Merge new index into old')
-        # index1 = pt.IndexFactory.of("./index1")
-        # index2 = pt.IndexFactory.of("./index2")
-        # comb_index = index1 + index2
-        # br = pt.BatchRetrieve(comb_index)
+    elif indexing_mode == "UPDATE":
+        old_index_path = (
+            Path(Config.get_data_path())
+            / database
+            / model
+            / str(expansion_method).lower()
+        )
+        update_index(old_index_path, new_index)
+
     else:
-        raise Exception('Invalid indexing mode.')
+        raise Exception("Invalid indexing mode.")
 
-    response = {'num_methods_indexed': len(methods), 'num_files_indexed': len(files)}
+    response = {"num_methods_indexed": len(methods)}
     return make_response(jsonify(response), 201)
