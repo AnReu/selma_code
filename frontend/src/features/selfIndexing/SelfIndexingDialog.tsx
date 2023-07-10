@@ -353,7 +353,7 @@ export default function SelfIndexingDialog() {
         PaperProps={{
           sx: {
             width: '50%',
-            height: 400,
+            height: 480,
           },
         }}
       >
