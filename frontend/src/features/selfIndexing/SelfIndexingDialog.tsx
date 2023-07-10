@@ -235,23 +235,10 @@ export default function SelfIndexingDialog() {
       case 2: {
         if (form.indexingMode === 'CREATE') {
           return (
-            <TextField
-              label="Model"
-              name="model"
-              value={form.model}
-              onChange={handleChange}
-              select
-              SelectProps={{
-                native: true,
-              }}
-            >
-              <option value="" />
-              <option value={BM25_NAME}>BM25</option>
-              <option value={COLBERT_NAME}>ColBERT</option>
-            </TextField>
-          );
-        }
-        return (
+          <FormControl>
+            <FormLabel sx={{ mb: 2 }}>
+              Which model do you wish to use to build the index?
+            </FormLabel>
           <TextField
             label="Model"
             name="model"
@@ -265,6 +252,7 @@ export default function SelfIndexingDialog() {
             <option value="" disabled />
             {models.map((idx) => <option key={idx} value={idx}>{idx}</option>)}
           </TextField>
+          </FormControl>
         );
       }
       case 3: {
