@@ -24,23 +24,23 @@ class Config(object):
     DB_CONTENT_ATTRIBUTE_NAME = None  # TODO rename
     ALLOWED_SEARCH_MODES = None
     DATA_PATH = None
-    
+
     @staticmethod
     def to_dict():
         return {
-            'db_path': Config.DB_PATH,
-            'index_path': Config.INDEX_PATH,
-            'db_table_name': Config.DB_TABLE_NAME,
-            'db_content_attribute_name': Config.DB_CONTENT_ATTRIBUTE_NAME,
-            'data_path': Config.DATA_PATH,
-            'allowed_search_modes': {
-                'default': Config.ALLOWED_SEARCH_MODES['default'],
-                'separated': Config.ALLOWED_SEARCH_MODES['separated'],
-                'url': Config.ALLOWED_SEARCH_MODES['url'],
-                'file': Config.ALLOWED_SEARCH_MODES['file'],
-                },
+            "db_path": Config.DB_PATH,
+            "index_path": Config.INDEX_PATH,
+            "db_table_name": Config.DB_TABLE_NAME,
+            "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME,
+            "data_path": Config.DATA_PATH,
+            "allowed_search_modes": {
+                "default": Config.ALLOWED_SEARCH_MODES["default"],
+                "separated": Config.ALLOWED_SEARCH_MODES["separated"],
+                "url": Config.ALLOWED_SEARCH_MODES["url"],
+                "file": Config.ALLOWED_SEARCH_MODES["file"],
+            },
         }
-    
+
     @staticmethod
     def get_data_path():
         if os.environ.get("DATA_PATH"):
@@ -52,7 +52,7 @@ class Config(object):
     def get_db_path(db_name):  # TODO rename method
         if Config.DB_PATH:
             return Config.DB_PATH
-        
+
         return os.path.join(Config.get_data_path(), db_name, f"{db_name}.db")
 
     @staticmethod
@@ -92,7 +92,7 @@ class Config(object):
     def get_index_path(db, model, index):
         if Config.INDEX_PATH:
             return Config.INDEX_PATH
-        
+
         return os.path.join(Config.get_data_path(), db, model, index)
 
     @staticmethod

@@ -8,16 +8,16 @@ from tree_sitter import Language
 def get_methods_from_git_repo(git_repo_url, prog_lang):
     DataProcessor.PARSER.set_language(
         Language(
-            '/media/gui/ssd/dev/retrievalsystem/backend/app/tree_sitter_languages/languages.so',
+            "/mnt/ssd/dev/retrievalsystem/backend/app/tree_sitter_languages/languages.so",
             prog_lang,
         )
     )
     processor = DataProcessor(
         language=prog_lang,
-        language_parser=LANGUAGE_METADATA[prog_lang]['language_parser'],
+        language_parser=LANGUAGE_METADATA[prog_lang]["language_parser"],
     )
     definitions = processor.process_dee(
-        git_repo_url, ext=LANGUAGE_METADATA[prog_lang]['ext']
+        git_repo_url, ext=LANGUAGE_METADATA[prog_lang]["ext"]
     )
     return definitions
 
@@ -30,5 +30,5 @@ def create_index_from_methods(methods, tmp_dir):
     # The first argument should always a pandas.Series object of Strings,
     # which specifies the body of each document.
     # Any arguments after that are for specifying metadata.
-    indexref = pd_indexer.index(df['function'], df['docno'])
+    indexref = pd_indexer.index(df["text"], df["docno"])
     return indexref

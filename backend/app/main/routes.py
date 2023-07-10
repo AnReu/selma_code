@@ -180,22 +180,22 @@ def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
 
-    if json_data["index_path"] != '':
+    if json_data["index_path"] != "":
         Config.INDEX_PATH = json_data["index_path"]
     else:
         Config.INDEX_PATH = None
 
-    if json_data["db_path"] != '':
+    if json_data["db_path"] != "":
         Config.DB_PATH = json_data["db_path"]
     else:
         Config.DB_PATH = None
 
-    if json_data["db_table_name"] != '':
+    if json_data["db_table_name"] != "":
         Config.DB_TABLE_NAME = json_data["db_table_name"]
     else:
         Config.DB_TABLE_NAME = None
 
-    if json_data["db_content_attribute_name"] != '':
+    if json_data["db_content_attribute_name"] != "":
         Config.DB_CONTENT_ATTRIBUTE_NAME = json_data["db_content_attribute_name"]
     else:
         Config.DB_CONTENT_ATTRIBUTE_NAME = None
@@ -216,26 +216,26 @@ def update_config_vars():
 @bp.route(f"{URL_PREFIX}/index", methods=["POST"])
 def selfindex_route():
     json_data = request.get_json()
-    url = json_data['url']
-    index = json_data['index']
-    database = json_data['database']
-    model = json_data['model']
-    indexing_mode = json_data['indexingMode']
+    url = json_data["url"]
+    database = json_data["database"]
+    model = json_data["model"]
+    indexing_mode = json_data["indexingMode"]
+    expansion_method = json_data["expansionMethod"]
 
     # TODO: for now, we only supoprt java
-    methods = get_methods_from_git_repo(url, 'java')
+    methods = get_methods_from_git_repo(url, "java")
 
     # Decide which database to use
-    if indexing_mode == 'CREATE':
+    if indexing_mode == "CREATE":
         database_dir = Path(Config.get_data_path()) / database
         if database_dir.exists():
             raise Exception(
-                'Invalid database name. A database with this name already exists.'
+                "Invalid database name. A database with this name already exists."
             )
         else:
             database_dir.mkdir()
 
-        con = connect(database_dir / f'{database}.db')
+        con = connect(database_dir / f"{database}.db")
         cur = con.cursor()
         cur.execute(
             "CREATE TABLE IF NOT EXISTS documents ("
@@ -246,25 +246,26 @@ def selfindex_route():
             "body TEXT"
             ");"
         )
-    elif indexing_mode == 'UPDATE':
-        database_path = Path(Config.get_data_path()) / database / f'{database}.db'
+    elif indexing_mode == "UPDATE":
+        database_path = Path(Config.get_data_path()) / database / f"{database}.db"
         if not database_path.exists():
             raise Exception(
-                'Error when updating existing database. The database path does not exist.'
+                "Error when updating existing database. The database path does not exist."
             )
         con = connect(database_path)
         cur = con.cursor()
     else:
-        raise Exception('Invalid indexing mode')
+        raise Exception("Invalid indexing mode")
 
     # Add methods to database
     for m in methods:
         cur.execute(
-            '''
+            """
         INSERT INTO documents(title, language, url, body)
-        VALUES(?,?,?,?)''',
-            (m['identifier'], m['language'], m['url'], m['function']),
+        VALUES(?,?,?,?)""",
+            (m["identifier"], m["language"], m["url"], m["function"]),
         )
+        m["id"] = cur.lastrowid
     # Apply database changes
     con.commit()
 
@@ -273,7 +274,7 @@ def selfindex_route():
     indexref = create_index_from_methods(methods, tmp_dir)
     new_index = pt.IndexFactory.of(indexref)
 
-    if indexing_mode == 'CREATE':
+    if indexing_mode == "CREATE":
         print('TODO: save new_index')
         src_path = Path(tmp_dir.name)
         target_path = Path(Config.get_data_path()) / database / model / 'myIndex'
