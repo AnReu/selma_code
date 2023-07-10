@@ -134,9 +134,8 @@ export default function SelfIndexingDialog() {
   const isNextDisabled = () => {
     switch (activeStep) {
       case 0: {
-        const gitRepoRegex = /^(https?:\/\/)?(www\.)?(github\.com|gitlab\.com|bitbucket\.org)\/[\w-]+\/[\w-]+(\.git)?$/i;
-        const isValid = gitRepoRegex.test(form.url);
-        return !isValid;
+        // Did not find any solution to validate gir urls
+        return false;
       }
       case 1: {
         return form.indexingMode === null || form.database === '';
@@ -146,7 +145,6 @@ export default function SelfIndexingDialog() {
       }
       case 3: {
         if (form.expansionMethod === null) return true;
-        if (form.model === COLBERT_NAME && form.neuralIndexingMethod === null) return true;
         return false;
       }
       case 4: {
