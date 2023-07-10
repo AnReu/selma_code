@@ -261,37 +261,27 @@ export default function SelfIndexingDialog() {
         return (
           <>
             <FormControl>
-              <FormLabel id="expansion-method-radio-buttons-label">
+              <FormLabel sx={{ mb: 2 }}>
                 How would you like to expand your documents?
               </FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="expansion-method-radio-buttons-label"
-                name="expansionMethod"
-                value={form.expansionMethod}
+              <FormGroup
                 onChange={handleChange}
               >
+                {Object.entries(configs.expansion_methods).map(([value, label]) => (
+                  // expansion_methods is a dictionary
                 <FormControlLabel
-                  value="PLBART"
-                  control={<Radio />}
-                  label="PLBART"
+                    key={value}
+                    value={value}
+                    control={<Checkbox />}
+                    label={label}
                 />
-                <FormControlLabel
-                  value="CODETRANS"
-                  control={<Radio />}
-                  label="CodeTrans"
-                />
-                <FormControlLabel
-                  value="KEYWORDS"
-                  control={<Radio />}
-                  label="Keywords"
-                />
+                ))}
                 <FormControlLabel
                   value="NONE"
-                  control={<Radio />}
+                  control={<Checkbox />}
                   label="No expansion"
                 />
-              </RadioGroup>
+              </FormGroup>
             </FormControl>
 
             {

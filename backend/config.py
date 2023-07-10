@@ -94,3 +94,11 @@ class Config(object):
             return Config.INDEX_PATH
         
         return os.path.join(Config.get_data_path(), db, model, index)
+
+    @staticmethod
+    def get_expansion_methods():
+        return {
+            "plbart": "PLBart",
+            "codetrans": "CodeTrans",
+            "keywords": "Keywords",
+        }

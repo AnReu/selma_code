@@ -59,7 +59,8 @@ export interface Config {
     separated: boolean,
     url: boolean,
     file: boolean,
-  }
+  },
+  expansion_methods: { [key: string]: string },
 }
 
 export const emptyConfig: Config = {
@@ -70,6 +71,7 @@ export const emptyConfig: Config = {
   allowed_search_modes: {
     default: true, separated: true, url: true, file: true,
   },
+  expansion_methods: {},
 };
 
 export const emptyExample: Example = {
