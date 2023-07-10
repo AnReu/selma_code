@@ -102,7 +102,7 @@ export default function SelfIndexingDialog() {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
+        setIsOpen(false);
       })
       .catch((error) => console.error(error));
   };
