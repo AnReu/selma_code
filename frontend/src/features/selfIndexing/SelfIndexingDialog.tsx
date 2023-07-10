@@ -5,12 +5,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -21,7 +23,11 @@ import Stepper from '@mui/material/Stepper';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useRecoilValue } from 'recoil';
-import { baseURL, dataStructureQueryState, dbsState } from '../../recoil/selectors';
+import {
+  baseURL,
+  configsState,
+  dataStructureQueryState, dbsState,
+} from '../../recoil/selectors';
 
 type IndexingMode = 'CREATE'|'UPDATE';
 type ExpansionMethod = | 'PLBART' | 'CODETRANS' | 'KEYWORDS' | 'NONE';
@@ -57,6 +63,8 @@ export default function SelfIndexingDialog() {
   const [models, setModels] = React.useState<string[]>([]);
   const databases = useRecoilValue(dbsState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
+  const configs = useRecoilValue(configsState);
+
   const steps = [
     'Git URL',
     'Choose Collection',
@@ -154,6 +162,10 @@ export default function SelfIndexingDialog() {
     switch (step) {
       case 0: {
         return (
+          <FormControl>
+            <FormLabel sx={{ mb: 2 }}>
+              Which Git repository do you wish to index?
+            </FormLabel>
           <TextField
             label="Git Repository Url"
             name="url"
@@ -162,19 +174,19 @@ export default function SelfIndexingDialog() {
             value={form.url}
             onChange={handleChange}
           />
+          </FormControl>
         );
       }
       case 1: {
         return (
           <>
             <FormControl>
-              <FormLabel id="indexing-strategy-radio-buttons-label">
+              <FormLabel sx={{ mb: 2 }}>
                 Would you like to create a new collection or update an existing one?
               </FormLabel>
               <RadioGroup
                 row
-                aria-labelledby="indexing-strategy-radio-buttons-label"
-                name="createNew"
+                name="indexingMode"
                 value={form.indexingMode}
                 onChange={handleChange}
               >
@@ -287,12 +299,11 @@ export default function SelfIndexingDialog() {
             {
             form.model === COLBERT_NAME && (
             <FormControl>
-              <FormLabel id="indexing-strategy-radio-buttons-label">
+              <FormLabel>
                 How would you like to index this?
               </FormLabel>
               <RadioGroup
                 row
-                aria-labelledby="indexing-strategy-radio-buttons-label"
                 name="neuralIndexingMethod"
                 value={form.neuralIndexingMethod}
                 onChange={handleChange}
