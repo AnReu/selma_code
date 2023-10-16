@@ -5,8 +5,71 @@ import pyterrier as pt
 from pathlib import Path
 from function_parser.language_data import LANGUAGE_METADATA
 from function_parser.process import DataProcessor
+from typing import List, NamedTuple, Optional
 from tree_sitter import Language
-from transformers import AutoTokenizer, AutoModelWithLMHead, SummarizationPipeline
+from transformers import (
+    AutoTokenizer,
+    AutoModelWithLMHead,
+    SummarizationPipeline,
+    PLBartForConditionalGeneration,
+    PLBartTokenizer,
+)
+
+
+# TODO: Find a better name for this class
+class MethodDefinitions(NamedTuple):
+    """
+    Properties from the dictionary returned by process_dee from the DataProcessor class in function_parser.
+    For more details, see: https://github.com/github/CodeSearchNet/tree/master/function_parser
+    """
+
+    nwo: str
+    sha: str
+    path: str
+    language: str
+    identifier: str
+    parameters: str
+    argument_list: str
+    return_statement: str
+    docstring: str
+    docstring_summary: str
+    docstring_tokens: str
+    function: str
+    function_tokens: str
+    url: str
+    id: Optional[str] = None
+    text: Optional[str] = None
+
+
+def expand_with_plbart(documents: List[MethodDefinitions], checkpoint: str) -> str:
+    model = PLBartForConditionalGeneration.from_pretrained(checkpoint)
+    tokenizer = PLBartTokenizer.from_pretrained(
+        checkpoint, src_lang="java", tgt_lang="en_XX"
+    )
+    for doc in documents:
+        inputs = tokenizer(doc["text"], return_tensors="pt")
+        output_tokens = model.generate(
+            **inputs,
+            decoder_start_token_id=tokenizer.lang_code_to_id["__en_XX__"],
+        )
+        summary = tokenizer.batch_decode(output_tokens, skip_special_tokens=True)[0]
+        doc["text"] = doc["text"] + " " + summary
+    return documents
+
+
+def expand_with_codetrans(documents: List[MethodDefinitions], checkpoint: str) -> str:
+    for doc in documents:
+        pipeline = SummarizationPipeline(
+            model=AutoModelWithLMHead.from_pretrained(checkpoint),
+            tokenizer=AutoTokenizer.from_pretrained(
+                checkpoint,
+                skip_special_tokens=True,
+            ),
+            device=0,
+        )
+        summary = pipeline(doc["text"])[0]["summary_text"]
+        doc["text"] = doc["text"] + " " + summary
+    return documents
 
 
 def copy_and_overwrite(from_path: Path, to_path: Path):
@@ -15,36 +78,30 @@ def copy_and_overwrite(from_path: Path, to_path: Path):
     shutil.copytree(from_path, to_path)
 
 
-def expand_methods(methods, expansion_method):
-    if expansion_method == "NONE":
-        for m in methods:
-            m["text"] = m["function"]
-        return methods
-    elif expansion_method == "PLBART":
-        raise Exception("TODO: implement me")
-    elif expansion_method == "CODETRANS":
-        model_name = "SEBIS/code_trans_t5_base_code_documentation_generation_java"
-        pipeline = SummarizationPipeline(
-            model=AutoModelWithLMHead.from_pretrained(model_name),
-            tokenizer=AutoTokenizer.from_pretrained(
-                model_name,
-                skip_special_tokens=True,
-            ),
-            device=0,
+def expand_documents(
+    original_docs, expansion_methods: List[str]
+) -> List[MethodDefinitions]:
+    expanded_docs = original_docs
+    for doc in expanded_docs:
+        doc["text"] = doc["function"]
+
+    if "CODETRANS" in expansion_methods:
+        CODETRANS_CHECKPOINT = (
+            "SEBIS/code_trans_t5_base_code_documentation_generation_java"
         )
-        documents = []
-        for m in methods:
-            summary = pipeline(m["function"])[0]["summary_text"]
-            document = m["function"] + " " + summary
-            documents.append({"text": document})
-        return documents
-    elif expansion_method == "KEYWORDS":
+        expanded_docs = expand_with_codetrans(expanded_docs, CODETRANS_CHECKPOINT)
+
+    if "PLBART" in expansion_methods:
+        PLBART_CHECKPOINT = "uclanlp/plbart-java-en_XX"
+        expanded_docs = expand_with_plbart(expanded_docs, PLBART_CHECKPOINT)
+
+    if "KEYWORDS" in expansion_methods:
         raise Exception("TODO: implement me")
-    else:
-        raise Exception("Invalid expansion method.")
+
+    return expanded_docs
 
 
-def get_methods_from_git_repo(git_repo_url, prog_lang):
+def get_methods_from_git_repo(git_repo_url, prog_lang) -> List[MethodDefinitions]:
     DataProcessor.PARSER.set_language(
         # TODO: replace hard-coded path
         Language(
@@ -62,12 +119,14 @@ def get_methods_from_git_repo(git_repo_url, prog_lang):
     return definitions
 
 
-def create_index_from_methods(methods, expansion_method, tmp_dir):
-    documents = expand_methods(methods, expansion_method)
+def create_index_from_documents(
+    documents: MethodDefinitions, expansion_methods: List[str], tmp_dir: Path
+):
+    expanded_docs = expand_documents(documents, expansion_methods)
 
     # Create index
     pd_indexer = pt.DFIndexer(tmp_dir.name, blocks=True)
-    df = pd.DataFrame(documents)
+    df = pd.DataFrame(expanded_docs)
     df["docno"] = df["id"].astype(str)
 
     # The first argument should always a pandas.Series object of Strings,

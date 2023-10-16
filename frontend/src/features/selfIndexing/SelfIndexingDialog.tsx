@@ -29,18 +29,24 @@ import {
   dataStructureQueryState, dbsState,
 } from '../../recoil/selectors';
 
-type IndexingMode = 'CREATE'|'UPDATE';
-type ExpansionMethod = | 'PLBART' | 'CODETRANS' | 'KEYWORDS' | 'NONE';
-type NeuralIndexingMethod = 'APLLIED' | 'TRAINED';
+interface Index {
+  name: string;
+  type: string;
+  createdAt: string;
+  updatedAt: string;
+  expansionMethods: string[],
+  neuralConfig: string;
+  sources: string[];
+}
 
 export interface IndexRequest {
   url: string;
   model: string;
   database: string;
   index: string;
-  expansionMethod: ExpansionMethod | null;
-  neuralIndexingMethod: NeuralIndexingMethod | null;
-  indexingMode: IndexingMode | null;
+  expansionMethods: string[];
+  neuralIndexingMethod: string | null;
+  indexingMode: string | null;
 }
 
 const COLBERT_NAME = 'PyterrierColbert';
@@ -51,7 +57,7 @@ export const emptyIndexRequest: IndexRequest = {
   model: BM25_NAME,
   database: 'new_database',
   index: '',
-  expansionMethod: 'CODETRANS',
+  expansionMethods: [],
   neuralIndexingMethod: null,
   indexingMode: 'CREATE',
 };
@@ -60,7 +66,7 @@ export default function SelfIndexingDialog() {
   const [activeStep, setActiveStep] = React.useState<number>(0);
   const [isOpen, setIsOpen] = React.useState(false);
   const [form, setForm] = React.useState<IndexRequest>(emptyIndexRequest);
-  const [models, setModels] = React.useState<string[]>([]);
+  const [indexes, setIndexes] = React.useState<Index[]>([]);
   const databases = useRecoilValue(dbsState);
   const dataStructure = useRecoilValue(dataStructureQueryState);
   const configs = useRecoilValue(configsState);
@@ -74,13 +80,22 @@ export default function SelfIndexingDialog() {
   ];
 
   React.useEffect(() => {
-    // filter models
-    if (form.database && dataStructure[form.database]) {
-      setModels(Object.keys(dataStructure[form.database]));
-    } else {
-      setModels([]);
-    }
-  }, [form]);
+    const fetchIndexes = async () => {
+      const response = await fetch(`${baseURL}/indexes`);
+      const json = await response.json();
+      setIndexes((oldIndexes) => [...oldIndexes, json]);
+    };
+    fetchIndexes().catch(console.error);
+  }, []);
+
+  // React.useEffect(() => {
+  //   // filter models
+  //   if (form.database && dataStructure[form.database]) {
+  //     setModels(Object.keys(dataStructure[form.database]));
+  //   } else {
+  //     setModels([]);
+  //   }
+  // }, [form]);
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -93,6 +108,18 @@ export default function SelfIndexingDialog() {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setForm((oldForm) => ({ ...oldForm, [name]: value }));
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    // console.log(form.expansionMethods);
+    // console.log(form.expansionMethods?.includes(value as ExpansionMethod));
+    let newArray: string[] = [...form.expansionMethods, value];
+
+    if (form.expansionMethods?.includes(value)) {
+      newArray = newArray.filter((method) => method !== value);
+    }
+    setForm((oldForm) => ({ ...oldForm, expansionMethods: newArray }));
   };
 
   const handleReset = () => {
@@ -144,7 +171,7 @@ export default function SelfIndexingDialog() {
         return form.model === '';
       }
       case 3: {
-        if (form.expansionMethod === null) return true;
+        if (form.expansionMethods === null) return true;
         return false;
       }
       case 4: {
@@ -164,14 +191,14 @@ export default function SelfIndexingDialog() {
             <FormLabel sx={{ mb: 2 }}>
               Which Git repository do you wish to index?
             </FormLabel>
-          <TextField
-            label="Git Repository Url"
-            name="url"
-            variant="filled"
-            fullWidth
-            value={form.url}
-            onChange={handleChange}
-          />
+            <TextField
+              label="Git Repository Url"
+              name="url"
+              variant="filled"
+              fullWidth
+              value={form.url}
+              onChange={handleChange}
+            />
           </FormControl>
         );
       }
@@ -224,7 +251,7 @@ export default function SelfIndexingDialog() {
                 native: true,
               }}
             >
-              <option value="" />
+              <option disabled value="" />
               {databases.map((db) => <option key={db} value={db}>{db}</option>)}
             </TextField>
             )}
@@ -233,26 +260,60 @@ export default function SelfIndexingDialog() {
         );
       }
       case 2: {
-        if (form.indexingMode === 'CREATE') {
-          return (
-          <FormControl>
-            <FormLabel sx={{ mb: 2 }}>
-              Which model do you wish to use to build the index?
-            </FormLabel>
-          <TextField
-            label="Model"
-            name="model"
-            value={form.model}
-            onChange={handleChange}
-            select
-            SelectProps={{
-              native: true,
-            }}
-          >
-            <option value="" disabled />
-            {models.map((idx) => <option key={idx} value={idx}>{idx}</option>)}
-          </TextField>
-          </FormControl>
+        return (
+          <>
+            <FormControl>
+              <FormLabel sx={{ mb: 2 }}>
+                Would you like to create a new index or update an existing one?
+              </FormLabel>
+              <RadioGroup
+                row
+                name="indexingMode"
+                value={form.indexingMode}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value="CREATE"
+                  control={<Radio />}
+                  label="Create new index"
+                />
+                <FormControlLabel
+                  value="UPDATE"
+                  control={<Radio />}
+                  label="Update existing index"
+                />
+              </RadioGroup>
+            </FormControl>
+
+            {form.indexingMode === 'CREATE' && (
+            <TextField
+              label="Name"
+              name="database"
+              variant="filled"
+              fullWidth
+              value={form.database}
+              onChange={handleChange}
+              helperText="Name of new collection"
+            />
+            )}
+
+            {form.indexingMode === 'UPDATE' && (
+            <TextField
+              label="Database"
+              name="database"
+              value={form.database}
+              onChange={handleChange}
+              select
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option disabled value="" />
+              {databases.map((db) => <option key={db} value={db}>{db}</option>)}
+            </TextField>
+            )}
+
+          </>
         );
       }
       case 3: {
@@ -263,7 +324,7 @@ export default function SelfIndexingDialog() {
                 How would you like to expand your documents?
               </FormLabel>
               <FormGroup
-                onChange={handleChange}
+                onChange={handleCheckboxChange}
               >
                 <FormControlLabel
                   value="codetrans"
@@ -272,7 +333,7 @@ export default function SelfIndexingDialog() {
                 />
                 <FormControlLabel
                   value="plbart"
-                    control={<Checkbox />}
+                  control={<Checkbox />}
                   label="PLBART"
                 />
                 <FormControlLabel
@@ -323,7 +384,7 @@ export default function SelfIndexingDialog() {
               {`Using the model: ${form.model}`}
             </p>
             <p>
-              {`Expanding documents using: ${form.expansionMethod}`}
+              {`Expanding documents using: ${form.expansionMethods}`}
             </p>
             {form.model === 'PyTerrierColbert' && <p>form.neuralIndexingMethod</p>}
           </>
@@ -351,7 +412,7 @@ export default function SelfIndexingDialog() {
         PaperProps={{
           sx: {
             width: '50%',
-            height: 480,
+            height: 420,
           },
         }}
       >

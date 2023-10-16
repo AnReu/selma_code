@@ -16,7 +16,7 @@ from marshmallow import ValidationError
 from backend.config import Config
 from backend.app.main import bp
 from pathlib import Path
-from .utils import get_methods_from_git_repo, create_index_from_methods, update_index
+from .utils import get_methods_from_git_repo, create_index_from_documents, update_index
 
 URL_PREFIX = "/api/v1"
 
@@ -212,17 +212,51 @@ def update_config_vars():
     return make_response(jsonify(Config.to_dict()), 201)
 
 
+@bp.route(f"{URL_PREFIX}/indexes", methods=["GET"])
+def get_indexes():
+    fake_response = [
+        {
+            "name": "index666",
+            "type": "bm25",
+            "expansionMethods": ["codeTrans", "plbart"],
+            "neuralConfig": "",
+            "numDocuments": 666,
+            "createdAt": "2021-01-01 00:00:00",
+            "updatedAt": "2021-01-01 00:00:00",
+            "sources": [
+                "github.com/1",
+                "github.com/2",
+                "github.com/3",
+                "github.com/4",
+            ],
+        },
+        {
+            "name": "index1390",
+            "type": "colbert",
+            "expansionMethods": [],
+            "neuralConfig": "applied",
+            "numDocuments": 1390,
+            "createdAt": "2023-03-03 00:00:00",
+            "updatedAt": "2023-03-03 00:00:00",
+            "sources": ["github.com/5", "github.com/6"],
+        },
+    ]
+
+    return make_response(jsonify(fake_response), 200)
+
+
 @bp.route(f"{URL_PREFIX}/index", methods=["POST"])
 def selfindex_route():
     json_data = request.get_json()
     url = json_data["url"]
     database = json_data["database"]
     model = json_data["model"]
+    index_name = json_data["index"]
     indexing_mode = json_data["indexingMode"]
-    expansion_method = json_data["expansionMethod"]
+    expansion_methods = json_data["expansionMethods"]
 
     # TODO: for now, we only supoprt java
-    methods = get_methods_from_git_repo(url, "java")
+    documents = get_methods_from_git_repo(url, "java")
 
     # Decide which database to use
     if indexing_mode == "CREATE":
@@ -257,46 +291,36 @@ def selfindex_route():
         raise Exception("Invalid indexing mode")
 
     # Add methods to database
-    for m in methods:
+    for doc in documents:
         cur.execute(
             """
         INSERT INTO documents(title, language, url, body)
         VALUES(?,?,?,?)""",
-            (m["identifier"], m["language"], m["url"], m["function"]),
+            (doc["identifier"], doc["language"], doc["url"], doc["function"]),
         )
-        m["id"] = cur.lastrowid
+        doc["id"] = cur.lastrowid
     # Apply database changes
     con.commit()
 
     # Create index for new methods
     tmp_dir = tempfile.TemporaryDirectory()
-    new_indexref = create_index_from_methods(methods, expansion_method, tmp_dir)
+    new_indexref = create_index_from_documents(documents, expansion_methods, tmp_dir)
     new_index = pt.IndexFactory.of(new_indexref)
+    target_path = Path(Config.get_data_path()) / database / model / index_name
 
     if indexing_mode == "CREATE":
-        # Copy temporary files to final location
-        src_path = Path(tmp_dir.name)
-        target_path = (
-            Path(Config.get_data_path()) / database / model / expansion_method.lower()
-        )
         try:
-            shutil.copytree(src_path, target_path)
+            shutil.copytree(Path(tmp_dir.name), target_path)
         except:
             raise Exception(
                 "Something went wrong when copying temporary files to final location."
             )
 
     elif indexing_mode == "UPDATE":
-        old_index_path = (
-            Path(Config.get_data_path())
-            / database
-            / model
-            / str(expansion_method).lower()
-        )
-        update_index(old_index_path, new_index)
+        update_index(target_path, new_index)
 
     else:
         raise Exception("Invalid indexing mode.")
 
-    response = {"num_methods_indexed": len(methods)}
+    response = {"num_methods_indexed": len(documents)}
     return make_response(jsonify(response), 201)
