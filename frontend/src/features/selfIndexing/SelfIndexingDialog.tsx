@@ -265,19 +265,20 @@ export default function SelfIndexingDialog() {
               <FormGroup
                 onChange={handleChange}
               >
-                {Object.entries(configs.expansion_methods).map(([value, label]) => (
-                  // expansion_methods is a dictionary
                 <FormControlLabel
-                    key={value}
-                    value={value}
-                    control={<Checkbox />}
-                    label={label}
-                />
-                ))}
-                <FormControlLabel
-                  value="NONE"
+                  value="codetrans"
                   control={<Checkbox />}
-                  label="No expansion"
+                  label="CodeTrans"
+                />
+                <FormControlLabel
+                  value="plbart"
+                    control={<Checkbox />}
+                  label="PLBART"
+                />
+                <FormControlLabel
+                  value="keywords"
+                  control={<Checkbox />}
+                  label="Keywords"
                 />
               </FormGroup>
             </FormControl>
