@@ -249,17 +249,20 @@ def get_indexes():
 def selfindex_route():
     json_data = request.get_json()
     url = json_data["url"]
-    database = json_data["database"]
     model = json_data["model"]
+    database = json_data["database"]
     index_name = json_data["index"]
-    indexing_mode = json_data["indexingMode"]
-    expansion_methods = json_data["expansionMethods"]
+    expansion_methods = [
+        key for key, value in json_data["expansionMethods"].items() if value
+    ]
+    indexing_action = json_data["indexingAction"]
+    collection_action = json_data["collectionAction"]
 
     # TODO: for now, we only supoprt java
     documents = get_methods_from_git_repo(url, "java")
 
     # Decide which database to use
-    if indexing_mode == "CREATE":
+    if collection_action == "CREATE":
         database_dir = Path(Config.get_data_path()) / database
         if database_dir.exists():
             raise Exception(
@@ -279,7 +282,7 @@ def selfindex_route():
             "body TEXT"
             ");"
         )
-    elif indexing_mode == "UPDATE":
+    elif collection_action == "UPDATE":
         database_path = Path(Config.get_data_path()) / database / f"{database}.db"
         if not database_path.exists():
             raise Exception(
@@ -288,7 +291,7 @@ def selfindex_route():
         con = connect(database_path)
         cur = con.cursor()
     else:
-        raise Exception("Invalid indexing mode")
+        raise Exception("Invalid collection action.")
 
     # Add methods to database
     for doc in documents:
@@ -302,13 +305,14 @@ def selfindex_route():
     # Apply database changes
     con.commit()
 
-    # Create index for new methods
+    # Create temporary index for new methods
     tmp_dir = tempfile.TemporaryDirectory()
     new_indexref = create_index_from_documents(documents, expansion_methods, tmp_dir)
     new_index = pt.IndexFactory.of(new_indexref)
     target_path = Path(Config.get_data_path()) / database / model / index_name
 
-    if indexing_mode == "CREATE":
+    # Decide whether to create or update index
+    if indexing_action == "CREATE":
         try:
             shutil.copytree(Path(tmp_dir.name), target_path)
         except:
@@ -316,11 +320,11 @@ def selfindex_route():
                 "Something went wrong when copying temporary files to final location."
             )
 
-    elif indexing_mode == "UPDATE":
+    elif indexing_action == "UPDATE":
         update_index(target_path, new_index)
 
     else:
-        raise Exception("Invalid indexing mode.")
+        raise Exception("Invalid indexing action.")
 
     response = {"num_methods_indexed": len(documents)}
     return make_response(jsonify(response), 201)

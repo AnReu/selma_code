@@ -1,15 +1,18 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable no-shadow */
 /* eslint-disable no-unreachable */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
+import {
+  Alert, Box, CircularProgress, Snackbar, Typography,
+} from '@mui/material';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
@@ -21,13 +24,20 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
 import TextField from '@mui/material/TextField';
+import { green } from '@mui/material/colors';
 import * as React from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import {
   baseURL,
-  configsState,
-  dataStructureQueryState, dbsState,
+  dataStructureQueryState,
+  dbsState,
 } from '../../recoil/selectors';
+
+const COLBERT_NAME = 'PyterrierColbert';
+const BM25_NAME = 'PyterrierModel';
+const CODETRANS_NAME = 'CODETRANS';
+const PLBART_NAME = 'PLBART';
+const KEYWORDS_NAME = 'KEYWORDS';
 
 interface Index {
   name: string;
@@ -39,37 +49,49 @@ interface Index {
   sources: string[];
 }
 
-export interface IndexRequest {
-  url: string;
-  model: string;
-  database: string;
-  index: string;
-  expansionMethods: string[];
-  neuralIndexingMethod: string | null;
-  indexingMode: string | null;
+interface expansionMethods {
+  [CODETRANS_NAME]: boolean;
+  [PLBART_NAME]: boolean;
+  [KEYWORDS_NAME]: boolean;
 }
 
-const COLBERT_NAME = 'PyterrierColbert';
-const BM25_NAME = 'PyterrierModel';
+export interface IndexRequest {
+  url: string;
+  model: string | null;
+  database: string;
+  index: string;
+  expansionMethods: expansionMethods;
+  neuralIndexingMethod: string | null;
+  collectionAction: 'CREATE' | 'UPDATE' | null;
+  indexingAction: 'CREATE' | 'UPDATE' | null;
+}
 
 export const emptyIndexRequest: IndexRequest = {
   url: 'https://github.com/jabedhasan21/java-hello-world-with-maven.git',
-  model: BM25_NAME,
-  database: 'new_database',
+  model: null,
+  database: '',
   index: '',
-  expansionMethods: [],
+  expansionMethods: {
+    [CODETRANS_NAME]: false,
+    [PLBART_NAME]: false,
+    [KEYWORDS_NAME]: false,
+  },
   neuralIndexingMethod: null,
-  indexingMode: 'CREATE',
+  collectionAction: null,
+  indexingAction: null,
 };
 
 export default function SelfIndexingDialog() {
   const [activeStep, setActiveStep] = React.useState<number>(0);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [isSnackbarVisible, setIsSnackbarVisible] = React.useState(false);
   const [form, setForm] = React.useState<IndexRequest>(emptyIndexRequest);
-  const [indexes, setIndexes] = React.useState<Index[]>([]);
+  const [, setIndexes] = React.useState<Index[]>([]);
   const databases = useRecoilValue(dbsState);
-  const dataStructure = useRecoilValue(dataStructureQueryState);
-  const configs = useRecoilValue(configsState);
+  const [loading, setLoading] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const [error, setError] = React.useState(false);
+  const refreshDataStructure = useRecoilRefresher_UNSTABLE(dataStructureQueryState);
 
   const steps = [
     'Git URL',
@@ -88,38 +110,70 @@ export default function SelfIndexingDialog() {
     fetchIndexes().catch(console.error);
   }, []);
 
-  // React.useEffect(() => {
-  //   // filter models
-  //   if (form.database && dataStructure[form.database]) {
-  //     setModels(Object.keys(dataStructure[form.database]));
-  //   } else {
-  //     setModels([]);
-  //   }
-  // }, [form]);
-
   const handleOpen = () => {
-    setIsOpen(true);
+    setIsDialogOpen(true);
   };
 
-  const handleClose = () => {
-    setIsOpen(false);
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleCloseSnackbar = () => {
+    setIsSnackbarVisible(false);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setForm((oldForm) => ({ ...oldForm, [name]: value }));
+    setForm((oldForm) => ({
+      ...oldForm,
+      [name]: value,
+    }));
   };
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    // console.log(form.expansionMethods);
-    // console.log(form.expansionMethods?.includes(value as ExpansionMethod));
-    let newArray: string[] = [...form.expansionMethods, value];
+  function extractRepoName(url: string): string {
+    // Split the URL by '/' and get the last part
+    const parts = url.split('/');
+    const lastPart = parts[parts.length - 1];
 
-    if (form.expansionMethods?.includes(value)) {
-      newArray = newArray.filter((method) => method !== value);
+    // Remove the '.git' extension if present
+    const repoName = lastPart.endsWith('.git') ? lastPart.slice(0, -4) : lastPart;
+
+    return repoName;
+  }
+
+  const handleChangeUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const repoName = extractRepoName(value);
+
+    setForm((oldForm) => ({
+      ...oldForm,
+      url: value,
+      database: repoName,
+    }));
+  };
+
+  const handleChangeExpansionmethods = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = event.target;
+
+    setForm((oldForm) => ({
+      ...oldForm,
+      expansionMethods: {
+        ...oldForm.expansionMethods,
+        [name]: checked,
+      },
+    }));
+  };
+
+  const handleChangeCollectionAction = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    if (value === 'CREATE') {
+      setForm((oldForm) => ({ ...oldForm, indexingAction: 'CREATE' }));
+    } else if (value === 'UPDATE') {
+      setForm((oldForm) => ({ ...oldForm, indexingAction: null }));
     }
-    setForm((oldForm) => ({ ...oldForm, expansionMethods: newArray }));
+
+    setForm((oldForm) => ({ ...oldForm, [name]: value }));
   };
 
   const handleReset = () => {
@@ -128,18 +182,30 @@ export default function SelfIndexingDialog() {
   };
 
   const handleFinish = () => {
-    fetch(`${baseURL}/index`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        setIsOpen(false);
+    if (!loading) {
+      setSuccess(false);
+      setLoading(true);
+      fetch(`${baseURL}/index`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
       })
-      .catch((error) => console.error(error));
+        .then((response) => response.json())
+        .then(() => {
+          refreshDataStructure();
+          setLoading(false);
+          setSuccess(true);
+          setIsDialogOpen(false);
+          setIsSnackbarVisible(true);
+        })
+        .catch(() => {
+          setLoading(false);
+          setSuccess(false);
+          setError(true);
+        });
+    }
   };
 
   const totalSteps = () => steps.length;
@@ -165,7 +231,7 @@ export default function SelfIndexingDialog() {
         return false;
       }
       case 1: {
-        return form.indexingMode === null || form.database === '';
+        return form.collectionAction === null || form.database === '';
       }
       case 2: {
         return form.model === '';
@@ -183,6 +249,29 @@ export default function SelfIndexingDialog() {
     }
   };
 
+  const getSelectedExpansionMethods = () => {
+    const selectedExpansionMethods: string[] = [];
+
+    Object.entries(form.expansionMethods).map((entry) => {
+      if (entry[1] as boolean) {
+        selectedExpansionMethods.push(entry[0]);
+      }
+
+      return null;
+    });
+
+    return selectedExpansionMethods.join(', ').replace(/, ([^,]*)$/, ' and $1');
+  };
+
+  const buttonSx = {
+    ...(success && {
+      bgcolor: green[500],
+      '&:hover': {
+        bgcolor: green[700],
+      },
+    }),
+  };
+
   const FormStep = (step: number) => {
     switch (step) {
       case 0: {
@@ -197,7 +286,7 @@ export default function SelfIndexingDialog() {
               variant="filled"
               fullWidth
               value={form.url}
-              onChange={handleChange}
+              onChange={handleChangeUrl}
             />
           </FormControl>
         );
@@ -211,9 +300,9 @@ export default function SelfIndexingDialog() {
               </FormLabel>
               <RadioGroup
                 row
-                name="indexingMode"
-                value={form.indexingMode}
-                onChange={handleChange}
+                name="collectionAction"
+                value={form.collectionAction}
+                onChange={handleChangeCollectionAction}
               >
                 <FormControlLabel
                   value="CREATE"
@@ -221,6 +310,7 @@ export default function SelfIndexingDialog() {
                   label="Create new collection"
                 />
                 <FormControlLabel
+                  disabled
                   value="UPDATE"
                   control={<Radio />}
                   label="Update existing collection"
@@ -228,7 +318,7 @@ export default function SelfIndexingDialog() {
               </RadioGroup>
             </FormControl>
 
-            {form.indexingMode === 'CREATE' && (
+            {form.collectionAction === 'CREATE' && (
             <TextField
               label="Name"
               name="database"
@@ -240,9 +330,9 @@ export default function SelfIndexingDialog() {
             />
             )}
 
-            {form.indexingMode === 'UPDATE' && (
+            {form.collectionAction === 'UPDATE' && (
             <TextField
-              label="Database"
+              label="Collection"
               name="database"
               value={form.database}
               onChange={handleChange}
@@ -262,57 +352,69 @@ export default function SelfIndexingDialog() {
       case 2: {
         return (
           <>
-            <FormControl>
-              <FormLabel sx={{ mb: 2 }}>
-                Would you like to create a new index or update an existing one?
-              </FormLabel>
-              <RadioGroup
-                row
-                name="indexingMode"
-                value={form.indexingMode}
+            {form.collectionAction === 'UPDATE' && (
+              <FormControl>
+                <FormLabel sx={{ mb: 2 }}>
+                  Would you like to create a new index or update an existing one?
+                </FormLabel>
+                <RadioGroup
+                  row
+                  name="indexingAction"
+                  value={form.indexingAction}
+                  onChange={handleChange}
+                >
+                  <FormControlLabel
+                    value="CREATE"
+                    control={<Radio />}
+                    label="Create new index"
+                  />
+                  <FormControlLabel
+                    value="UPDATE"
+                    control={<Radio />}
+                    label="Update existing index"
+                  />
+                </RadioGroup>
+              </FormControl>
+            )}
+
+            {form.indexingAction === 'CREATE' && (
+            <>
+              <FormControl>
+                <FormLabel sx={{ mb: 2 }}>
+                  Which kind of index would you like to create?
+                </FormLabel>
+                <RadioGroup
+                  row
+                  name="model"
+                  value={form.model}
+                  onChange={handleChange}
+                >
+                  <FormControlLabel
+                    value={BM25_NAME}
+                    control={<Radio />}
+                    label="BM25"
+                  />
+                  <FormControlLabel
+                    disabled
+                    value={COLBERT_NAME}
+                    control={<Radio />}
+                    label="ColBERT"
+                  />
+                </RadioGroup>
+              </FormControl>
+
+              <TextField
+                label="Name"
+                name="index"
+                variant="filled"
+                fullWidth
+                value={form.index}
                 onChange={handleChange}
-              >
-                <FormControlLabel
-                  value="CREATE"
-                  control={<Radio />}
-                  label="Create new index"
-                />
-                <FormControlLabel
-                  value="UPDATE"
-                  control={<Radio />}
-                  label="Update existing index"
-                />
-              </RadioGroup>
-            </FormControl>
-
-            {form.indexingMode === 'CREATE' && (
-            <TextField
-              label="Name"
-              name="database"
-              variant="filled"
-              fullWidth
-              value={form.database}
-              onChange={handleChange}
-              helperText="Name of new collection"
-            />
+                helperText="Name of new index"
+                disabled={form.model === null}
+              />
+            </>
             )}
-
-            {form.indexingMode === 'UPDATE' && (
-            <TextField
-              label="Database"
-              name="database"
-              value={form.database}
-              onChange={handleChange}
-              select
-              SelectProps={{
-                native: true,
-              }}
-            >
-              <option disabled value="" />
-              {databases.map((db) => <option key={db} value={db}>{db}</option>)}
-            </TextField>
-            )}
-
           </>
         );
       }
@@ -324,23 +426,42 @@ export default function SelfIndexingDialog() {
                 How would you like to expand your documents?
               </FormLabel>
               <FormGroup
-                onChange={handleCheckboxChange}
+                onChange={handleChangeExpansionmethods}
               >
                 <FormControlLabel
-                  value="codetrans"
-                  control={<Checkbox />}
+                  control={(
+                    <Checkbox
+                      checked={form.expansionMethods[CODETRANS_NAME]}
+                      onChange={handleChange}
+                      name={CODETRANS_NAME}
+                    />
+                )}
                   label="CodeTrans"
                 />
+
                 <FormControlLabel
-                  value="plbart"
-                  control={<Checkbox />}
+                  control={(
+                    <Checkbox
+                      checked={form.expansionMethods[PLBART_NAME]}
+                      onChange={handleChange}
+                      name={PLBART_NAME}
+                    />
+                )}
                   label="PLBART"
                 />
+
                 <FormControlLabel
-                  value="keywords"
-                  control={<Checkbox />}
+                  disabled
+                  control={(
+                    <Checkbox
+                      checked={form.expansionMethods[KEYWORDS_NAME]}
+                      onChange={handleChange}
+                      name={KEYWORDS_NAME}
+                    />
+                )}
                   label="Keywords"
                 />
+
               </FormGroup>
             </FormControl>
 
@@ -376,17 +497,61 @@ export default function SelfIndexingDialog() {
       case 4: {
         return (
           <>
-            <p>{form.indexingMode === 'CREATE' ? `Create new collection: ${form.database}` : `Update collection: ${form.database}`}</p>
-            <p>
-              {`From git repo: ${form.url}`}
-            </p>
-            <p>
-              {`Using the model: ${form.model}`}
-            </p>
-            <p>
-              {`Expanding documents using: ${form.expansionMethods}`}
-            </p>
-            {form.model === 'PyTerrierColbert' && <p>form.neuralIndexingMethod</p>}
+            {error && <Alert severity="error">Something went wrong. Documents could not be indexed.</Alert>}
+            <Typography variant="h5">
+              Indexing Summary:
+            </Typography>
+
+            <Typography variant="h6">
+              Source:
+            </Typography>
+            <div>
+              <b>Git URL: </b>
+              <span>{form.url}</span>
+            </div>
+
+            <Divider />
+
+            <Typography variant="h6">
+              Collection:
+            </Typography>
+            <div>
+              <b>Action: </b>
+              <span>{form.collectionAction}</span>
+            </div>
+            <div>
+              <b>Name: </b>
+              <span>{form.database}</span>
+            </div>
+
+            <Divider />
+
+            <Typography variant="h6">
+              Index:
+            </Typography>
+            <div>
+              <b>Action: </b>
+              <span>{form.indexingAction}</span>
+            </div>
+            <div>
+              <b>Model: </b>
+              <span>{form.model}</span>
+            </div>
+            <div>
+              <b>Name: </b>
+              <span>{form.index}</span>
+            </div>
+
+            <Divider />
+
+            <Typography variant="h6">
+              Document Expansion:
+            </Typography>
+            <div>
+              <b>Methods: </b>
+              <span>{getSelectedExpansionMethods()}</span>
+            </div>
+
           </>
         );
       }
@@ -407,12 +572,12 @@ export default function SelfIndexingDialog() {
       </Button>
 
       <Dialog
-        open={isOpen}
-        onClose={handleClose}
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
         PaperProps={{
           sx: {
             width: '50%',
-            height: 420,
+            minHeight: 420,
           },
         }}
       >
@@ -443,14 +608,47 @@ export default function SelfIndexingDialog() {
               >
                 Back
               </Button>
-              <Button onClick={handleNext} disabled={isNextDisabled()}>
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button>
+
+              {activeStep === steps.length - 1 ? (
+                <Box sx={{ m: 1, position: 'relative' }}>
+                  <Button
+                    variant="contained"
+                    sx={buttonSx}
+                    disabled={loading}
+                    onClick={handleFinish}
+                  >
+                    Submit
+                  </Button>
+                  {loading && (
+                  <CircularProgress
+                    size={24}
+                    sx={{
+                      color: green[500],
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      marginTop: '-12px',
+                      marginLeft: '-12px',
+                    }}
+                  />
+                  )}
+                </Box>
+              ) : (
+                <Button onClick={handleNext} disabled={isNextDisabled()}>
+                  Next
+                </Button>
+              )}
             </>
           )}
         </DialogActions>
 
       </Dialog>
+
+      <Snackbar open={isSnackbarVisible} autoHideDuration={600} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          Documents successfully indexed
+        </Alert>
+      </Snackbar>
     </>
   );
 }
