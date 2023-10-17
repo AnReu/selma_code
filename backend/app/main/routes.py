@@ -305,6 +305,21 @@ def selfindex_route():
     # Apply database changes
     con.commit()
 
+    if collection_action == "UPDATE" and indexing_action == "CREATE":
+        documents = []
+        query = "SELECT * FROM documents"
+        results = cur.execute(query)
+        rows = results.fetchall()
+        for row in rows:
+            doc = {
+                "id": row[0],
+                "title": row[1],
+                "language": row[2],
+                "url": row[3],
+                "function": row[4],
+            }
+            documents.append(doc)
+
     # Create temporary index for new methods
     tmp_dir = tempfile.TemporaryDirectory()
     new_indexref = create_index_from_documents(documents, expansion_methods, tmp_dir)

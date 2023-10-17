@@ -76,12 +76,24 @@ export default function SelfIndexingDialog() {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState(false);
   const [form, setForm] = React.useState<IndexRequest>(emptyIndexRequest);
-  const [, setIndexes] = React.useState<Index[]>([]);
+  const [indexes, setIndexes] = React.useState<string[]>([]);
   const databases = useRecoilValue(dbsState);
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const refreshDataStructure = useRecoilRefresher_UNSTABLE(dataStructureQueryState);
+  const dataStructure = useRecoilValue(dataStructureQueryState);
+
+  React.useEffect(() => {
+    if (form.model == null) return;
+
+    // filter indexes
+    if (dataStructure[form.database] && dataStructure[form.database][form.model]) {
+      setIndexes(dataStructure[form.database][form.model]);
+    } else {
+      setIndexes([]);
+    }
+  }, [form.model]);
 
   const steps = [
     'Git URL',
@@ -292,7 +304,6 @@ export default function SelfIndexingDialog() {
                   label="Create new collection"
                 />
                 <FormControlLabel
-                  disabled
                   value="UPDATE"
                   control={<Radio />}
                   label="Update existing collection"
@@ -359,32 +370,34 @@ export default function SelfIndexingDialog() {
               </FormControl>
             )}
 
+            {form.indexingAction && (
+            <FormControl>
+              <FormLabel sx={{ mb: 2 }}>
+                Which kind of index would you like to create?
+              </FormLabel>
+              <RadioGroup
+                row
+                name="model"
+                value={form.model}
+                onChange={handleChange}
+              >
+                <FormControlLabel
+                  value={BM25_NAME}
+                  control={<Radio />}
+                  label="BM25"
+                />
+                <FormControlLabel
+                  disabled
+                  value={COLBERT_NAME}
+                  control={<Radio />}
+                  label="ColBERT"
+                />
+              </RadioGroup>
+            </FormControl>
+            )}
+
             {form.indexingAction === 'CREATE' && (
             <>
-              <FormControl>
-                <FormLabel sx={{ mb: 2 }}>
-                  Which kind of index would you like to create?
-                </FormLabel>
-                <RadioGroup
-                  row
-                  name="model"
-                  value={form.model}
-                  onChange={handleChange}
-                >
-                  <FormControlLabel
-                    value={BM25_NAME}
-                    control={<Radio />}
-                    label="BM25"
-                  />
-                  <FormControlLabel
-                    disabled
-                    value={COLBERT_NAME}
-                    control={<Radio />}
-                    label="ColBERT"
-                  />
-                </RadioGroup>
-              </FormControl>
-
               <TextField
                 label="Name"
                 name="index"
@@ -396,6 +409,24 @@ export default function SelfIndexingDialog() {
                 disabled={form.model === null}
               />
             </>
+            )}
+
+            {form.indexingAction === 'UPDATE' && (
+            <TextField
+              label="Index"
+              name="index"
+              value={form.index}
+              onChange={handleChange}
+              select
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option disabled value="" />
+              {indexes.map(
+                (index) => <option key={index} value={index}>{index}</option>,
+              )}
+            </TextField>
             )}
           </>
         );
@@ -559,7 +590,7 @@ export default function SelfIndexingDialog() {
         PaperProps={{
           sx: {
             width: '50%',
-            minHeight: 420,
+            minHeight: 480,
           },
         }}
       >

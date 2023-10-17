@@ -16,32 +16,7 @@ from transformers import (
 )
 
 
-# TODO: Find a better name for this class
-class MethodDefinitions(NamedTuple):
-    """
-    Properties from the dictionary returned by process_dee from the DataProcessor class in function_parser.
-    For more details, see: https://github.com/github/CodeSearchNet/tree/master/function_parser
-    """
-
-    nwo: str
-    sha: str
-    path: str
-    language: str
-    identifier: str
-    parameters: str
-    argument_list: str
-    return_statement: str
-    docstring: str
-    docstring_summary: str
-    docstring_tokens: str
-    function: str
-    function_tokens: str
-    url: str
-    id: Optional[str] = None
-    text: Optional[str] = None
-
-
-def expand_with_plbart(documents: List[MethodDefinitions], checkpoint: str) -> str:
+def expand_with_plbart(documents, checkpoint: str):
     model = PLBartForConditionalGeneration.from_pretrained(checkpoint)
     tokenizer = PLBartTokenizer.from_pretrained(
         checkpoint, src_lang="java", tgt_lang="en_XX"
@@ -57,7 +32,7 @@ def expand_with_plbart(documents: List[MethodDefinitions], checkpoint: str) -> s
     return documents
 
 
-def expand_with_codetrans(documents: List[MethodDefinitions], checkpoint: str) -> str:
+def expand_with_codetrans(documents, checkpoint: str):
     for doc in documents:
         pipeline = SummarizationPipeline(
             model=AutoModelWithLMHead.from_pretrained(checkpoint),
@@ -78,9 +53,7 @@ def copy_and_overwrite(from_path: Path, to_path: Path):
     shutil.copytree(from_path, to_path)
 
 
-def expand_documents(
-    original_docs, expansion_methods: List[str]
-) -> List[MethodDefinitions]:
+def expand_documents(original_docs, expansion_methods: List[str]):
     expanded_docs = original_docs
     for doc in expanded_docs:
         doc["text"] = doc["function"]
@@ -101,7 +74,7 @@ def expand_documents(
     return expanded_docs
 
 
-def get_methods_from_git_repo(git_repo_url, prog_lang) -> List[MethodDefinitions]:
+def get_methods_from_git_repo(git_repo_url: str, prog_lang: str):
     DataProcessor.PARSER.set_language(
         Language(
             "backend/app/tree_sitter_languages/languages.so",
@@ -115,12 +88,11 @@ def get_methods_from_git_repo(git_repo_url, prog_lang) -> List[MethodDefinitions
     definitions = processor.process_dee(
         git_repo_url, ext=LANGUAGE_METADATA[prog_lang]["ext"]
     )
+
     return definitions
 
 
-def create_index_from_documents(
-    documents: MethodDefinitions, expansion_methods: List[str], tmp_dir: Path
-):
+def create_index_from_documents(documents, expansion_methods: List[str], tmp_dir: Path):
     expanded_docs = expand_documents(documents, expansion_methods)
 
     # Create index
