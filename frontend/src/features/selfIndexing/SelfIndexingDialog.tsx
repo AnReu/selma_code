@@ -199,6 +199,7 @@ export default function SelfIndexingDialog() {
           setSuccess(true);
           setIsDialogOpen(false);
           setIsSnackbarVisible(true);
+          handleReset();
         })
         .catch(() => {
           setLoading(false);
