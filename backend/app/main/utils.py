@@ -103,9 +103,8 @@ def expand_documents(
 
 def get_methods_from_git_repo(git_repo_url, prog_lang) -> List[MethodDefinitions]:
     DataProcessor.PARSER.set_language(
-        # TODO: replace hard-coded path
         Language(
-            "/mnt/ssd/dev/retrievalsystem/backend/app/tree_sitter_languages/languages.so",
+            "backend/app/tree_sitter_languages/languages.so",
             prog_lang,
         )
     )
