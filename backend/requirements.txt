@@ -18,6 +18,9 @@ python-dotenv
 python-terrier
 tika
 tree_sitter
+pandas==1.5.3
+protobuf==3.20.3
+torch
 
 
 
