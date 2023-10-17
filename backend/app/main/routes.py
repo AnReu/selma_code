@@ -16,7 +16,11 @@ from marshmallow import ValidationError
 from backend.config import Config
 from backend.app.main import bp
 from pathlib import Path
-from .utils import get_methods_from_git_repo, create_index_from_documents, update_index
+from .utils import (
+    get_methods_from_git_repo,
+    create_index_from_documents,
+    update_index,
+)
 
 URL_PREFIX = "/api/v1"
 
@@ -210,39 +214,6 @@ def update_config_vars():
         }
 
     return make_response(jsonify(Config.to_dict()), 201)
-
-
-@bp.route(f"{URL_PREFIX}/indexes", methods=["GET"])
-def get_indexes():
-    fake_response = [
-        {
-            "name": "index666",
-            "type": "bm25",
-            "expansionMethods": ["codeTrans", "plbart"],
-            "neuralConfig": "",
-            "numDocuments": 666,
-            "createdAt": "2021-01-01 00:00:00",
-            "updatedAt": "2021-01-01 00:00:00",
-            "sources": [
-                "github.com/1",
-                "github.com/2",
-                "github.com/3",
-                "github.com/4",
-            ],
-        },
-        {
-            "name": "index1390",
-            "type": "colbert",
-            "expansionMethods": [],
-            "neuralConfig": "applied",
-            "numDocuments": 1390,
-            "createdAt": "2023-03-03 00:00:00",
-            "updatedAt": "2023-03-03 00:00:00",
-            "sources": ["github.com/5", "github.com/6"],
-        },
-    ]
-
-    return make_response(jsonify(fake_response), 200)
 
 
 @bp.route(f"{URL_PREFIX}/index", methods=["POST"])
