@@ -1,3 +1,11 @@
+# SELMA
+This repository contains the code for SELMA, our semantic and local code search system. 
+
+## Dependencies
+You need to have Java 11+ installed on your system in order to use Terrier. In order to use our Transformer-based features, 
+we recommend using a platform which has access to at least one GPU (with CUDA installed).
+
+
 ## Introduction
 
 We will use two programs to deploy our app, namely [gunicorn](https://gunicorn.org/) and [nginx](https://www.nginx.com/).
@@ -99,3 +107,4 @@ If the app is already installed and all you wish is to update it, all you need t
 1. Update the project with `git pull`
 2. (optional) Rebuild the frontend app:
    - Navigate to `retrievalsystem/frontend` and run `yarn build`
+
