@@ -39,16 +39,6 @@ const CODETRANS_NAME = 'CODETRANS';
 const PLBART_NAME = 'PLBART';
 const KEYWORDS_NAME = 'KEYWORDS';
 
-interface Index {
-  name: string;
-  type: string;
-  createdAt: string;
-  updatedAt: string;
-  expansionMethods: string[],
-  neuralConfig: string;
-  sources: string[];
-}
-
 interface expansionMethods {
   [CODETRANS_NAME]: boolean;
   [PLBART_NAME]: boolean;
@@ -100,15 +90,6 @@ export default function SelfIndexingDialog() {
     'Indexing Options',
     'Confirmation',
   ];
-
-  React.useEffect(() => {
-    const fetchIndexes = async () => {
-      const response = await fetch(`${baseURL}/indexes`);
-      const json = await response.json();
-      setIndexes((oldIndexes) => [...oldIndexes, json]);
-    };
-    fetchIndexes().catch(console.error);
-  }, []);
 
   const handleOpen = () => {
     setIsDialogOpen(true);
