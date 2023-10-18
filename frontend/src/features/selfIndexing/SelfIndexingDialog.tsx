@@ -57,7 +57,7 @@ export interface IndexRequest {
 }
 
 export const emptyIndexRequest: IndexRequest = {
-  url: 'https://github.com/jabedhasan21/java-hello-world-with-maven.git',
+  url: '',
   model: null,
   database: '',
   index: '',
