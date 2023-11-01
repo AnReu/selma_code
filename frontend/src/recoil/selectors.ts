@@ -1,7 +1,7 @@
 import { atom, selector, useRecoilState } from 'recoil';
 import { QueryMode, queryState } from './atoms';
 
-const baseURL = '/api/v1';
+export const baseURL = '/api/v1';
 const headers = { 'Content-Type': 'application/json' };
 
 export const dataStructureQueryState = selector({
@@ -59,7 +59,8 @@ export interface Config {
     separated: boolean,
     url: boolean,
     file: boolean,
-  }
+  },
+  expansion_methods: { [key: string]: string },
 }
 
 export const emptyConfig: Config = {
@@ -70,6 +71,7 @@ export const emptyConfig: Config = {
   allowed_search_modes: {
     default: true, separated: true, url: true, file: true,
   },
+  expansion_methods: {},
 };
 
 export const emptyExample: Example = {

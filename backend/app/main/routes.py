@@ -1,6 +1,10 @@
 import json
 import re
 import os
+import tempfile
+import shutil
+from sqlite3 import connect
+import pyterrier as pt
 from flask import jsonify, request, make_response, current_app
 from backend.app import db
 from backend.app.models import QueryTemplate, QueryTemplateSchema
@@ -11,6 +15,12 @@ from backend.parser import tex_parser
 from marshmallow import ValidationError
 from backend.config import Config
 from backend.app.main import bp
+from pathlib import Path
+from .utils import (
+    get_methods_from_git_repo,
+    create_index_from_documents,
+    update_index,
+)
 
 URL_PREFIX = "/api/v1"
 
@@ -34,7 +44,9 @@ def search_route():
     index = request.args.get("index")
     page = request.args.get("page", 1, type=int)
 
-    return search(db_name, text, code, equation, _id, exchange, model, model_language, index, page)
+    return search(
+        db_name, text, code, equation, _id, exchange, model, model_language, index, page
+    )
 
 
 @bp.route(f"{URL_PREFIX}/relevance", methods=["POST"])
@@ -93,18 +105,18 @@ def get_data_structure():
     data_path = Config.get_data_path()
     tree = {}
     for db in os.listdir(data_path):
-        db_path = os.path.join(data_path,db)
+        db_path = os.path.join(data_path, db)
         if os.path.isdir(db_path):
             tree[db] = {}
             for model in os.listdir(db_path):
-                model_path = os.path.join(db_path,model)
+                model_path = os.path.join(db_path, model)
                 if os.path.isdir(model_path):
                     tree[db][model] = []
                     for index in os.listdir(model_path):
                         index_path = os.path.join(model_path, index)
                         if os.path.isdir(index_path):
                             tree[db][model].append(index)
-    
+
     return jsonify(tree)
 
 
@@ -155,9 +167,13 @@ def get_config_vars():
     config_vars = {
         "db_path": Config.DB_PATH if Config.DB_PATH else "",
         "db_table_name": Config.DB_TABLE_NAME if Config.DB_TABLE_NAME else "",
-        "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME if Config.DB_CONTENT_ATTRIBUTE_NAME else "",
+        "db_content_attribute_name": Config.DB_CONTENT_ATTRIBUTE_NAME
+        if Config.DB_CONTENT_ATTRIBUTE_NAME
+        else "",
         "index_path": Config.INDEX_PATH if Config.INDEX_PATH else "",
-        "allowed_search_modes": Config.ALLOWED_SEARCH_MODES if Config.ALLOWED_SEARCH_MODES else default_allowed_search_modes,
+        "allowed_search_modes": Config.ALLOWED_SEARCH_MODES
+        if Config.ALLOWED_SEARCH_MODES
+        else default_allowed_search_modes,
     }
     return make_response(jsonify(config_vars), 200)
 
@@ -166,23 +182,23 @@ def get_config_vars():
 def update_config_vars():
     json_data = request.get_json()
     modified_fields = []
-        
-    if json_data["index_path"] != '':
+
+    if json_data["index_path"] != "":
         Config.INDEX_PATH = json_data["index_path"]
     else:
         Config.INDEX_PATH = None
 
-    if json_data["db_path"] != '':
+    if json_data["db_path"] != "":
         Config.DB_PATH = json_data["db_path"]
     else:
         Config.DB_PATH = None
 
-    if json_data["db_table_name"] != '':
+    if json_data["db_table_name"] != "":
         Config.DB_TABLE_NAME = json_data["db_table_name"]
     else:
         Config.DB_TABLE_NAME = None
 
-    if json_data["db_content_attribute_name"] != '':
+    if json_data["db_content_attribute_name"] != "":
         Config.DB_CONTENT_ATTRIBUTE_NAME = json_data["db_content_attribute_name"]
     else:
         Config.DB_CONTENT_ATTRIBUTE_NAME = None
@@ -196,5 +212,105 @@ def update_config_vars():
             "url": True,
             "file": True,
         }
-        
+
     return make_response(jsonify(Config.to_dict()), 201)
+
+
+@bp.route(f"{URL_PREFIX}/index", methods=["POST"])
+def selfindex_route():
+    json_data = request.get_json()
+    url = json_data["url"]
+    model = json_data["model"]
+    database = json_data["database"]
+    index_name = json_data["index"]
+    expansion_methods = [
+        key for key, value in json_data["expansionMethods"].items() if value
+    ]
+    indexing_action = json_data["indexingAction"]
+    collection_action = json_data["collectionAction"]
+
+    # TODO: for now, we only supoprt java
+    documents = get_methods_from_git_repo(url, "java")
+
+    # Decide which database to use
+    if collection_action == "CREATE":
+        database_dir = Path(Config.get_data_path()) / database
+        if database_dir.exists():
+            raise Exception(
+                "Invalid database name. A database with this name already exists."
+            )
+        else:
+            database_dir.mkdir()
+
+        con = connect(database_dir / f"{database}.db")
+        cur = con.cursor()
+        cur.execute(
+            "CREATE TABLE IF NOT EXISTS documents ("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "title TEXT,"
+            "language TEXT NOT NULL,"
+            "url TEXT,"
+            "body TEXT"
+            ");"
+        )
+    elif collection_action == "UPDATE":
+        database_path = Path(Config.get_data_path()) / database / f"{database}.db"
+        if not database_path.exists():
+            raise Exception(
+                "Error when updating existing database. The database path does not exist."
+            )
+        con = connect(database_path)
+        cur = con.cursor()
+    else:
+        raise Exception("Invalid collection action.")
+
+    # Add methods to database
+    for doc in documents:
+        cur.execute(
+            """
+        INSERT INTO documents(title, language, url, body)
+        VALUES(?,?,?,?)""",
+            (doc["identifier"], doc["language"], doc["url"], doc["function"]),
+        )
+        doc["id"] = cur.lastrowid
+    # Apply database changes
+    con.commit()
+
+    if collection_action == "UPDATE" and indexing_action == "CREATE":
+        documents = []
+        query = "SELECT * FROM documents"
+        results = cur.execute(query)
+        rows = results.fetchall()
+        for row in rows:
+            doc = {
+                "id": row[0],
+                "title": row[1],
+                "language": row[2],
+                "url": row[3],
+                "function": row[4],
+            }
+            documents.append(doc)
+
+    # Create temporary index for new methods
+    tmp_dir = tempfile.TemporaryDirectory()
+    new_indexref = create_index_from_documents(documents, expansion_methods, tmp_dir)
+    new_index = pt.IndexFactory.of(new_indexref)
+    target_path = Path(Config.get_data_path()) / database / model / index_name
+
+    # Decide whether to create or update index
+    if indexing_action == "CREATE":
+        try:
+            shutil.copytree(Path(tmp_dir.name), target_path)
+        except:
+            raise Exception(
+                "Something went wrong when copying temporary files to final location."
+            )
+
+    elif indexing_action == "UPDATE":
+        update_index(target_path, new_index)
+
+    else:
+        raise Exception("Invalid indexing action.")
+
+    response = {"num_methods_indexed": len(documents)}
+    return make_response(jsonify(response), 201)

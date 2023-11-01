@@ -99,16 +99,7 @@ def search(
         )
         result["relevant_sentence"] = get_relevant_sentence(result)
 
-    print("results = ")
-    print(results)
-
     response = {"results": results, "error": error}, status
-
-    print("response = ")
-    print(response)
-    print(
-        "================================================================================================================================="
-    )
 
     return response
 

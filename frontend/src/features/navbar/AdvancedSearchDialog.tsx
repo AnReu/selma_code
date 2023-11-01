@@ -1,31 +1,31 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { QueryErrors, queryState } from '../../recoil/atoms';
 import {
   Config,
-  languagesState,
   configsState,
-  useConfigsMutations,
   dbsState,
+  languagesState,
+  useConfigsMutations,
 } from '../../recoil/selectors';
 
-export interface SimpleDialogProps {
+export interface AdvancedSearchDialogProps {
   isOpen: boolean;
   onClose: () => void;
   dataStructure: any;
   errors: QueryErrors;
 }
 
-export default function AdvancedSearchDialog(props: SimpleDialogProps) {
+export default function AdvancedSearchDialog(props: AdvancedSearchDialogProps) {
   const {
     onClose, isOpen, dataStructure,
   } = props;

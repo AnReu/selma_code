@@ -1,13 +1,14 @@
-import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 // import { useTheme } from '@mui/material/styles';
 import ExamplesDialog from '../features/examples/ExamplesDialog';
 import SystemSettings from '../features/navbar/SystemSettings';
+import SelfIndexingDialog from '../features/selfIndexing/SelfIndexingDialog';
 import { configsState } from '../recoil/selectors';
 
 export default function MainLayout() {
@@ -47,6 +48,8 @@ export default function MainLayout() {
           <Box sx={{ flexGrow: 1 }} />
 
           <ExamplesDialog />
+
+          <SelfIndexingDialog />
 
           <SystemSettings />
 
